@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Digital Marketing Manager — Process Documentation</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --blue: #A6373C;
+    --blue-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+    --confirm-bg: #FFF7E6;
+    --confirm-border: #F0B429;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 32px 22px;
+    border-top: 6px solid var(--blue);
+  }
+  header.top h1 { margin: 0 0 6px; font-size: 24px; }
+  header.top .meta { font-size: 13px; color: #E8D0D0; }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.side {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .section-tab {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .section-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .section-tab.disabled { color: var(--muted); cursor: not-allowed; opacity: 0.6; }
+  .jumplist { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; display: none; }
+  .jumplist.visible { display: block; }
+  .jumplist a {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .jumplist a:hover { background: var(--blue-light); color: var(--blue); }
+  main {
+    flex: 1;
+    padding: 24px 32px 80px;
+    min-width: 0;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 8px;
+  }
+  .card h3 { color: var(--blue); font-size: 15px; margin: 18px 0 6px; }
+  .card p { line-height: 1.55; font-size: 14px; margin: 0 0 10px; }
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  ul.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ul.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+  ol.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ol.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+  .scope-cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  .scope-cols > div { flex: 1; min-width: 240px; }
+  .scope-cols h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 13.5px;
+  }
+  table.data th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+  }
+  table.data td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: var(--blue-light); }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--blue-light);
+  }
+  .step-header:hover { background: #E8EFF8; }
+  .step-header .title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .step-header .chev { font-size: 13px; color: var(--muted); transition: transform .15s ease; }
+  .step.open .step-header .chev { transform: rotate(90deg); }
+  .step-body { display: none; padding: 14px 18px 18px; font-size: 14px; }
+  .step.open .step-body { display: block; }
+  .field { margin-bottom: 8px; }
+  .field .label { font-weight: 600; color: var(--navy); }
+  .quote {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-light);
+    padding: 12px 16px;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 8px 0 16px;
+    border-radius: 0 6px 6px 0;
+  }
+  .confirm-box {
+    background: var(--confirm-bg);
+    border: 1px solid var(--confirm-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .confirm-box h2 { border-bottom: none; color: #8A6300; }
+  .confirm-box ul.plain li { color: #6B4E00; }
+  a.ext-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+  a.ext-link:hover { text-decoration: underline; }
+  .links-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+  .links-list li { margin-bottom: 8px; font-size: 14px; }
+  .expand-all {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .expand-all:hover { background: var(--blue-light); }
+  footer.doc-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
+  .diagram-wrap { overflow-x: auto; }
+  .diagram-wrap svg { max-width: 640px; width: 100%; height: auto; display: block; margin: 0 auto; }
+  .coming-soon { font-size: 13px; color: var(--muted); text-align: center; padding: 40px 20px; }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.side { width: 100%; position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html" style="display:inline-block; font-size:12.5px; color:#E8D0D0; text-decoration:none; margin-bottom:10px;">&larr; All roles</a>
+  <h1>Digital Marketing Manager — Process Documentation</h1>
+  <div class="meta">Owner: Digital Marketing Manager &nbsp;|&nbsp; Last Updated: 15 July 2026 &nbsp;|&nbsp; Review Cadence: Quarterly</div>
+</header>
+
+<div class="layout">
+  <nav class="side">
+    <button class="section-tab active" data-tab="section1" onclick="showTab('section1', this)">Section 1: Website (Shopify)</button>
+    <div class="jumplist visible" id="jump-section1">
+      <a href="#s1-purpose">Purpose</a>
+      <a href="#s1-scope">Scope</a>
+      <a href="#s1-raci">RACI Matrix</a>
+      <a href="#s1-flow">Process Flow</a>
+      <a href="#s1-diagram">Process Flow Diagram</a>
+      <a href="#s1-steps">Detailed Steps</a>
+      <a href="#s1-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s1-metrics">Metrics</a>
+      <a href="#s1-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section2" onclick="showTab('section2', this)">Section 2: EDMs</button>
+    <div class="jumplist" id="jump-section2">
+      <a href="#s2-purpose">Purpose</a>
+      <a href="#s2-scope">Scope</a>
+      <a href="#s2-tiers">EDM Tier System</a>
+      <a href="#s2-raci">RACI Matrix</a>
+      <a href="#s2-flow">Process Flow</a>
+      <a href="#s2-diagram">Process Flow Diagram</a>
+      <a href="#s2-steps">Detailed Steps</a>
+      <a href="#s2-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s2-metrics">Metrics</a>
+      <a href="#s2-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section3" onclick="showTab('section3', this)">Section 3: Ads (Always-On)</button>
+    <div class="jumplist" id="jump-section3">
+      <a href="#s3-purpose">Purpose</a>
+      <a href="#s3-scope">Scope</a>
+      <a href="#s3-raci">RACI Matrix</a>
+      <a href="#s3-flow">Process Flow</a>
+      <a href="#s3-diagram">Process Flow Diagram</a>
+      <a href="#s3-steps">Detailed Steps</a>
+      <a href="#s3-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s3-metrics">Metrics</a>
+      <a href="#s3-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section4" onclick="showTab('section4', this)">Section 4: eCommerce Campaigns</button>
+    <div class="jumplist" id="jump-section4">
+      <a href="#s4-purpose">Purpose</a>
+      <a href="#s4-scope">Scope</a>
+      <a href="#s4-raci">RACI Matrix</a>
+      <a href="#s4-flow">Process Flow</a>
+      <a href="#s4-diagram">Process Flow Diagram</a>
+      <a href="#s4-steps">Detailed Steps</a>
+      <a href="#s4-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s4-metrics">Metrics</a>
+      <a href="#s4-related">Related Documents</a>
+    </div>
+    <button class="section-tab" data-tab="section5" onclick="showTab('section5', this)">Section 5: Social Media</button>
+    <div class="jumplist" id="jump-section5">
+      <a href="#s5-purpose">Purpose</a>
+      <a href="#s5-scope">Scope</a>
+      <a href="#s5-raci">RACI Matrix</a>
+      <a href="#s5-flow">Process Flow</a>
+      <a href="#s5-diagram">Process Flow Diagram</a>
+      <a href="#s5-steps">Detailed Steps</a>
+      <a href="#s5-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s5-metrics">Metrics</a>
+      <a href="#s5-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="sectionKOL" onclick="showTab('sectionKOL', this)">Section 6: KOL Management</button>
+    <div class="jumplist" id="jump-sectionKOL">
+      <a href="#skol-purpose">Purpose</a>
+      <a href="#skol-scope">Scope</a>
+      <a href="#skol-raci">RACI Matrix</a>
+      <a href="#skol-flow">Process Flow</a>
+      <a href="#skol-diagram">Process Flow Diagram</a>
+      <a href="#skol-steps">Detailed Steps</a>
+      <a href="#skol-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#skol-metrics">Metrics</a>
+      <a href="#skol-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section6" onclick="showTab('section6', this)">Section 7: Retailers</button>
+    <div class="jumplist" id="jump-section6">
+      <a href="#s6-purpose">Purpose</a>
+      <a href="#s6-scope">Scope</a>
+      <a href="#s6-raci">RACI Matrix</a>
+      <a href="#s6-flow">Process Flow</a>
+      <a href="#s6-diagram">Process Flow Diagram</a>
+      <a href="#s6-steps">Detailed Steps</a>
+      <a href="#s6-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s6-metrics">Metrics</a>
+      <a href="#s6-related">Related Documents</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ================= SECTION 1: WEBSITE (SHOPIFY) ================= -->
+    <div class="tab-content active" id="section1">
+
+      <div class="card" id="s1-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to keep the Shopify storefront's homepage and banners refreshed and aligned with current campaigns and promotions, with proper design clearance from the Head of Marketing and quality assurance before and after each update goes live.</p>
+      </div>
+
+      <div class="card" id="s1-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Homepage banner design and creation, for both planned campaigns and ad-hoc always-on promos</li>
+              <li>Requesting and tracking approval from the Head of Marketing via ClickUp before publishing</li>
+              <li>Publishing approved banner updates live on Shopify</li>
+              <li>Post-publish QA of the live banner (rendering, links, load time)</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Landing page builds</li>
+              <li>Product and collection page updates</li>
+              <li>Site health, speed, and performance monitoring — owned outside this role (e.g. developer/agency), not part of the Digital Marketing Manager's responsibilities</li>
+              <li>App or plugin management</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Identify Update Requirement</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Brand/eComm Managers (ad-hoc requests)</td><td>—</td></tr>
+          <tr><td>2. Design Banner Asset</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Submit for Approval (ClickUp)</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Publish to Shopify</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+          <tr><td>5. Post-Publish QA</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Reference the campaign calendar or an ad-hoc promo request to determine the homepage banner update needed.</li>
+          <li>Design the banner asset (desktop and mobile versions) to match the campaign or promo.</li>
+          <li>Create a ClickUp card with the draft asset and submit it to the Head of Marketing for review.</li>
+          <li>If not approved at least 3 days before the live date, follow up and escalate — never publish without clearance.</li>
+          <li>Once approved, publish the banner update live on the Shopify storefront.</li>
+          <li>Run the QA checklist (desktop/mobile rendering, links, images, load time) to confirm everything displays correctly.</li>
+          <li>Repeat at least twice a month based on the campaign calendar, plus any ad-hoc always-on promos as they arise.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s1-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 620" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Website (Shopify) homepage &amp; banner update process flow</title>
+<desc>Flowchart from identifying a homepage banner update requirement, through designing the asset, submitting for ClickUp approval from the Head of Marketing, publishing to Shopify, and running post-publish QA.</desc>
+<defs>
+  <marker id="arrowDmm1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmm1box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmm1dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmm1end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmm1title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmm1sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmm1lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmm1edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmm1); }
+  .dmm1dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmm1); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="620"/>
+
+<rect class="dmm1box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmm1title">Identify Update Need</text>
+<text x="260" y="60" text-anchor="middle" class="dmm1sub">Campaign calendar or ad-hoc</text>
+<path class="dmm1edge" d="M260,76 L260,100"/>
+
+<rect class="dmm1box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="dmm1title">Design Banner Asset</text>
+<text x="260" y="140" text-anchor="middle" class="dmm1sub">Desktop + mobile versions</text>
+<path class="dmm1edge" d="M260,156 L260,180"/>
+
+<rect class="dmm1box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="dmm1title">Submit via ClickUp</text>
+<text x="260" y="220" text-anchor="middle" class="dmm1sub">Tag Head of Marketing</text>
+<path class="dmm1edge" d="M260,236 L260,260"/>
+
+<polygon class="dmm1dbox" points="260,260 360,300 260,340 160,300"/>
+<text x="260" y="296" text-anchor="middle" class="dmm1title" font-size="14">Approved</text>
+<text x="260" y="310" text-anchor="middle" class="dmm1title" font-size="14">in time?</text>
+<path class="dmm1edge" d="M360,300 L558,300"/>
+<text x="450" y="292" text-anchor="middle" class="dmm1lbl">No</text>
+<path class="dmm1edge" d="M260,340 L260,364"/>
+<text x="278" y="356" class="dmm1lbl">Yes</text>
+
+<rect class="dmm1dbox" x="560" y="272" width="190" height="56" rx="10"/>
+<text x="655" y="294" text-anchor="middle" class="dmm1title">Follow Up / Escalate</text>
+<text x="655" y="312" text-anchor="middle" class="dmm1sub">Don't publish unapproved</text>
+<path class="dmm1dedge" d="M655,272 L655,252 L260,252 L260,260"/>
+
+<rect class="dmm1box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="dmm1title">Publish to Shopify</text>
+<text x="260" y="404" text-anchor="middle" class="dmm1sub">Homepage banner goes live</text>
+<path class="dmm1edge" d="M260,420 L260,444"/>
+
+<rect class="dmm1box" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="dmm1title">Run QA Checklist</text>
+<text x="260" y="484" text-anchor="middle" class="dmm1sub">Desktop, mobile, links, speed</text>
+<path class="dmm1edge" d="M260,500 L260,524"/>
+
+<rect class="dmm1end" x="150" y="524" width="220" height="56" rx="10"/>
+<text x="260" y="546" text-anchor="middle" class="dmm1title">Update Live &amp; Verified</text>
+<text x="260" y="564" text-anchor="middle" class="dmm1sub">Ready for the next cycle</text>
+
+<text x="390" y="605" text-anchor="middle" class="dmm1lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s1-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section1', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Identify Update Requirement</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing — driven by the campaign calendar (minimum twice per month) and ad-hoc requests</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Reference the marketing/campaign calendar to identify upcoming promotions that require a homepage banner update.</li>
+                <li>Monitor for ad-hoc requests from brand or eCommerce managers for always-on promos outside the planned calendar.</li>
+                <li>Confirm the messaging, dates, and offer details for the banner with the requesting stakeholder where needed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear brief of what the banner needs to communicate and by when.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Design the Banner Asset</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> After the update requirement is identified</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Design the homepage banner/promotional asset, including both desktop and mobile versions, reflecting the campaign or promo messaging.</li>
+                <li>Ensure the asset matches brand guidelines and Shopify's homepage banner specifications.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A draft banner asset ready for review.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Submit for Approval via ClickUp</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once the draft asset is ready</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Create a ClickUp card with the draft banner asset attached, tagging the Head of Marketing for review.</li>
+                <li>Include the intended live date and relevant campaign details in the card.</li>
+                <li>If the Head of Marketing hasn't approved by 3 days before the intended live date, send a follow-up/escalation — do not publish without clearance.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An approved banner asset, tracked in ClickUp, ready to publish.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Publish to Shopify</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once approval is received in ClickUp</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Upload and publish the approved banner asset live on the Shopify homepage.</li>
+                <li>Confirm the correct desktop and mobile versions are set and scheduled for the right dates.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The updated banner is live on the storefront.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Post-Publish QA</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Immediately after publishing</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Check the banner renders correctly on both desktop and mobile, matching the approved design (no layout shift, cropping, or distortion).</li>
+                <li>Test that any linked buttons/CTAs go to the correct destination.</li>
+                <li>Confirm the copy matches the approved draft exactly (dates, pricing, promo codes, spelling).</li>
+                <li>Confirm the previous banner is fully replaced, with no overlap or flash of old content.</li>
+                <li>Confirm the page loads without noticeable slowdown and all images display (no broken image icons).</li>
+                <li>Spot-check on at least two browsers (e.g. Chrome and Safari) for consistent rendering.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Confirmation that the live banner displays and functions correctly.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Head of Marketing hasn't approved even after a follow-up</td><td>Escalate further and delay the live date rather than publish an unapproved banner.</td></tr>
+          <tr><td>An urgent, always-on promo needs a fast turnaround</td><td>Still route through ClickUp for approval, but flag the card as urgent for expedited review.</td></tr>
+          <tr><td>QA check finds an issue after the banner is already live</td><td>Fix the issue immediately, or revert to the previous banner while the fix is made.</td></tr>
+          <tr><td>Campaign dates change after the banner is already approved/live</td><td>Update the banner and re-submit for a quick approval check before republishing.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Homepage updates per month</td><td>At least 2, plus ad-hoc always-on promos as needed</td><td>Count of banner updates published</td></tr>
+          <tr><td>Approval turnaround time</td><td>1 business day, from ClickUp submission to Head of Marketing approval</td><td>Time from ClickUp submission to Head of Marketing approval</td></tr>
+          <tr><td>QA issues caught post-publish</td><td>0 unresolved — any issue found must be fixed the same day</td><td>Count of QA issues found per update, and time to resolution</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li><a class="ext-link" href="https://app.clickup.com/90182527480/v/l/6-901816861029-1?pr=901810190376" target="_blank" rel="noopener">ClickUp — Website Asset Approval board/list ↗</a></li>
+        </ul>
+        <ul class="plain">
+          <li>Shopify admin access (login provided separately)</li>
+          <li>Brand guidelines / banner spec sheet</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 2: EDMs ================= -->
+    <div class="tab-content" id="section2">
+
+      <div class="card" id="s2-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure consistent, effective email marketing through Klaviyo — planning and executing monthly campaign EDMs across brands, and keeping automated flows (welcome, abandoned cart, post-purchase, win-back) accurate and performing well, with Head of Marketing approval before any campaign send.</p>
+      </div>
+
+      <div class="card" id="s2-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Planning the monthly campaign/promo EDM lineup per brand, tied to the campaign calendar</li>
+              <li>Defining segmentation rules for each planned EDM</li>
+              <li>Drafting individual EDM content in Klaviyo</li>
+              <li>Submitting the monthly lineup, segmentation rules, and drafts to the Head of Marketing for approval via Google Docs</li>
+              <li>Scheduling and sending approved campaign EDMs</li>
+              <li>Maintaining automated flows: adding new products, removing discontinued products, refreshing stale content</li>
+              <li>Identifying gaps in the customer journey and briefing in missing flows (proposed copy + trigger logic)</li>
+              <li>Ongoing monitoring of open rate, click rate, revenue attribution, and flow conversion, with proposed fixes for notable changes</li>
+              <li>Quarterly review of automated flow performance, with suggested edits</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Graphic/creative asset design beyond what's built directly in Klaviyo (if applicable)</li>
+              <li>SMS marketing — not currently run for any brand</li>
+              <li>List/subscriber acquisition tactics (e.g. website signup forms) — covered under other sections</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note"><strong>Note:</strong> Campaigns are the monthly, calendar-driven EDM sends covered by Steps 1-5. Flows are always-on and triggered by customer activity, covered by Steps 6-9.</div>
+      </div>
+
+      <div class="card" id="s2-tiers">
+        <h2>Reference: EDM Tier System</h2>
+        <p>EDMs are run on a 4-tier system, defined in the Shortcutx EDM Playbook 2026 and adopted brand-wide (Shortcutx, Tradishot, Solulu, Omiee), which governs tone, discounting, and CTA style for every campaign email. The full playbook also covers copy standards, brand voice rules, the standard trust footer, and the ClickUp brief format — see Related Documents for the link.</p>
+        <table class="data">
+          <tr><th>Tier</th><th>Purpose</th><th>Target/Month</th><th>Discount</th><th>CTA Style</th></tr>
+          <tr><td>A — Relationship &amp; Trust</td><td>Build brand affinity, humanise the brand (founder notes, testimonials, FAQs)</td><td>2-3 emails</td><td>None (store credit at most)</td><td>Soft — "Read more," "Shop our range"</td></tr>
+          <tr><td>B — Education &amp; Product Depth</td><td>Inform, differentiate, build product confidence (ingredient spotlights, routines)</td><td>1-2 emails</td><td>None</td><td>Medium — "Shop [Product]," "Learn about [ingredient]"</td></tr>
+          <tr><td>C — Collection &amp; Social Proof</td><td>Showcase range, build desire, drive browsing (collections, bestsellers)</td><td>1-2 emails</td><td>None</td><td>Medium — "Explore the collection"</td></tr>
+          <tr><td>D — Promotional</td><td>Drive direct purchases with urgency (campaign launches, flash sales)</td><td>2-3 emails</td><td>Always present (anchor pricing)</td><td>Strong — "Shop Now," "Get X% Off"</td></tr>
+        </table>
+        <p class="note" style="margin-top:0;">Frequency rules: minimum 8 emails/month, maximum 2/week outside promo periods, minimum 2-3 days between sends, and no more than 2 consecutive Tier D emails without an A or B tier in between.</p>
+      </div>
+
+      <div class="card" id="s2-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Plan Monthly Lineup</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Define Segmentation</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Draft Individual EDMs</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Submit for Approval</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Schedule &amp; Send</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+          <tr><td>6. Maintain Automated Flows</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>7. Identify &amp; Brief In Missing Flows</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>8. Monitor Performance &amp; Propose Fixes</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+          <tr><td>9. Quarterly Flow Review</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Reference the campaign calendar to plan the month's EDM lineup, per brand (Solulu and Omiee once each brand's website launches, targeting 6 EDMs/month).</li>
+          <li>Define segmentation rules for each planned EDM.</li>
+          <li>Draft each EDM's content in Klaviyo.</li>
+          <li>Compile the lineup, segmentation rules, and drafts into a Google Doc and submit to the Head of Marketing for approval by the 3rd week of the prior month.</li>
+          <li>If not approved by that deadline, follow up and escalate — never send unapproved EDMs.</li>
+          <li>Once approved, schedule and send each EDM in Klaviyo to the correct segment.</li>
+          <li>Maintain automated flows on an ongoing basis — add new products, remove discontinued ones, refresh stale content.</li>
+          <li>Identify gaps in the customer journey and brief in missing flows (with proposed copy and triggers) for approval and build.</li>
+          <li>Monitor open rate, click rate, revenue attribution, and flow conversion on an ongoing basis; investigate causes of notable changes and propose fixes.</li>
+          <li>Every quarter, consolidate flow performance findings into a formal summary for the Head of Marketing.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s2-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 660" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>EDMs (Klaviyo) monthly campaign &amp; flow maintenance process flow</title>
+<desc>Flowchart from planning the monthly EDM lineup, through segmentation, drafting, Head of Marketing approval via Google Docs, scheduling and sending in Klaviyo, alongside ongoing automated flow maintenance, missing-flow identification, performance monitoring, and quarterly flow performance review.</desc>
+<defs>
+  <marker id="arrowDmm2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmm2box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmm2dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmm2end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmm2title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmm2sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmm2lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmm2edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmm2); }
+  .dmm2dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmm2); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="660"/>
+
+<rect class="dmm2dbox" x="560" y="20" width="190" height="52" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="42" text-anchor="middle" class="dmm2title" font-size="13.5">Ongoing: Maintain Flows</text>
+<text x="655" y="59" text-anchor="middle" class="dmm2sub">Add new / remove discontinued</text>
+
+<rect class="dmm2dbox" x="560" y="82" width="190" height="52" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="104" text-anchor="middle" class="dmm2title" font-size="13.5">Ongoing: Find Journey Gaps</text>
+<text x="655" y="121" text-anchor="middle" class="dmm2sub">Brief in missing flows</text>
+
+<rect class="dmm2dbox" x="560" y="144" width="190" height="52" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="166" text-anchor="middle" class="dmm2title" font-size="13.5">Ongoing: Monitor &amp; Fix</text>
+<text x="655" y="183" text-anchor="middle" class="dmm2sub">Open/click/revenue trends</text>
+
+<rect class="dmm2dbox" x="560" y="206" width="190" height="52" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="228" text-anchor="middle" class="dmm2title" font-size="13.5">Quarterly: Formal Review</text>
+<text x="655" y="245" text-anchor="middle" class="dmm2sub">Consolidated summary</text>
+
+<rect class="dmm2box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmm2title">Plan Monthly Lineup</text>
+<text x="260" y="60" text-anchor="middle" class="dmm2sub">Per brand, per campaign calendar</text>
+<path class="dmm2edge" d="M260,76 L260,100"/>
+
+<rect class="dmm2box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="dmm2title">Define Segmentation</text>
+<text x="260" y="140" text-anchor="middle" class="dmm2sub">Audience rules per EDM</text>
+<path class="dmm2edge" d="M260,156 L260,180"/>
+
+<rect class="dmm2box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="dmm2title">Draft Individual EDMs</text>
+<text x="260" y="220" text-anchor="middle" class="dmm2sub">Built in Klaviyo</text>
+<path class="dmm2edge" d="M260,236 L260,260"/>
+
+<rect class="dmm2box" x="150" y="260" width="220" height="56" rx="10"/>
+<text x="260" y="282" text-anchor="middle" class="dmm2title">Submit via Google Doc</text>
+<text x="260" y="300" text-anchor="middle" class="dmm2sub">By 3rd week of prior month</text>
+<path class="dmm2edge" d="M260,316 L260,340"/>
+
+<polygon class="dmm2dbox" points="260,340 360,380 260,420 160,380"/>
+<text x="260" y="376" text-anchor="middle" class="dmm2title" font-size="14">Approved</text>
+<text x="260" y="390" text-anchor="middle" class="dmm2title" font-size="14">in time?</text>
+<path class="dmm2edge" d="M360,380 L558,380"/>
+<text x="450" y="372" text-anchor="middle" class="dmm2lbl">No</text>
+<path class="dmm2edge" d="M260,420 L260,444"/>
+<text x="278" y="436" class="dmm2lbl">Yes</text>
+
+<rect class="dmm2dbox" x="560" y="352" width="190" height="56" rx="10"/>
+<text x="655" y="374" text-anchor="middle" class="dmm2title">Follow Up / Escalate</text>
+<text x="655" y="392" text-anchor="middle" class="dmm2sub">Don't send unapproved</text>
+<path class="dmm2dedge" d="M655,352 L655,332 L260,332 L260,340"/>
+
+<rect class="dmm2box" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="dmm2title">Schedule &amp; Send</text>
+<text x="260" y="484" text-anchor="middle" class="dmm2sub">In Klaviyo, per segment</text>
+<path class="dmm2edge" d="M260,500 L260,524"/>
+
+<rect class="dmm2end" x="150" y="524" width="220" height="56" rx="10"/>
+<text x="260" y="546" text-anchor="middle" class="dmm2title">EDMs Live</text>
+<text x="260" y="564" text-anchor="middle" class="dmm2sub">Sent to correct segments</text>
+
+<text x="390" y="645" text-anchor="middle" class="dmm2lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s2-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section2', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Plan the Monthly EDM Lineup (Campaigns)</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ahead of each month, driven by the campaign calendar</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Reference the campaign calendar to identify promos, launches, and always-on themes needing email support that month, per brand.</li>
+                <li>Draft a proposed lineup of EDM sends for the month — roughly 8-10 for Shortcutx and 6-8 for Tradishot. Solulu and Omiee don't yet have a live website, so no EDM volume currently applies; once each brand's website launches, target 6 EDMs/month.</li>
+                <li>Assign each planned EDM a tier (A/B/C/D) per the EDM Playbook, which applies brand-wide, targeting the monthly tier mix (A: 2-3, B: 1-2, C: 1-2, D: 2-3) — see Reference: EDM Tier System above.</li>
+                <li>Note the intended send date and purpose (promo, launch, etc.) for each planned EDM.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A draft monthly EDM lineup ready for segmentation planning.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Define Segmentation Rules</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Alongside lineup planning</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>For each planned EDM, define the audience segment (e.g. purchase history, engagement level, brand/product interest).</li>
+                <li>Document the segmentation logic clearly enough for the Head of Marketing to review alongside the drafts.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Segmentation rules attached to each planned EDM in the lineup.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Draft Individual EDMs</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> After the lineup and segmentation are set</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Build each EDM in Klaviyo, covering subject line, copy, and visuals.</li>
+                <li>Ensure content matches brand voice and the relevant campaign/promo messaging.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Draft EDMs ready for review.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Submit for Head of Marketing Approval</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> By the 3rd week of the prior month — approval must be secured before the new month begins</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compile the Proposed EDM Lineup, Segmentation Rules, and Individual Drafts into a Google Doc.</li>
+                <li>Place the document in the shared Google Drive folder for Head of Marketing review.</li>
+                <li>Follow up if not approved by the 3rd week of the prior month — do not send unapproved EDMs.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An approved monthly EDM lineup, ready to schedule.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Schedule &amp; Send Campaign EDMs</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once approval is received</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Schedule each approved EDM in Klaviyo per its segmentation rule and planned send date.</li>
+                <li>Confirm test sends look correct (rendering, links, personalization) before the live send.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> EDMs sent on schedule to the correct segments.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Maintain Automated Flows</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Flows are always-on and triggered by customer activity (welcome series, abandoned cart, post-purchase, win-back/re-engagement) — distinct from the monthly campaign cadence in Steps 1-5.</li>
+                <li>Add new products to relevant flows as they become available.</li>
+                <li>Remove discontinued products from flow content promptly so flows never reference items no longer in production.</li>
+                <li>Review each flow for stale or outdated content (expired promos, sold-out products, outdated pricing) and refresh as needed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Automated flows stay accurate, current, and free of stale content.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 7: Identify &amp; Brief In Missing Flows</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, formally reassessed each quarter</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Identify gaps in the customer journey not yet covered by an existing automated flow (e.g. browse abandonment, replenishment reminder, review request).</li>
+                <li>Draft proposed copy and trigger logic for each missing flow.</li>
+                <li>Submit the proposal to the Head of Marketing for approval, following the same approval process as campaign EDMs.</li>
+                <li>Once approved, build the new flow live in Klaviyo.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Journey gaps identified and new flows proposed, approved, and built.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 8: Monitor Performance &amp; Propose Fixes</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing — after each campaign send, and periodically for flows</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Monitor open rate, click rate, and revenue attribution for each campaign EDM, and conversion rate for each flow, in Klaviyo.</li>
+                <li>Identify likely causes for notable increases or drops (e.g. subject line, send time, segmentation, content fatigue, deliverability).</li>
+                <li>Propose fixes or tests to the Head of Marketing (e.g. new subject line formula, resend to non-openers, adjusted segmentation, refreshed flow content).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Ongoing performance insight, with proposed fixes actioned as agreed.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 9: Quarterly Automated Flow Performance Review</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Quarterly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Consolidate the quarter's flow performance monitoring, content recency checks, and journey-gap findings into a single summary.</li>
+                <li>Share the summary and recommendations with the Head of Marketing.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A quarterly flow performance summary with suggested edits, actioned as agreed.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Head of Marketing hasn't approved the monthly lineup by the 3rd week of the prior month</td><td>Follow up and escalate immediately — never send unapproved EDMs; delay affected sends if needed.</td></tr>
+          <tr><td>An urgent EDM is needed outside the planned monthly lineup</td><td>Still submit it for approval via the same Google Doc process, flagged as urgent.</td></tr>
+          <tr><td>A product referenced in an automated flow goes out of stock or is discontinued</td><td>Remove or update the flow content immediately — don't wait for the quarterly review.</td></tr>
+          <tr><td>A segmentation error is discovered after a send</td><td>Flag it to the Head of Marketing, and correct the segmentation before the next send in that flow or campaign.</td></tr>
+          <tr><td>A notable drop or spike in open rate, click rate, or revenue is observed</td><td>Investigate likely causes and propose a fix or test to the Head of Marketing without waiting for the quarterly review.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Open rate / click rate</td><td>No fixed target — monitor trend per send; investigate and propose fixes for notable increases or drops</td><td>Per-EDM performance in Klaviyo</td></tr>
+          <tr><td>Revenue attributed to email</td><td>No fixed target — monitor trend; investigate and propose fixes for notable changes</td><td>Klaviyo email-attributed revenue</td></tr>
+          <tr><td>Flow performance</td><td>No fixed target — monitor conversion trend and content recency; propose fixes/refreshes as needed</td><td>Conversion rate per automated flow in Klaviyo</td></tr>
+          <tr><td>Monthly lineup approved on time</td><td>100%, approved by the 3rd week of the month prior</td><td>Approval date vs. start of the new month</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Klaviyo account access (provided separately)</li>
+          <li>Google Drive — Monthly EDM Lineup, Segmentation &amp; Drafts folder</li>
+          <li>Brand guidelines</li>
+        </ul>
+        <ul class="links-list">
+          <li><a class="ext-link" href="https://docs.google.com/document/d/1IJmPMJmJCn-d4TW9o84uK4fjiqGYvPBoAkOszViHx6A/edit?usp=sharing" target="_blank" rel="noopener">Shortcutx EDM Playbook 2026 — full playbook (tiers, copy standards, brand voice, trust footer, ClickUp brief format) — adopted brand-wide ↗</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 3: ADS (ALWAYS-ON) ================= -->
+    <div class="tab-content" id="section3">
+
+      <div class="card" id="s3-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure a consistent pipeline of high-performing video ad creative (EGC/UGC) — with static ad creative produced separately by the Brand Manager — across Meta, Google, and TikTok always-on ads, spanning the full funnel (TOFU, MOFU, BOFU), refreshed regularly to avoid fatigue and continuously improved in partnership with the Media Manager.</p>
+      </div>
+
+      <div class="card" id="s3-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Creating video ad creative (EGC, UGC) for Meta, Google, and TikTok always-on ads, covering TOFU, MOFU, and BOFU</li>
+              <li>Using AI tools (e.g. Claude, TryBloom, and other relevant tools) to support and optimize creative production</li>
+              <li>Soft, light-touch approval from the Head of Marketing before creative is handed off — testing is expected to happen in-platform, not gated beforehand</li>
+              <li>Monthly refresh of always-on creative to avoid ad fatigue, or sooner if flagged</li>
+              <li>Reviewing always-on ad performance in the Media Manager's Google Data Studio dashboard and consulting on what needs attention, via a weekly scheduled sync</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Media buying and budget allocation — owned by the Media Manager</li>
+              <li>Budget changes — require Head of Marketing approval, executed by the Media Manager</li>
+              <li>Performance reporting — owned by the Media Manager via Google Data Studio</li>
+              <li>MOFU/BOFU creative built specifically for eCommerce Campaigns (Part 4) — covered separately from always-on</li>
+              <li>Static ad creative production — owned by the Brand Manager, as part of Shortcutx's hyper-personalized ad strategy</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Identify Creative Needs</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Media Manager (performance gaps)</td><td>—</td></tr>
+          <tr><td>2. Produce Ad Creative</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Brand Manager &amp; Content Creator (EGC), eCommerce Executive (UGC/KOL), Videographer (motion graphics)</td><td>—</td></tr>
+          <tr><td>3. Soft Approval</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Hand Off to Media Manager</td><td>Digital Marketing Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Weekly Performance Sync</td><td>Digital Marketing Manager, Media Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>6. Monthly Creative Refresh</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Media Manager (priorities)</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Identify creative needs across Meta, Google, and TikTok always-on ads, spanning TOFU, MOFU, and BOFU funnel stages.</li>
+          <li>Produce the monthly video creative batch (9 EGC videos, 3 UGC videos) — EGC with the Brand Manager and Content Creator, UGC with the eCommerce Executive and shortlisted KOLs, and motion graphics with the videographer. Static ad creative is produced separately by the Brand Manager.</li>
+          <li>Share new creative with the Head of Marketing for soft, light-touch approval — a quick check, not a formal gate, since testing happens in-platform.</li>
+          <li>Upload approved creative to the Google Shared Drive and hand off to the Media Manager, who owns media buying, budget execution, and platform upload.</li>
+          <li>Meet with the Media Manager in a scheduled weekly sync to review performance in Google Data Studio.</li>
+          <li>Discuss what's working, what's underperforming, and what needs new creative or optimization.</li>
+          <li>Refresh always-on creative at least monthly to avoid fatigue, or sooner if the Media Manager flags a performance drop.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s3-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Ads (Always-On) creative production process flow</title>
+<desc>Flowchart from identifying always-on creative needs across TOFU, MOFU, and BOFU on Meta, Google, and TikTok, through production, soft approval from the Head of Marketing, handoff to the Media Manager for media buying, a weekly performance sync, and a monthly creative refresh that loops back into the cycle.</desc>
+<defs>
+  <marker id="arrowDmm3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmm3box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmm3dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmm3end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmm3title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmm3sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmm3lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmm3edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmm3); }
+  .dmm3dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmm3); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="560"/>
+
+<rect class="dmm3dbox" x="560" y="252" width="190" height="72" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="274" text-anchor="middle" class="dmm3title" font-size="14">Media Manager Owns</text>
+<text x="655" y="291" text-anchor="middle" class="dmm3sub">Media buying &amp; budget</text>
+<text x="655" y="306" text-anchor="middle" class="dmm3sub">Data Studio reporting</text>
+
+<rect class="dmm3box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmm3title">Identify Creative Needs</text>
+<text x="260" y="60" text-anchor="middle" class="dmm3sub">TOFU/MOFU/BOFU x Meta/Google/TikTok</text>
+<path class="dmm3edge" d="M260,76 L260,100"/>
+
+<rect class="dmm3box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="dmm3title">Produce Ad Creative</text>
+<text x="260" y="140" text-anchor="middle" class="dmm3sub">9 EGC, 3 UGC videos — cross-team</text>
+<path class="dmm3edge" d="M260,156 L260,180"/>
+
+<rect class="dmm3box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="dmm3title">Soft Approval</text>
+<text x="260" y="220" text-anchor="middle" class="dmm3sub">Head of Marketing — light-touch check</text>
+<path class="dmm3edge" d="M260,236 L260,260"/>
+
+<rect class="dmm3box" x="150" y="260" width="220" height="56" rx="10"/>
+<text x="260" y="282" text-anchor="middle" class="dmm3title">Hand Off to Media Manager</text>
+<text x="260" y="300" text-anchor="middle" class="dmm3sub">Google Shared Drive; DMM has check access</text>
+<path class="dmm3edge" d="M260,316 L260,340"/>
+
+<rect class="dmm3box" x="150" y="340" width="220" height="56" rx="10"/>
+<text x="260" y="362" text-anchor="middle" class="dmm3title">Weekly Performance Sync</text>
+<text x="260" y="380" text-anchor="middle" class="dmm3sub">Review Data Studio together</text>
+<path class="dmm3edge" d="M260,396 L260,420"/>
+
+<rect class="dmm3end" x="150" y="420" width="220" height="56" rx="10"/>
+<text x="260" y="442" text-anchor="middle" class="dmm3title">Monthly Creative Refresh</text>
+<text x="260" y="460" text-anchor="middle" class="dmm3sub">New batch — or sooner if flagged</text>
+
+<path class="dmm3dedge" d="M150,448 L60,448 L60,48 L150,48"/>
+<text x="65" y="250" text-anchor="middle" class="dmm3lbl" transform="rotate(-90 65 250)">Next cycle</text>
+
+<text x="390" y="525" text-anchor="middle" class="dmm3lbl">Blue = process step   ·   Amber = owned by Media Manager</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s3-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section3', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Identify Creative Needs</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, ahead of each monthly refresh or when flagged in the weekly sync</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Reference the always-on funnel structure (TOFU, MOFU, BOFU) across Meta, Google, and TikTok to identify which stages and platforms need new or refreshed creative.</li>
+                <li>Note the format needed for each: video (EGC) or video (UGC) — static creative needs are flagged to the Brand Manager separately.</li>
+                <li>Factor in any performance gaps flagged by the Media Manager in the weekly sync.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear creative brief list for the upcoming production cycle.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Produce Ad Creative</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Following the monthly refresh cycle, or sooner if flagged</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>For EGC videos, discuss execution with the Brand Manager and the Content Creator — target 9 EGC videos per monthly refresh.</li>
+                <li>For UGC videos, work with the eCommerce Executive to approve shortlisted KOLs, brief them on the content needed, and review the work they submit — target 3 UGC videos per monthly refresh.</li>
+                <li>For motion graphics videos, discuss execution with the videographer.</li>
+                <li>Static ad creative (10 assets per funnel stage, 30 total across TOFU, MOFU, and BOFU) is produced by the Brand Manager, as part of Shortcutx's hyper-personalized ad strategy — outside the Digital Marketing Manager's production scope.</li>
+                <li>Use AI tools such as Claude, TryBloom, and other relevant tools to support and optimize output (e.g. copy generation, image editing, asset variation), and identify and propose additional AI tools that could improve production efficiency.</li>
+                <li>Ensure all creative aligns with brand voice and the appropriate funnel stage (TOFU: awareness-led; MOFU: consideration; BOFU: conversion-led).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A complete monthly video creative batch (9 EGC + 3 UGC) ready for review.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Soft Approval from Head of Marketing</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once creative is drafted</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Share the new creative with the Head of Marketing for a soft, light-touch review.</li>
+                <li>Since creative is meant to be tested in-platform, this is a quick sanity check rather than a formal, blocking approval gate.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Creative cleared to hand off for media buying and testing.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Hand Off to Media Manager</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once creative is soft-approved</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Upload approved creative assets to the shared Google Shared Drive folder for the Media Manager.</li>
+                <li>The Media Manager owns media buying, budget allocation, and uploading/launching the creative in-platform — this sits outside the Digital Marketing Manager's scope.</li>
+                <li>The Digital Marketing Manager retains check/verification access to the Meta, Google, and TikTok ad accounts, to confirm creative is live and set up correctly — but does not perform media buying or platform setup.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Creative live in the Google Shared Drive and handed off, with the Digital Marketing Manager able to verify setup via ad account access.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Weekly Performance Sync</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager, with the Media Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly, on a scheduled recurring basis</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review always-on ad performance together in the Media Manager's Google Data Studio dashboard.</li>
+                <li>Discuss what's performing well, what's underperforming, and why.</li>
+                <li>Agree on what needs new creative, a refresh, or a pause.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Shared understanding of current performance and a clear action list.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Monthly Creative Refresh</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Monthly, or sooner if flagged in a weekly sync</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Produce a new batch of always-on creative across TOFU, MOFU, and BOFU to avoid ad fatigue.</li>
+                <li>Prioritize formats/platforms flagged as underperforming or fatigued in the weekly sync.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Fresh creative delivered on a monthly cadence, keeping always-on ads performing.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Media Manager flags a performance drop before the monthly refresh is due</td><td>Produce new creative sooner, outside the regular monthly cadence.</td></tr>
+          <tr><td>Head of Marketing raises a concern during soft approval</td><td>Revise the creative before handoff to the Media Manager, even though approval is normally light-touch.</td></tr>
+          <tr><td>A creative format underperforms consistently across a funnel stage</td><td>Discuss with the Media Manager at the next weekly sync and jointly decide whether to retire the concept or invest in further testing.</td></tr>
+          <tr><td>A new product or campaign needs always-on creative outside the regular cycle</td><td>Treat it as an ad-hoc creative need — same production and soft-approval process, just off-cycle.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Creative refresh cadence</td><td>9 EGC videos and 3 UGC videos per monthly refresh, or sooner if flagged (static ad creative — 30 assets, 10 per funnel stage — is produced separately by the Brand Manager)</td><td>Count of new video creative delivered per month, by type and funnel stage</td></tr>
+          <tr><td>Weekly sync held</td><td>100%, on schedule</td><td>Sync occurred vs. scheduled</td></tr>
+          <tr><td>Detailed ad performance (CTR, CPA, ROAS, etc.)</td><td>Owned and reported by the Media Manager</td><td>Google Data Studio dashboard — outside this section's scope</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Google Shared Drive — Always-On Creative Assets folder (handoff to Media Manager)</li>
+          <li>Meta, Google, and TikTok ad accounts — Digital Marketing Manager has check/verification access; Media Manager handles buying and platform setup</li>
+          <li>Google Data Studio — always-on ad performance dashboard (Media Manager-owned)</li>
+          <li>AI tools: Claude, TryBloom, and additional tools proposed by the Digital Marketing Manager as identified</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 4: ECOMMERCE CAMPAIGNS ================= -->
+    <div class="tab-content" id="section4">
+
+      <div class="card" id="s4-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure eCommerce sales campaigns (6.6, 9.9, 11.11, 12.12, and similar Shopify, Shopee, and Lazada campaign events) are supported with MOFU/BOFU creative — both paid ad creative for the campaign push and on-platform assets (banners, campaign pages, voucher visuals) — built to the calendar and mechanics set by the eCommerce Executive/Manager, and approved by the Head of Marketing.</p>
+      </div>
+
+      <div class="card" id="s4-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Producing MOFU/BOFU paid ad video creative specifically for eCommerce campaigns, across Shopify, Shopee, and Lazada (static ad creative for campaigns is produced by the Brand Manager)</li>
+              <li>Producing on-platform campaign assets: Shopify campaign banners/pages, Shopee/Lazada campaign graphics, and voucher/discount visuals</li>
+              <li>Building creative to the campaign calendar, dates, discount mechanics, and bundle offers set by the eCommerce Executive/Manager</li>
+              <li>Submitting creative to the Head of Marketing for approval before handoff</li>
+              <li>Handing off approved creative to the eCommerce Executive for platform setup and launch</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Setting the campaign calendar, discount mechanics, or bundle offers — owned by the eCommerce Executive/Manager</li>
+              <li>Uploading/configuring campaigns on Shopify, Shopee, or Lazada — owned by the eCommerce Executive</li>
+              <li>TOFU always-on creative — covered under Ads (Always-On), Part 3</li>
+              <li>Weekly sales reporting — covered under the eCommerce Executive's own process documentation</li>
+              <li>Static ad creative for eCommerce campaigns — owned by the Brand Manager, as part of Shortcutx's hyper-personalized ad strategy</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Receive Campaign Calendar</td><td>Digital Marketing Manager</td><td>eCommerce Executive/Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Identify Creative Needs</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>eCommerce Executive</td><td>—</td></tr>
+          <tr><td>3. Produce Campaign Creative</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Submit for Approval</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Hand Off to eCommerce Executive</td><td>Digital Marketing Manager</td><td>eCommerce Executive</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>The eCommerce Executive/Manager shares the campaign calendar and mechanics (dates, discount %, bundles) for upcoming Shopify, Shopee, and Lazada campaigns.</li>
+          <li>Identify the creative needed: paid ad creative (MOFU/BOFU) plus on-platform assets (banners, campaign pages, voucher visuals).</li>
+          <li>Produce the creative, aligned to the campaign's dates, mechanics, and offers.</li>
+          <li>Submit creative to the Head of Marketing for approval.</li>
+          <li>If not approved, revise and resubmit.</li>
+          <li>Once approved, hand off creative to the eCommerce Executive for platform setup and launch.</li>
+          <li>Major campaigns — new product launches, or GWP promotions where the gift itself needs to be designed, produced, manufactured, delivered, and photographed/filmed — begin this process 4-6 weeks ahead. Smaller/regular promos align with the standard EDM planning cadence (by the 3rd week of the prior month), with creative delivered within 3 days of brief and approved within 1-2 days.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s4-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>eCommerce Campaigns creative production process flow</title>
+<desc>Flowchart from receiving the campaign calendar from the eCommerce Executive, through identifying creative needs, producing MOFU/BOFU campaign creative, Head of Marketing approval, and handing off to the eCommerce Executive for platform setup and launch.</desc>
+<defs>
+  <marker id="arrowDmm4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmm4box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmm4dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmm4end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmm4title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmm4sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmm4lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmm4edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmm4); }
+  .dmm4dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmm4); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="560"/>
+
+<rect class="dmm4box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmm4title">Receive Campaign Calendar</text>
+<text x="260" y="60" text-anchor="middle" class="dmm4sub">From eCommerce Executive/Manager</text>
+<path class="dmm4edge" d="M260,76 L260,100"/>
+
+<rect class="dmm4box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="dmm4title">Identify Creative Needs</text>
+<text x="260" y="140" text-anchor="middle" class="dmm4sub">Paid ads (MOFU/BOFU) + on-platform</text>
+<path class="dmm4edge" d="M260,156 L260,180"/>
+
+<rect class="dmm4box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="dmm4title">Produce Campaign Creative</text>
+<text x="260" y="220" text-anchor="middle" class="dmm4sub">Shopify, Shopee, Lazada</text>
+<path class="dmm4edge" d="M260,236 L260,260"/>
+
+<polygon class="dmm4dbox" points="260,260 360,300 260,340 160,300"/>
+<text x="260" y="296" text-anchor="middle" class="dmm4title" font-size="14">HoM</text>
+<text x="260" y="310" text-anchor="middle" class="dmm4title" font-size="14">approves?</text>
+<path class="dmm4edge" d="M360,300 L558,300"/>
+<text x="450" y="292" text-anchor="middle" class="dmm4lbl">No</text>
+<path class="dmm4edge" d="M260,340 L260,364"/>
+<text x="278" y="356" class="dmm4lbl">Yes</text>
+
+<rect class="dmm4dbox" x="560" y="272" width="190" height="56" rx="10"/>
+<text x="655" y="294" text-anchor="middle" class="dmm4title">Revise Creative</text>
+<text x="655" y="312" text-anchor="middle" class="dmm4sub">Address HoM feedback</text>
+<path class="dmm4dedge" d="M655,272 L655,252 L260,252 L260,260"/>
+
+<rect class="dmm4box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="dmm4title">Hand Off to eCommerce Exec</text>
+<text x="260" y="404" text-anchor="middle" class="dmm4sub">Assets, copy, mechanics confirmed</text>
+<path class="dmm4edge" d="M260,420 L260,444"/>
+
+<rect class="dmm4end" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="dmm4title">Campaign Set Up &amp; Launched</text>
+<text x="260" y="484" text-anchor="middle" class="dmm4sub">eCommerce Executive executes</text>
+
+<text x="390" y="525" text-anchor="middle" class="dmm4lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s4-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section4', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Receive Campaign Calendar &amp; Mechanics</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, as the eCommerce Executive/Manager shares upcoming campaigns</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Receive the campaign calendar from the eCommerce Executive/Manager, covering dates, discount mechanics, and bundle offers for Shopify, Shopee, and Lazada campaigns. The calendar is maintained on Canva.</li>
+                <li>Confirm the required lead time: campaigns are "major" (4-6 weeks) when they involve a new product launch, or a gift-with-purchase (GWP) where the gift itself needs to be designed, produced, manufactured, delivered, and photographed/filmed. All other campaigns are smaller/regular promos, aligned with the standard monthly EDM planning cadence (by the 3rd week of the prior month), with creative delivered within 3 days of the eCommerce Manager's brief.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear brief of what campaign creative is needed and by when.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Identify Creative Needs</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once the campaign calendar is received</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Identify the paid ad creative needed for the campaign push (MOFU/BOFU only — TOFU is covered separately under Ads Always-On).</li>
+                <li>Identify the on-platform assets needed: Shopify campaign banners/pages, Shopee/Lazada campaign graphics, and voucher/discount visuals.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A creative brief covering both paid ad and on-platform assets for the campaign.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Produce Campaign Creative</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Following the required campaign lead time</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Produce MOFU/BOFU paid ad video creative for the campaign, including a standard allocation of 3 EGC videos and 3 founder-led videos per campaign. Static ad creative for the campaign is produced separately by the Brand Manager.</li>
+                <li>Produce on-platform assets: Shopify campaign banners/pages, Shopee/Lazada campaign graphics, and voucher/discount visuals.</li>
+                <li>Ensure all creative reflects the correct campaign dates, discount mechanics, and bundle offers from the eCommerce Executive/Manager.</li>
+                <li>Use AI tools (Claude, TryBloom, etc.) to support production, consistent with the Ads Always-On process.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A complete set of campaign creative, ready for approval, delivered within 3 days of the eCommerce Manager's brief.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Submit for Head of Marketing Approval</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once creative is produced</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Share all campaign creative with the Head of Marketing for approval. Target turnaround is 1-2 days.</li>
+                <li>Revise based on feedback before handing off.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Approved campaign creative, ready for platform setup.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Hand Off to eCommerce Executive</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once creative is approved</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Hand off approved creative to the eCommerce Executive, who owns uploading and configuring the campaign on Shopify, Shopee, and Lazada.</li>
+                <li>Confirm the eCommerce Executive has everything needed (assets, copy, mechanics) to set up the campaign correctly.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Campaign creative delivered and ready for platform setup.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Campaign dates or mechanics change after creative is already produced</td><td>Update the creative and resubmit for approval before handoff.</td></tr>
+          <tr><td>Major campaign creative (new product launch or GWP) isn't ready within the 4-6 week lead time</td><td>Flag to the Head of Marketing and eCommerce Executive early, and prioritize the highest-impact assets first.</td></tr>
+          <tr><td>Head of Marketing requests changes close to the campaign launch date</td><td>Expedite revisions and flag the urgency, to keep the eCommerce Executive's platform setup on schedule.</td></tr>
+          <tr><td>A campaign is added to the calendar with short notice</td><td>Treat it under the smaller/regular promo lead time, but flag the reduced quality-control time to the Head of Marketing.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Campaign creative delivered on time</td><td>Within 3 days of brief from the eCommerce Manager (4-6 weeks ahead for major campaigns)</td><td>Delivery date vs. required lead time</td></tr>
+          <tr><td>Approval turnaround time</td><td>1-2 days</td><td>Time from submission to Head of Marketing approval</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li><a href="https://canva.link/l3ty10cbgvka7or" target="_blank" rel="noopener">Campaign calendar (Canva, owned by the eCommerce Executive/Manager)</a></li>
+          <li>Brand guidelines</li>
+          <li>eCommerce Executive Process Documentation — Section 3: eCommerce Support (weekly reporting) [cross-reference]</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 5: SOCIAL MEDIA ================= -->
+    <div class="tab-content" id="section5">
+
+      <div class="card" id="s5-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to keep Shortcutx's social media presence (TikTok, Instagram, Facebook) active, on-brand, and consistently published — planning the monthly content calendar at least two weeks in advance, producing content Instagram-first (then adapting and cross-posting to TikTok and Facebook) against the brand's defined content pillars, securing Head of Marketing approval at both the calendar and individual-asset level, scheduling and publishing approved content, flagging UGC/EGC videos to the Media Manager for potential paid boosting, and reporting on performance by the 10th of each month.</p>
+      </div>
+
+      <div class="card" id="s5-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Managing social media content across TikTok, Instagram, and Facebook — planned and produced Instagram-first, then adapted and cross-posted to TikTok and Facebook</li>
+              <li>Planning the monthly content calendar at least 2 weeks before the new month starts, following the established calendar template (content pillars, platforms, monthly specials)</li>
+              <li>Presenting the monthly calendar to the Head of Marketing for topline approval</li>
+              <li>Producing content — concept, visuals, video, captions — through to final output, working with the videographer for photography/videography where required</li>
+              <li>Setting up and tracking ClickUp tasks through the content status workflow (Concept WIP, Concept Approved, Visuals WIP, Visuals Approved, Video WIP, Video Approved, Caption WIP, All Approved, To Schedule, Scheduled, Cancelled, KIV), managing Head of Marketing approval and revisions at each stage</li>
+              <li>Scheduling and publishing approved content</li>
+              <li>Flagging UGC/EGC videos to the Media Manager for boosting/dark ad consideration</li>
+              <li>Producing and presenting an end-of-month performance report, no later than the 10th of the month (or the next Monday if the 10th falls on a weekend), including scheduling the presentation</li>
+              <li>Minimum monthly volume: 1 Instagram Story (IGS) per day (higher during events), plus at least 16 content pieces (4/week) across Behind Shortcutx (2x), Innovation (4x), Testimonials (4x), TA Use In-Situ/Collab (4x), Trending (2x), and Events as they arise</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Paid media boosting/dark ad execution — owned by the Media Manager</li>
+              <li>Static ad creative production — owned by the Brand Manager, as part of Shortcutx's hyper-personalized ad strategy</li>
+              <li>Organic KOL/influencer content and relationships — covered under Section 6 (KOL Management)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s5-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Plan Monthly Content Calendar</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+          <tr><td>2. Present Calendar for Topline Approval</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Produce Content</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Videographer</td><td>—</td></tr>
+          <tr><td>4. Track & Secure Asset Approval</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Schedule & Publish</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>6. Flag UGC/EGC for Boosting</td><td>Digital Marketing Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>7. Prepare & Present End-of-Month Report</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>At least 2 weeks before the new month, plan the content calendar following the established template (content pillars, platforms, monthly specials).</li>
+          <li>Present the calendar to the Head of Marketing for topline approval.</li>
+          <li>Produce each content piece — concept, visuals/video, captions — working with the videographer for photography/videography as needed.</li>
+          <li>Track each piece through the ClickUp status workflow, securing Head of Marketing approval at each relevant stage, and revise as needed.</li>
+          <li>Once approved, schedule and publish content across TikTok, Instagram, and Facebook.</li>
+          <li>Flag any UGC/EGC videos to the Media Manager for potential boosting/dark ads.</li>
+          <li>By the 10th of the month (or the next Monday if the 10th falls on a weekend), prepare and present an end-of-month performance report; scheduling the presentation is the Digital Marketing Manager's own responsibility.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s5-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Social Media planning, production, approval, scheduling, and reporting process flow</title>
+<desc>Flowchart from planning the monthly content calendar two weeks ahead, through Head of Marketing topline approval, content production with the videographer, tracking asset approval through ClickUp, scheduling and publishing across TikTok, Instagram, and Facebook, flagging UGC/EGC to the Media Manager for boosting, and presenting an end-of-month report by the 10th, which loops back monthly into the cycle.</desc>
+<defs>
+  <marker id="arrowDmm5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmm5box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmm5dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmm5end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmm5title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmm5sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmm5lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmm5edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmm5); }
+  .dmm5dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmm5); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="560"/>
+
+<rect class="dmm5dbox" x="560" y="180" width="190" height="72" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="202" text-anchor="middle" class="dmm5title" font-size="14">Media Manager</text>
+<text x="655" y="219" text-anchor="middle" class="dmm5sub">Flag UGC/EGC for</text>
+<text x="655" y="234" text-anchor="middle" class="dmm5sub">boosting/dark ads</text>
+
+<rect class="dmm5box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmm5title">Plan Monthly Calendar</text>
+<text x="260" y="60" text-anchor="middle" class="dmm5sub">2 weeks before month start</text>
+<path class="dmm5edge" d="M260,76 L260,100"/>
+
+<rect class="dmm5box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="dmm5title">Present for Topline Approval</text>
+<text x="260" y="140" text-anchor="middle" class="dmm5sub">Head of Marketing</text>
+<path class="dmm5edge" d="M260,156 L260,180"/>
+
+<rect class="dmm5box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="dmm5title">Produce Content</text>
+<text x="260" y="220" text-anchor="middle" class="dmm5sub">Concept, visuals, video, captions</text>
+<path class="dmm5edge" d="M260,236 L260,260"/>
+
+<rect class="dmm5box" x="150" y="260" width="220" height="56" rx="10"/>
+<text x="260" y="282" text-anchor="middle" class="dmm5title">Track &amp; Approve via ClickUp</text>
+<text x="260" y="300" text-anchor="middle" class="dmm5sub">Status stages; revise as needed</text>
+<path class="dmm5edge" d="M260,316 L260,340"/>
+
+<rect class="dmm5box" x="150" y="340" width="220" height="56" rx="10"/>
+<text x="260" y="362" text-anchor="middle" class="dmm5title">Schedule &amp; Publish</text>
+<text x="260" y="380" text-anchor="middle" class="dmm5sub">TikTok, Instagram, Facebook</text>
+<path class="dmm5edge" d="M370,368 L558,216"/>
+
+<path class="dmm5edge" d="M260,396 L260,420"/>
+
+<rect class="dmm5end" x="150" y="420" width="220" height="56" rx="10"/>
+<text x="260" y="442" text-anchor="middle" class="dmm5title">End-of-Month Report</text>
+<text x="260" y="460" text-anchor="middle" class="dmm5sub">Presented by the 10th (or next Monday)</text>
+
+<path class="dmm5dedge" d="M150,448 L60,448 L60,48 L150,48"/>
+<text x="65" y="250" text-anchor="middle" class="dmm5lbl" transform="rotate(-90 65 250)">Next month</text>
+
+<text x="390" y="525" text-anchor="middle" class="dmm5lbl">Blue = process step   ·   Amber = Media Manager handoff</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s5-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section5', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Plan Monthly Content Calendar</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> At least 2 weeks before the new month starts</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Build the monthly content calendar following the established template — content pillars, platforms, and any monthly specials (e.g. new product launches).</li>
+                <li>Plan a minimum of 1 Instagram Story (IGS) per day for the month, made up of always-on content: BTS, re-shares, testimonials, product reviews, product content, and event coverage — increasing volume when there's a live event.</li>
+                <li>Plan a minimum of 16 content pieces for the month (4 per week), allocated across the content pillars: Behind Shortcutx (2x), Innovation (4x), Testimonials (4x), TA Use In-Situ/Collab (4x), Trending (2x), plus Events as they arise.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A complete draft monthly content calendar.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Present Calendar for Topline Approval</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once the draft calendar is built</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Present the monthly calendar to the Head of Marketing for topline approval.</li>
+                <li>Revise based on feedback before moving into production.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An approved monthly content calendar.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Produce Content</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Following calendar approval, through the month</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Develop each content piece from concept through to final output — concept, static/carousel visuals or video storyboards, video editing, and captions.</li>
+                <li>Work with the videographer for photography/videography where required.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Completed content assets, ready for approval.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Track & Secure Asset Approval</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> As each content piece moves through production</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Set up and track each content piece in ClickUp through its status stages: Concept WIP, Concept Approved, Visuals WIP, Visuals Approved, Video WIP, Video Approved, Caption WIP, All Approved.</li>
+                <li>Secure Head of Marketing approval at each relevant stage, and manage revisions.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Fully approved content, ready to schedule.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Schedule & Publish</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once content is fully approved</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Move approved content to "To Schedule," then schedule and publish it across TikTok, Instagram, and Facebook as planned.</li>
+                <li>Mark content as "Scheduled" once queued, or "Cancelled"/"KIV" as needed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Content live across platforms, per the calendar.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Flag UGC/EGC for Boosting</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> As UGC/EGC videos are produced or published</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Communicate any UGC/EGC videos to the Media Manager for consideration for boosting or dark ads.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The Media Manager informed and equipped to act on high-potential content.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 7: Prepare & Present End-of-Month Report</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> No later than the 10th of the month (or the next Monday if the 10th falls on a weekend)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Prepare the end-of-month social media performance report.</li>
+                <li>Schedule a calendar invite to present the report — scheduling the session is the Digital Marketing Manager's own responsibility.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A presented end-of-month report, on time.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s5-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>The 10th of the month falls on a weekend</td><td>Present the end-of-month report on the immediate following Monday instead.</td></tr>
+          <tr><td>A live event significantly increases content/coverage needs</td><td>Increase daily IGS volume and adjust the calendar to match live event coverage.</td></tr>
+          <tr><td>A content piece is deprioritized mid-production</td><td>Mark it "Cancelled" or "KIV" in ClickUp rather than leaving its status stale.</td></tr>
+          <tr><td>UGC/EGC content needs boosting urgently (e.g. tied to a live campaign)</td><td>Flag to the Media Manager immediately, rather than waiting for standard cadence.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Monthly content volume</td><td>At least 16 content pieces + 1 IGS per day</td><td>Count of published content against the monthly calendar</td></tr>
+          <tr><td>Calendar submission lead time</td><td>At least 2 weeks before the new month starts</td><td>Date calendar presented vs. month start</td></tr>
+          <tr><td>End-of-month report timing</td><td>By the 10th of the month (or the next Monday)</td><td>Date report is presented</td></tr>
+          <tr><td>Organic engagement performance</td><td>Tracked — no fixed benchmark set</td><td>Reach and engagement rate (ER%) per platform</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Monthly content calendar template — maintained on Canva; the Digital Marketing Manager has access, and a new calendar sheet is created each month</li>
+          <li>Content pillar reference: Community Engagement, Founder-Led, Product Lifestyle, Brand Collaborations, Product Education &amp; Tips, Reviews, Retail Activations &amp; Events, Employee-led/BTS, PR</li>
+          <li>ClickUp status indicator legend (Concept WIP through Scheduled/Cancelled/KIV)</li>
+          <li>Cross-reference: Section 3 (Ads Always-On) — UGC/EGC boosting handoff to the Media Manager</li>
+          <li>Cross-reference: Section 6 (KOL Management) — organic KOL content follows the same boosting handoff principle</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 6: KOL MANAGEMENT ================= -->
+    <div class="tab-content" id="sectionKOL">
+
+      <div class="card" id="skol-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to manage organic KOL/influencer relationships across Shortcutx, Solulu, and Tradishot — approving KOL selection from candidates shortlisted by the eCommerce Executive, briefing KOLs directly, reviewing their content, managing product seeding, and tracking both organic performance and deliverable fulfillment. This is distinct from Section 3 (Ads Always-On): the same KOL pool may be used, but paid ad UGC creative sits with the eCommerce Executive, while organic KOL relationship management sits with the Digital Marketing Manager.</p>
+      </div>
+
+      <div class="card" id="skol-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Reviewing and approving KOL candidates shortlisted by the eCommerce Executive via ClickUp</li>
+              <li>Clearing the approved KOL roster with the Head of Marketing and CEO before briefing</li>
+              <li>Briefing approved, cleared KOLs directly on deliverables, key messages, and posting timeline</li>
+              <li>Reviewing and approving KOL content before or as it goes live</li>
+              <li>Managing product seeding/gifting to KOLs</li>
+              <li>Tracking organic reach/engagement performance of KOL content</li>
+              <li>Tracking deliverable fulfillment — whether KOLs post on time and per the brief</li>
+              <li>Monthly KOL engagement targets: 10 KOLs for Shortcutx, 4-6 for Solulu, 4-6 for Tradishot</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Initial KOL sourcing/shortlisting — owned by the eCommerce Executive</li>
+              <li>Paid ad UGC creative sourcing and briefing — covered under Ads (Always-On), Part 3, and owned by the eCommerce Executive</li>
+              <li>Paid media performance reporting — owned by the Media Manager</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="skol-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Shortlist Candidate KOLs</td><td>eCommerce Executive</td><td>eCommerce Executive</td><td>Digital Marketing Manager</td><td>—</td></tr>
+          <tr><td>2. Approve KOL Selection</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>eCommerce Executive</td></tr>
+          <tr><td>3. Clear with HoM & CEO</td><td>Digital Marketing Manager</td><td>Head of Marketing, CEO</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Brief the KOL</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Manage Seeding & Gifting</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>eCommerce Executive</td><td>—</td></tr>
+          <tr><td>6. Review Content</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>7. Track Performance & Deliverables</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="skol-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>The eCommerce Executive shortlists candidate KOLs and places them in ClickUp for review.</li>
+          <li>The Digital Marketing Manager reviews and approves (or rejects) each KOL selection.</li>
+          <li>The Digital Marketing Manager clears the approved roster with the Head of Marketing and CEO before proceeding.</li>
+          <li>The Digital Marketing Manager briefs the cleared KOL directly on deliverables, key messages, and timeline.</li>
+          <li>The Digital Marketing Manager coordinates product seeding/gifting to the KOL.</li>
+          <li>The KOL produces and posts content; the Digital Marketing Manager reviews it against the brief.</li>
+          <li>The Digital Marketing Manager tracks organic reach/engagement and deliverable fulfillment monthly, against target: 10 KOLs for Shortcutx, 4-6 for Solulu, 4-6 for Tradishot.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="skol-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 700" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>KOL Management review, clearance, briefing, seeding, and performance tracking process flow</title>
+<desc>Flowchart from receiving KOL candidates shortlisted by the eCommerce Executive, through DMM approval of selection (with a reject path back to the eCommerce Executive), clearing the roster with the Head of Marketing and CEO, briefing the KOL, managing seeding and gifting, reviewing content, and tracking performance and deliverables, which loops back monthly into the cycle.</desc>
+<defs>
+  <marker id="arrowDmmKOL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmmKOLbox { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmmKOLdbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmmKOLend { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmmKOLtitle { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmmKOLsub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmmKOLlbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmmKOLedge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmmKOL); }
+  .dmmKOLdedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmmKOL); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="700"/>
+
+<rect class="dmmKOLbox" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmmKOLtitle">Receive &amp; Review Shortlist</text>
+<text x="260" y="60" text-anchor="middle" class="dmmKOLsub">From eCommerce Executive via ClickUp</text>
+<path class="dmmKOLedge" d="M260,76 L260,100"/>
+
+<polygon class="dmmKOLdbox" points="260,100 360,140 260,180 160,140"/>
+<text x="260" y="136" text-anchor="middle" class="dmmKOLtitle" font-size="14">Approve</text>
+<text x="260" y="150" text-anchor="middle" class="dmmKOLtitle" font-size="14">KOL?</text>
+<path class="dmmKOLedge" d="M360,140 L558,140"/>
+<text x="450" y="132" text-anchor="middle" class="dmmKOLlbl">No</text>
+<path class="dmmKOLedge" d="M260,180 L260,204"/>
+<text x="278" y="196" class="dmmKOLlbl">Yes</text>
+
+<rect class="dmmKOLdbox" x="560" y="112" width="190" height="56" rx="10"/>
+<text x="655" y="134" text-anchor="middle" class="dmmKOLtitle">Reject &amp; Inform</text>
+<text x="655" y="152" text-anchor="middle" class="dmmKOLsub">eCommerce Executive refines shortlist</text>
+
+<rect class="dmmKOLdbox" x="150" y="204" width="220" height="56" rx="10"/>
+<text x="260" y="226" text-anchor="middle" class="dmmKOLtitle">Clear with HoM &amp; CEO</text>
+<text x="260" y="244" text-anchor="middle" class="dmmKOLsub">Roster cleared before briefing</text>
+<path class="dmmKOLedge" d="M260,260 L260,284"/>
+
+<rect class="dmmKOLbox" x="150" y="284" width="220" height="56" rx="10"/>
+<text x="260" y="306" text-anchor="middle" class="dmmKOLtitle">Brief the KOL</text>
+<text x="260" y="324" text-anchor="middle" class="dmmKOLsub">Deliverables, key messages, timeline</text>
+<path class="dmmKOLedge" d="M260,340 L260,364"/>
+
+<rect class="dmmKOLbox" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="dmmKOLtitle">Manage Seeding &amp; Gifting</text>
+<text x="260" y="404" text-anchor="middle" class="dmmKOLsub">Coordinate product delivery</text>
+<path class="dmmKOLedge" d="M260,420 L260,444"/>
+
+<rect class="dmmKOLbox" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="dmmKOLtitle">Review KOL Content</text>
+<text x="260" y="484" text-anchor="middle" class="dmmKOLsub">Against brief, before/as it goes live</text>
+<path class="dmmKOLedge" d="M260,500 L260,524"/>
+
+<rect class="dmmKOLend" x="150" y="524" width="220" height="56" rx="10"/>
+<text x="260" y="546" text-anchor="middle" class="dmmKOLtitle">Track Performance &amp; Deliverables</text>
+<text x="260" y="564" text-anchor="middle" class="dmmKOLsub">Organic engagement + fulfillment, monthly</text>
+
+<path class="dmmKOLdedge" d="M150,552 L60,552 L60,48 L150,48"/>
+<text x="65" y="300" text-anchor="middle" class="dmmKOLlbl" transform="rotate(-90 65 300)">Monthly cycle</text>
+
+<text x="390" y="670" text-anchor="middle" class="dmmKOLlbl">Blue = process step   ·   Amber = decision, clearance, or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="skol-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('sectionKOL', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Receive &amp; Review Shortlisted KOLs</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, as the eCommerce Executive places candidates in ClickUp</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Receive candidate KOL profiles shortlisted by the eCommerce Executive via ClickUp.</li>
+                <li>Review each candidate against brand fit, audience, and past performance for Shortcutx, Solulu, or Tradishot as relevant.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A reviewed shortlist, ready for an approval decision.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Approve KOL Selection</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once the shortlist is reviewed</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Approve or reject each shortlisted KOL directly in ClickUp.</li>
+                <li>If rejected, note the reasoning so the eCommerce Executive can refine future shortlisting.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A confirmed KOL roster for the period.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Clear KOL Selection with Head of Marketing &amp; CEO</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> After internal KOL selection approval, before briefing the KOL</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Present the approved KOL roster to the Head of Marketing and CEO for clearance.</li>
+                <li>Hold the roster until clearance is received from both; revise the selection if either raises concerns.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A KOL roster cleared by both the Head of Marketing and CEO, ready to brief.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Brief the KOL</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once a KOL is cleared by the Head of Marketing and CEO</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Draft and send the content brief directly to the KOL, covering deliverables, key messages, and posting timeline.</li>
+                <li>Confirm the KOL's agreement to the brief and schedule. Target is full deliverable completion within 2 weeks of brief.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A confirmed brief and posting timeline with the KOL, targeting completion within 2 weeks of brief.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Manage Seeding &amp; Gifting</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Following brief confirmation</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Arrange product seeding/gifting to the KOL, prioritized by current campaigns and/or product focus per the eCommerce plan (there is no separate seeding budget/allocation process).</li>
+                <li>Coordinate with the eCommerce Executive on stock and fulfillment as needed.</li>
+                <li>Track seeding status to ensure the KOL receives product in time to meet the posting timeline.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Product delivered to the KOL, ready for content creation.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Review KOL Content</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> As KOL content is submitted or posted</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review KOL content against the brief before or as it goes live.</li>
+                <li>Flag and request revisions if content doesn't meet brand guidelines or brief requirements.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Approved, on-brief KOL content live.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 7: Track Performance &amp; Deliverables</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, reviewed monthly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Track organic reach and engagement (views, likes, comments, saves) on KOL content.</li>
+                <li>Track deliverable fulfillment — whether each KOL posted on time and per the brief.</li>
+                <li>Monitor monthly engagement volume against target: 10 KOLs for Shortcutx, 4-6 for Solulu, 4-6 for Tradishot.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A monthly performance and fulfillment summary of KOL activity.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="skol-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>The Head of Marketing or CEO does not clear a roster member</td><td>Remove the KOL from the roster and, if needed, revisit shortlisting criteria with the eCommerce Executive before recirculating.</td></tr>
+          <tr><td>A KOL doesn't fulfill agreed deliverables (no post, late post, off-brief)</td><td>Flag to the Head of Marketing, and consider excluding the KOL from future seeding rounds.</td></tr>
+          <tr><td>A shortlisted KOL doesn't fit brand/organic-content standards</td><td>Reject in ClickUp and inform the eCommerce Executive with reasoning, so shortlisting criteria can be refined.</td></tr>
+          <tr><td>Seeded product doesn't arrive in time for the agreed posting timeline</td><td>Escalate to the eCommerce Executive on fulfillment status, and adjust the posting timeline with the KOL.</td></tr>
+          <tr><td>The same KOL is being considered for both paid UGC ads (Section 3) and organic seeding (this section)</td><td>Coordinate with the eCommerce Executive to avoid duplicate or conflicting outreach to the same KOL.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="skol-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Monthly KOL engagement volume</td><td>10 KOLs (Shortcutx), 4-6 (Solulu), 4-6 (Tradishot)</td><td>Count of KOLs briefed and seeded per brand per month</td></tr>
+          <tr><td>Deliverable fulfillment rate</td><td>100% completed within 2 weeks of brief</td><td>% of briefed KOLs who complete their deliverable (post live), on time and per the brief, within 2 weeks of brief</td></tr>
+          <tr><td>Organic engagement performance</td><td>Tracked — no fixed benchmark set</td><td>Reach and engagement rate (ER%) per KOL post</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="skol-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li><a href="https://app.clickup.com/90182527480/inbox?tab=primary" target="_blank" rel="noopener">ClickUp — KOL shortlist/review board (general link; each brand has its own)</a></li>
+          <li>Brand guidelines</li>
+          <li>Cross-reference: Section 3 (Ads Always-On) — UGC creator collaboration, same KOL pool used for paid ad content</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 7: RETAILERS ================= -->
+    <div class="tab-content" id="section6">
+
+      <div class="card" id="s6-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure physical retail partners have accurate, up-to-date product listing content, plus the point-of-sale, co-op, and sampling materials needed to support in-store sell-through — with all retailer-facing content approved by the Head of Marketing before it goes out.</p>
+      </div>
+
+      <div class="card" id="s6-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Maintaining product info/spec sheets for physical retail partners</li>
+              <li>Managing product content on retailers' own online catalogs/websites (Watsons, BHG, Tangs, Al Barakah)</li>
+              <li>Providing in-store planogram/shelf display artwork specs</li>
+              <li>Producing point-of-sale (POS) / in-store materials (posters, shelf-talkers, standees)</li>
+              <li>Supporting co-op advertising campaigns with retail partners</li>
+              <li>Producing sampling/promo event materials for in-store demos and activations</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Online marketplaces (Shopee, Lazada, etc.) — covered separately under eCommerce responsibilities</li>
+              <li>Retailer relationship/account management and commercial negotiations — owned by the Head of Marketing</li>
+              <li>Retailer sales performance tracking/reporting — owned by the Head of Marketing</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s6-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Receive &amp; Triage Request</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Maintain Product Info &amp; Listings</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Retailer merchandising team</td><td>—</td></tr>
+          <tr><td>3. Produce POS &amp; In-Store Materials</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Support Co-op &amp; Sampling</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Submit for Approval</td><td>Digital Marketing Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>6. Deliver &amp; Track</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Receive and triage a retailer request from the Head of Marketing (listing, content update, POS materials, co-op campaign, or sampling event).</li>
+          <li>Produce the required content or materials — product info/listings, POS materials, co-op assets, or sampling/event materials.</li>
+          <li>Submit to the Head of Marketing for approval before anything is sent to the retailer.</li>
+          <li>If not approved, revise based on feedback and resubmit.</li>
+          <li>Once approved, deliver the content/materials to the retailer, or upload directly to their platform.</li>
+          <li>Track outstanding retailer requests and follow up to ensure nothing is missed.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s6-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Retailers listing, content, and co-op support process flow</title>
+<desc>Flowchart from receiving and triaging a retailer request, through producing listing content or in-store/co-op materials, Head of Marketing approval, delivery to the retailer, and tracking outstanding requests.</desc>
+<defs>
+  <marker id="arrowDmm6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .dmm6box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .dmm6dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .dmm6end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .dmm6title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .dmm6sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .dmm6lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .dmm6edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowDmm6); }
+  .dmm6dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowDmm6); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="560"/>
+
+<rect class="dmm6box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="dmm6title">Receive &amp; Triage Request</text>
+<text x="260" y="60" text-anchor="middle" class="dmm6sub">Via Head of Marketing</text>
+<path class="dmm6edge" d="M260,76 L260,100"/>
+
+<rect class="dmm6box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="dmm6title">Produce Content / Materials</text>
+<text x="260" y="140" text-anchor="middle" class="dmm6sub">Listings, POS, co-op, sampling</text>
+<path class="dmm6edge" d="M260,156 L260,180"/>
+
+<polygon class="dmm6dbox" points="260,180 360,220 260,260 160,220"/>
+<text x="260" y="216" text-anchor="middle" class="dmm6title" font-size="14">HoM</text>
+<text x="260" y="230" text-anchor="middle" class="dmm6title" font-size="14">approves?</text>
+<path class="dmm6edge" d="M360,220 L558,220"/>
+<text x="450" y="212" text-anchor="middle" class="dmm6lbl">No</text>
+<path class="dmm6edge" d="M260,260 L260,284"/>
+<text x="278" y="276" class="dmm6lbl">Yes</text>
+
+<rect class="dmm6dbox" x="560" y="192" width="190" height="56" rx="10"/>
+<text x="655" y="214" text-anchor="middle" class="dmm6title">Revise Content</text>
+<text x="655" y="232" text-anchor="middle" class="dmm6sub">Address HoM feedback</text>
+<path class="dmm6dedge" d="M655,248 L655,268 L365,268 L365,220"/>
+
+<rect class="dmm6box" x="150" y="284" width="220" height="56" rx="10"/>
+<text x="260" y="306" text-anchor="middle" class="dmm6title">Deliver to Retailer</text>
+<text x="260" y="324" text-anchor="middle" class="dmm6sub">Direct, or via retailer platform</text>
+<path class="dmm6edge" d="M260,340 L260,364"/>
+
+<rect class="dmm6box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="dmm6title">Track &amp; Follow Up</text>
+<text x="260" y="404" text-anchor="middle" class="dmm6sub">Outstanding requests</text>
+<path class="dmm6edge" d="M260,420 L260,444"/>
+
+<rect class="dmm6end" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="dmm6title">Request Fulfilled</text>
+<text x="260" y="484" text-anchor="middle" class="dmm6sub">Logged and closed out</text>
+
+<text x="390" y="525" text-anchor="middle" class="dmm6lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s6-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section6', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Receive &amp; Triage Retailer Request</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> As requests come in</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>The Head of Marketing routes incoming retailer requests to the Digital Marketing Manager (new product listing, content update, POS materials, co-op campaign, or sampling event).</li>
+                <li>Confirm the request type, retailer, and deadline with the Head of Marketing.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear, triaged request ready for production.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Maintain Product Info &amp; Listing Content</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> When a new product launches or product details change</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Prepare or update product info and spec sheets for the retailer.</li>
+                <li>Update product content on the retailer's own online catalog/website where applicable (Watsons, BHG, Tangs, Al Barakah).</li>
+                <li>Prepare planogram/shelf display artwork specs as required by the retailer's merchandising team.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Accurate, current product listings and shelf-ready artwork.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Produce POS &amp; In-Store Materials</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Ahead of a retail activation or as requested</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Design point-of-sale materials (posters, shelf-talkers, standees) for in-store placement, with design ready at least 2 weeks before the due date.</li>
+                <li>Ensure materials match brand guidelines and the retailer's in-store specs.</li>
+                <li>Coordinate printing so materials are ready to ship at least 1 week before the due date.</li>
+                <li>Confirm in-store installation happens on the due date, with a 3-day grace period.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Ready-to-print POS materials, delivered and installed to the target timeline.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Support Co-op Advertising &amp; Sampling Events</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> As co-op campaigns or sampling events are planned</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Produce assets for joint co-op advertising campaigns with the retailer.</li>
+                <li>Produce materials for in-store sampling/demo activations.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Campaign and event materials ready for the retailer.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Submit for Head of Marketing Approval</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once materials/content are ready</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Share all retailer-facing content and materials with the Head of Marketing for approval before delivery. Target turnaround is 2 days.</li>
+                <li>Revise based on feedback before sending anything to the retailer.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Approved materials ready to send to the retailer.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Deliver to Retailer &amp; Track Requests</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Digital Marketing Manager</div>
+            <div class="field"><span class="label">When:</span> Once approved</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Deliver approved content/materials to the retailer, or upload directly to their platform.</li>
+                <li>Track outstanding retailer requests and follow up to ensure nothing is missed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Retailer requests fulfilled on time, with a clear record of what's been delivered.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s6-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A retailer requests something outside brand guidelines</td><td>Flag to the Head of Marketing before producing the content.</td></tr>
+          <tr><td>An urgent in-store activation has a tight deadline</td><td>Expedite production and flag the urgency clearly in the approval request.</td></tr>
+          <tr><td>The retailer's online catalog requires access the Digital Marketing Manager doesn't have</td><td>Escalate to the Head of Marketing or the retailer contact to secure the correct access.</td></tr>
+          <tr><td>A retailer request conflicts with an active campaign or promo</td><td>Check with the Head of Marketing before proceeding, to avoid conflicting messaging in-store.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Design ready</td><td>At least 2 weeks before the due date</td><td>Design completion date vs. due date</td></tr>
+          <tr><td>POSM printed & ready to ship</td><td>At least 1 week before the due date</td><td>Print/ship-ready date vs. due date</td></tr>
+          <tr><td>POSM installed in-store</td><td>On the due date, with a 3-day grace period</td><td>Installation date vs. due date (+3 days grace)</td></tr>
+          <tr><td>Approval turnaround time</td><td>2 days</td><td>Time from submission to Head of Marketing approval</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Active physical retail partners: Watsons, BHG, Tangs, Al Barakah</li>
+          <li>Brand guidelines / product spec sheet template</li>
+          <li><a href="https://drive.google.com/drive/u/0/folders/10XkYgmcprV0DIdeTsZfRi-J5bO_3GTOr" target="_blank" rel="noopener">Retailer online catalog access — Shortcutx (Google Drive)</a></li>
+          <li><a href="https://drive.google.com/drive/u/0/folders/1WDz8V0VXGI263qJ1857uF2MRukG_fy60" target="_blank" rel="noopener">Retailer online catalog access — Tradishot (Google Drive)</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="doc-footer">Digital Marketing Manager — Process Documentation</footer>
+
+<script>
+  function showTab(id, btn) {
+    if (btn.classList.contains('disabled')) return;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.section-tab').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.jumplist').forEach(el => el.classList.remove('visible'));
+    const jl = document.getElementById('jump-' + id);
+    if (jl) jl.classList.add('visible');
+  }
+  function toggleStep(headerEl) {
+    headerEl.parentElement.classList.toggle('open');
+  }
+  function toggleAll(sectionId, btn) {
+    const steps = document.querySelectorAll('#' + sectionId + ' .step');
+    const anyClosed = Array.from(steps).some(s => !s.classList.contains('open'));
+    steps.forEach(s => s.classList.toggle('open', anyClosed));
+    btn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
+  }
+</script>
+
+</body>
+</html>

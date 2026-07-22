@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>How We Work — Process Framework</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --red: #A6373C;
+    --red-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+
+    /* role colours */
+    --c-ceo:   #5B4A8A;
+    --c-bm:    #A6373C;
+    --c-dmm:   #2563A8;
+    --c-ecm:   #2E7D4A;
+    --c-ece:   #3A7FA0;
+    --c-cc:    #B86918;
+    --c-vid:   #7A6A14;
+    --c-mm:    #7A2A2A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+
+  /* ── HEADER ── */
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 32px 32px 26px;
+    border-top: 6px solid var(--red);
+  }
+  header.top a { display: inline-block; font-size: 12.5px; color: #E8D0D0; text-decoration: none; margin-bottom: 10px; }
+  header.top h1 { margin: 0 0 6px; font-size: 24px; }
+  header.top p  { margin: 0; font-size: 13.5px; color: #C8BFBF; max-width: 680px; line-height: 1.55; }
+
+  /* ── LAYOUT ── */
+  .page { max-width: 1100px; margin: 0 auto; padding: 32px 28px 80px; }
+
+  /* ── SECTION HEADERS ── */
+  .section-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--navy);
+    border-bottom: 2px solid var(--red);
+    padding-bottom: 8px;
+    margin: 0 0 20px;
+  }
+  .section-sub {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin: -12px 0 20px;
+    line-height: 1.55;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 24px;
+  }
+
+  /* ── 5-STAGE FLOW ── */
+  .stages-wrap { overflow-x: auto; margin-bottom: 8px; }
+  .stages-flow {
+    display: flex;
+    align-items: stretch;
+    min-width: 860px;
+    gap: 0;
+    margin-bottom: 4px;
+  }
+  .stage {
+    flex: 1;
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-right: 28px;
+  }
+  .stage:last-child { margin-right: 0; }
+  .stage::after {
+    content: '›';
+    position: absolute;
+    right: -22px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 22px;
+    color: var(--muted);
+    font-weight: 300;
+    pointer-events: none;
+  }
+  .stage:last-child::after { display: none; }
+  .stage-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stage-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 0;
+    line-height: 1.2;
+  }
+  .stage-lead {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .stage ul {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.55;
+    flex: 1;
+  }
+  .stage ul li { margin-bottom: 3px; }
+  .stage-output {
+    font-size: 12px;
+    color: var(--red);
+    font-weight: 600;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .stage-output::before { content: '↳ '; }
+
+  /* ── ROLE BADGES ── */
+  .badge {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .badge-s   { background: var(--c-ceo); }
+  .badge-bm  { background: var(--c-bm);  }
+  .badge-dmm { background: var(--c-dmm); }
+  .badge-ecm { background: var(--c-ecm); }
+  .badge-ece { background: var(--c-ece); }
+  .badge-cc  { background: var(--c-cc);  opacity: .8; }
+  .badge-vid { background: var(--c-vid); opacity: .8; }
+  .badge-mm  { background: var(--c-mm);  opacity: .8; }
+
+  /* ── APPROVAL TABLE ── */
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin: 4px 0 0;
+  }
+  table.data th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+    font-size: 12.5px;
+  }
+  table.data td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: var(--red-light); }
+  .td-tool {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+    align-items: center;
+  }
+  .legend-label { font-size: 12px; color: var(--muted); margin-right: 4px; }
+  .legend-soon { font-size: 11px; color: var(--muted); font-style: italic; }
+
+  /* ── MONTHLY TIMELINE ── */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+  .phase-block { margin-bottom: 12px; }
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--navy);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    user-select: none;
+  }
+  .phase-header:hover { background: #2A2A2A; }
+  .phase-week {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: #C8BFBF;
+    white-space: nowrap;
+  }
+  .phase-name {
+    font-size: 14px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .phase-toggle { font-size: 13px; color: #C8BFBF; transition: transform .15s; }
+  .phase-block.open .phase-toggle { transform: rotate(90deg); }
+  .phase-body {
+    display: none;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    background: #fff;
+  }
+  .phase-block.open .phase-body { display: block; }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-row .step-badge { flex-shrink: 0; padding-top: 2px; }
+  .step-row .step-text { flex: 1; }
+  .step-row .step-text strong { color: var(--navy); }
+  .step-row .step-text .note {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .flag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .flag-gate { background: #FFF3C4; color: #7A5C00; border: 1px solid #F0C842; }
+  .flag-tool { background: #E8F4EE; color: #1A5C30; border: 1px solid #A8D5B5; }
+  .flag-deadline { background: #FFE8E8; color: #7A1A1A; border: 1px solid #F0A0A0; }
+
+  /* ── COLLAB MAP ── */
+  .collab-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .collab-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    background: #fff;
+  }
+  .collab-item h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    color: var(--navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .collab-item ul {
+    margin: 0;
+    padding-left: 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .collab-item ul li { margin-bottom: 2px; }
+
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
+
+  @media (max-width: 700px) {
+    .collab-grid { grid-template-columns: 1fr; }
+    .page { padding: 20px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html">&larr; All roles</a>
+  <h1>How We Work — Process Framework</h1>
+  <p>This document captures how the team operates across all projects and campaigns: the five stages every initiative passes through, who owns what at each stage, the key approval gates, and how it all plays out in a concrete monthly example.</p>
+</header>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════
+       LEGEND
+  ═══════════════════════════════════════════════ -->
+  <div class="legend">
+    <span class="legend-label">Roles:</span>
+    <span class="badge badge-s">CEO</span>
+    <span class="badge badge-bm">Brand Manager</span>
+    <span class="badge badge-dmm">Digital Marketing Manager</span>
+    <span class="badge badge-ecm">eCommerce Manager</span>
+    <span class="badge badge-ece">eCommerce Executive</span>
+    <span class="badge badge-cc">Content Creator</span>
+    <span class="badge badge-vid">Videographer</span>
+    <span class="badge badge-mm">Media Manager</span>
+    <span class="legend-soon">&nbsp;(faded = doc coming soon)</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 1: THE 5-STAGE FRAMEWORK
+  ═══════════════════════════════════════════════ -->
+  <h2 class="section-title">The 5-Stage Project Lifecycle</h2>
+  <p class="section-sub">Every campaign, launch, or initiative — regardless of size — moves through these five stages. The Brand Manager is the central connective tissue: setting the brief at the start, holding the quality gate through Create, and synthesising results at the end.</p>
+
+  <div class="card" style="padding: 20px 20px 16px;">
+    <div class="stages-wrap">
+      <div class="stages-flow">
+
+        <!-- STAGE 1 -->
+        <div class="stage">
+          <div class="stage-num">Stage 1</div>
+          <div class="stage-name">Strategise</div>
+          <div class="stage-lead">
+            <span class="badge badge-s">CEO</span>
+            <span class="badge badge-bm">Brand Manager</span>
+          </div>
+          <ul>
+            <li>CEO shares business priorities &amp; revenue targets</li>
+            <li>Brand Manager sets quarterly creative direction per brand</li>
+            <li>Brand Manager conceptualises the campaign: concept, messaging, story</li>
+            <li>Brand Manager aligns concept with CEO</li>
+          </ul>
+          <div class="stage-output">Campaign concept + quarterly creative direction</div>
+        </div>
+
+        <!-- STAGE 2 -->
+        <div class="stage">
+          <div class="stage-num">Stage 2</div>
+          <div class="stage-name">Plan</div>
+          <div class="stage-lead">
+            <span class="badge badge-bm">Brand Manager</span>
+            <span class="badge badge-ecm">eCommerce Manager</span>
+            <span class="badge badge-dmm">Digital Marketing Manager</span>
+          </div>
+          <ul>
+            <li>Brand Manager plans campaign: timeline, channels, deliverables</li>
+            <li>Brand Manager issues brief to all executing teams</li>
+            <li>eCommerce Manager plans quarterly calendar, registers platforms promos</li>
+            <li>eCommerce Manager briefs Digital Marketing Manager + Media Manager</li>
+            <li>Digital Marketing Manager plans EDM lineup &amp; segmentation</li>
+          </ul>
+          <div class="stage-output">Campaign brief issued · Calendar locked · Promos registered</div>
+        </div>
+
+        <!-- STAGE 3 -->
+        <div class="stage">
+          <div class="stage-num">Stage 3</div>
+          <div class="stage-name">Create</div>
+          <div class="stage-lead">
+            <span class="badge badge-bm">Brand Manager</span>
+            <span class="badge badge-cc">Content Creator</span>
+            <span class="badge badge-vid">Videographer</span>
+            <span class="badge badge-dmm">Digital Marketing Manager</span>
+          </div>
+          <ul>
+            <li>Content Creator: social content (reels, carousels, TikToks)</li>
+            <li>Videographer: brand films, product videos, motion graphics</li>
+            <li>Brand Manager: 30 static ad assets (10 per TOFU/MOFU/BOFU)</li>
+            <li>Digital Marketing Manager: EGC/UGC videos, EDM drafts, Shopify banner</li>
+            <li>Brand Manager reviews + approves ALL output before anything advances</li>
+          </ul>
+          <div class="stage-output">All assets approved · EDMs approved · Platform setups done</div>
+        </div>
+
+        <!-- STAGE 4 -->
+        <div class="stage">
+          <div class="stage-num">Stage 4</div>
+          <div class="stage-name">Execute</div>
+          <div class="stage-lead">
+            <span class="badge badge-dmm">Digital Marketing Manager</span>
+            <span class="badge badge-mm">Media Manager</span>
+            <span class="badge badge-ecm">eCommerce Manager</span>
+            <span class="badge badge-ece">eCommerce Executive</span>
+          </div>
+          <ul>
+            <li>Digital Marketing Manager: Shopify banner live, EDMs send, social publishes</li>
+            <li>Digital Marketing Manager hands off creative to Media Manager</li>
+            <li>Media Manager activates paid ads (Meta, Google, TikTok), manages budget</li>
+            <li>eCommerce Executive: live streaming sessions, KOL posting</li>
+            <li>eCommerce Manager: monitors platform health, pricing, promo mechanics</li>
+          </ul>
+          <div class="stage-output">Campaign live across all channels</div>
+        </div>
+
+        <!-- STAGE 5 -->
+        <div class="stage">
+          <div class="stage-num">Stage 5</div>
+          <div class="stage-name">Measure</div>
+          <div class="stage-lead">
+            <span class="badge badge-bm">Brand Manager</span>
+            <span class="badge badge-mm">Media Manager</span>
+            <span class="badge badge-dmm">Digital Marketing Manager</span>
+            <span class="badge badge-ecm">eCommerce Manager</span>
+          </div>
+          <ul>
+            <li>Media Manager: ad performance report (Data Studio)</li>
+            <li>Digital Marketing Manager: EDM, social &amp; website performance</li>
+            <li>eCommerce Manager: platform GMV, conversion &amp; campaign uplift</li>
+            <li>Brand Manager synthesises all reports → post-campaign review</li>
+            <li>Review shared with CEO; insights feed the next Strategise cycle</li>
+          </ul>
+          <div class="stage-output">Post-campaign review → CEO · Learnings documented</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 2: APPROVAL GATES
+  ═══════════════════════════════════════════════ -->
+  <h2 class="section-title">Approval Gates</h2>
+  <p class="section-sub">Nothing goes live without clearing the relevant gate. The Brand Manager acts as Head of Marketing and is the primary approval authority across all marketing and creative outputs. The CEO approves campaign strategy and any significant brand decisions.</p>
+
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <table class="data">
+      <tr>
+        <th>What needs approval</th>
+        <th>Submitted by</th>
+        <th>Approved by</th>
+        <th>Tool</th>
+        <th>Deadline / SLA</th>
+      </tr>
+      <tr>
+        <td><strong>Campaign concept &amp; creative direction</strong></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td><span class="badge badge-s" style="font-size:11px;">CEO</span></td>
+        <td class="td-tool">Meeting / Google Doc</td>
+        <td>Before brief is issued</td>
+      </tr>
+      <tr>
+        <td><strong>eCommerce campaign calendar &amp; mechanics</strong></td>
+        <td><span class="badge badge-ecm" style="font-size:11px;">eCommerce Manager</span></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td class="td-tool">Presentation / Google Doc</td>
+        <td>1 week turnaround · Planned 1 quarter ahead</td>
+      </tr>
+      <tr>
+        <td><strong>Monthly EDM lineup, segmentation &amp; drafts</strong></td>
+        <td><span class="badge badge-dmm" style="font-size:11px;">Digital Marketing Manager</span></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td class="td-tool">Google Doc → Google Drive</td>
+        <td>Submitted by 3rd week of prior month</td>
+      </tr>
+      <tr>
+        <td><strong>Shopify homepage banner</strong></td>
+        <td><span class="badge badge-dmm" style="font-size:11px;">Digital Marketing Manager</span></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td class="td-tool">ClickUp card</td>
+        <td>At least 3 days before live · 1 business day turnaround</td>
+      </tr>
+      <tr>
+        <td><strong>Ad creative (always-on video &amp; static assets)</strong></td>
+        <td><span class="badge badge-dmm" style="font-size:11px;">Digital Marketing Manager</span></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td class="td-tool">Google Shared Drive</td>
+        <td>Soft / light-touch — before handoff to Media Manager</td>
+      </tr>
+      <tr>
+        <td><strong>All marketing assets (social, packaging, EDMs, ads)</strong></td>
+        <td>Relevant creator</td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td class="td-tool">ClickUp / Google Drive</td>
+        <td>2 business day turnaround · No exceptions for brand compliance</td>
+      </tr>
+      <tr>
+        <td><strong>Ad budget changes</strong></td>
+        <td><span class="badge badge-mm" style="font-size:11px;">Media Manager</span></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td class="td-tool">—</td>
+        <td>Required before any budget change is executed</td>
+      </tr>
+      <tr>
+        <td><strong>Brand guideline changes</strong></td>
+        <td><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span></td>
+        <td><span class="badge badge-s" style="font-size:11px;">CEO</span></td>
+        <td class="td-tool">Meeting / Google Doc</td>
+        <td>Before guideline is updated and distributed</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 3: KEY COLLABORATION FLOWS
+  ═══════════════════════════════════════════════ -->
+  <h2 class="section-title">Key Collaboration Flows</h2>
+  <p class="section-sub">These are the recurring cross-role touchpoints that keep everything connected — not one-off handoffs but standing interactions that run on a defined cadence.</p>
+
+  <div class="card" style="padding: 18px 20px;">
+    <div class="collab-grid">
+
+      <div class="collab-item">
+        <h4><span class="badge badge-dmm" style="font-size:11px;">DMM</span> &harr; <span class="badge badge-mm" style="font-size:11px;">Media Manager</span></h4>
+        <ul>
+          <li><strong>Weekly performance sync</strong> — DMM and Media Manager review Google Data Studio together; discuss what's working, what's underperforming, and what needs new creative or optimisation</li>
+          <li><strong>Creative handoff</strong> — DMM uploads approved ad creative (EGC + UGC videos) to Google Shared Drive; Media Manager uploads to platforms and manages spend</li>
+          <li><strong>Monthly creative refresh</strong> — triggered by the sync or by Media Manager flagging fatigue</li>
+        </ul>
+      </div>
+
+      <div class="collab-item">
+        <h4><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span> &harr; <span class="badge badge-s" style="font-size:11px;">CEO</span></h4>
+        <ul>
+          <li><strong>Fortnightly strategic check-in</strong> — Brand Manager shares creative highlights, brand health, competitor insights, and growth recommendations; strategic decisions are made together</li>
+          <li><strong>Quarterly direction-setting</strong> — CEO and Brand Manager align on creative priorities and brand vision for each brand across the portfolio</li>
+          <li><strong>Post-campaign review</strong> — Brand Manager synthesises results and presents to CEO within 1 week of campaign end</li>
+        </ul>
+      </div>
+
+      <div class="collab-item">
+        <h4><span class="badge badge-ecm" style="font-size:11px;">eCommerce Manager</span> &harr; <span class="badge badge-dmm" style="font-size:11px;">DMM</span> + <span class="badge badge-mm" style="font-size:11px;">Media Manager</span></h4>
+        <ul>
+          <li><strong>Quarterly campaign brief</strong> — eCommerce Manager shares the upcoming quarter's campaign calendar and mechanics with DMM (for creative production lead time) and Media Manager (via a call, to align on paid media asset requirements)</li>
+          <li><strong>Ongoing: creative readiness</strong> — if creative isn't ready in time for platform setup, eCommerce Manager flags to DMM and Brand Manager immediately</li>
+        </ul>
+      </div>
+
+      <div class="collab-item">
+        <h4><span class="badge badge-bm" style="font-size:11px;">Brand Manager</span> &harr; <span class="badge badge-cc" style="font-size:11px;">Content Creator</span> + <span class="badge badge-vid" style="font-size:11px;">Videographer</span></h4>
+        <ul>
+          <li><strong>Per campaign / monthly</strong> — Brand Manager issues production brief with visual references, creative direction, specs, and deadlines</li>
+          <li><strong>Milestone check-ins</strong> — Brand Manager reviews at concept/storyboard, rough cut, and final stages — not just at the end</li>
+          <li><strong>Weekly team check-in</strong> — Brand Manager runs a standing team check-in to surface blockers and maintain alignment</li>
+        </ul>
+      </div>
+
+      <div class="collab-item">
+        <h4><span class="badge badge-ecm" style="font-size:11px;">eCommerce Manager</span> &harr; <span class="badge badge-ece" style="font-size:11px;">eCommerce Executive</span></h4>
+        <ul>
+          <li><strong>Campaign setup</strong> — eCommerce Manager leads platform setup (pricing, mechanics, pages); eCommerce Executive assists on request and owns live streaming execution</li>
+          <li><strong>Daily platform monitoring</strong> — eCommerce Manager monitors listing health, pricing, and ad budget; eCommerce Executive flags any issues they spot in-platform</li>
+          <li><strong>Live streaming</strong> — eCommerce Executive runs sessions independently; eCommerce Manager tracks GMV performance</li>
+        </ul>
+      </div>
+
+      <div class="collab-item">
+        <h4><span class="badge badge-dmm" style="font-size:11px;">DMM</span> &harr; <span class="badge badge-cc" style="font-size:11px;">Content Creator</span> + <span class="badge badge-vid" style="font-size:11px;">Videographer</span></h4>
+        <ul>
+          <li><strong>Monthly EGC production</strong> — DMM produces 9 EGC videos per month in collaboration with Brand Manager and Content Creator</li>
+          <li><strong>UGC / KOL videos</strong> — DMM works with eCommerce Executive to approve KOLs and reviews submitted UGC (3 videos/month)</li>
+          <li><strong>Motion graphics</strong> — DMM discusses execution needs with Videographer for any animated or motion content</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════
+       SECTION 4: MONTHLY CAMPAIGN EXAMPLE
+  ═══════════════════════════════════════════════ -->
+  <h2 class="section-title">Monthly Campaign: Step by Step</h2>
+  <p class="section-sub">A concrete walkthrough of how a monthly cross-channel promotional campaign runs — from first idea to post-campaign review. Campaign launches in Week 1 of Month X; all preparation happens in Month X-1.</p>
+
+  <div class="card" style="padding: 0 0 0 0; overflow: hidden;">
+    <div style="padding: 16px 20px 12px; background: #FAFAFA; border-bottom: 1px solid var(--border); font-size: 12.5px; color: var(--muted);">
+      <span class="flag flag-gate">APPROVAL GATE</span>&ensp;marks a step that cannot be skipped — nothing advances without this sign-off.&ensp;
+      <span class="flag flag-tool">TOOL</span>&ensp;marks the system used for that step.&ensp;
+      <span class="flag flag-deadline">DEADLINE</span>&ensp;marks a hard timing constraint.
+    </div>
+    <div class="timeline">
+
+      <!-- PHASE 1 -->
+      <div class="phase-block open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-week">Month X-1 · Week 1–2</span>
+          <span class="phase-name">Stage 1–2: Strategise &amp; Plan</span>
+          <span class="phase-toggle">▶</span>
+        </div>
+        <div class="phase-body">
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-s">CEO</span></span>
+            <span class="step-text"><strong>Shares monthly business priorities and revenue targets</strong> with Brand Manager — the foundation every campaign is built from.</span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Conceptualises the campaign</strong> — defines the creative concept, key messaging, hero visual direction, and the story the campaign will tell. Aligns with CEO.
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Campaign concept must be CEO-aligned before the brief goes out.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Issues campaign brief to all teams</strong> — concept, timeline, deliverables, brand standards, and success criteria.
+              <span class="note"><span class="flag flag-deadline">DEADLINE</span> Brief must be issued at least 2 weeks before the earliest asset deadline.</span>
+              <span class="note"><span class="flag flag-tool">TOOL</span> ClickUp or Google Drive</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Submits campaign calendar and mechanics for Brand Manager approval</strong> — platform registrations (Shopify, TikTok Shop, Shopee, Lazada), discount mechanics, GWP sourcing flag.
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Brand Manager approval required before any platform registration or setup proceeds. Target: 1 week turnaround.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Briefs Digital Marketing Manager</strong> on campaign creative needs (for production lead time) and <strong>calls Media Manager</strong> to align on required paid media assets.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Plans the monthly EDM lineup</strong> — determines which sends (per tier A/B/C/D), which segments, and which send dates align with the campaign.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-block open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-week">Month X-1 · Week 2–3</span>
+          <span class="phase-name">Stage 3: Create</span>
+          <span class="phase-toggle">▶</span>
+        </div>
+        <div class="phase-body">
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-cc">Content Creator</span></span>
+            <span class="step-text"><strong>Produces social content per brief</strong> — reels, carousels, stories, TikToks — with visual references and caption direction from Brand Manager. Brand Manager checks in at concept and draft stage.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-vid">Videographer</span></span>
+            <span class="step-text"><strong>Shoots and edits video assets per brief</strong> — brand film, product video, motion graphics. Milestone reviews at storyboard and rough cut stage with Brand Manager.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Produces static ad creative batch</strong> — 30 assets total (10 per funnel stage: TOFU, MOFU, BOFU) as part of the hyper-personalised ad strategy.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Produces EGC videos</strong> (9/month, in collaboration with Brand Manager &amp; Content Creator) and <strong>UGC videos</strong> (3/month, via eCommerce Executive and shortlisted KOLs). Also designs <strong>EDM drafts in Klaviyo</strong> and the <strong>Shopify homepage banner</strong>.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Submits EDM lineup, segmentation rules, and drafts to Brand Manager for approval.</strong>
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Brand Manager must approve before any EDM is scheduled or sent.</span>
+              <span class="note"><span class="flag flag-deadline">DEADLINE</span> Must be submitted and approved by 3rd week of Month X-1.</span>
+              <span class="note"><span class="flag flag-tool">TOOL</span> Google Doc → Google Drive folder</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Reviews ALL submitted assets</strong> — checks creative quality, brand guideline compliance, and strategic alignment with the campaign concept. Approves or returns with specific feedback.
+              <span class="note">2 business day turnaround per review batch. No asset goes live without Brand Manager clearance.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Submits platform promo registrations</strong> (after Brand Manager approval on calendar) and begins configuring campaign mechanics on each platform — pricing, bundles, campaign pages.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase-block open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-week">Month X-1 · Week 4</span>
+          <span class="phase-name">Pre-Launch: Final Setup</span>
+          <span class="phase-toggle">▶</span>
+        </div>
+        <div class="phase-body">
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Submits Shopify banner for Brand Manager approval via ClickUp.</strong>
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> ClickUp card created, Brand Manager (Head of Marketing) must approve before publishing.</span>
+              <span class="note"><span class="flag flag-deadline">DEADLINE</span> Submitted at least 3 days before go-live. 1 business day turnaround.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Approves final ad creative and uploads to Google Shared Drive</strong> — static assets (30) handed off to Media Manager for paid ads. Soft approval on DMM's video creative batch.
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Media Manager cannot upload creative to platforms without Brand Manager clearance.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-mm">Media Manager</span></span>
+            <span class="step-text"><strong>Sets up paid ad campaigns</strong> in Meta Ads Manager, Google Ads, and TikTok Ads using the approved creative batch. Configures targeting, budgets, and scheduling for campaign go-live.
+              <span class="note"><span class="flag flag-tool">TOOL</span> Meta / Google / TikTok Ads · Google Data Studio for reporting</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Schedules approved EDMs in Klaviyo</strong> — per segmentation rules and planned send dates. Sends test sends to confirm rendering, links, and personalisation before the live send.
+              <span class="note"><span class="flag flag-tool">TOOL</span> Klaviyo</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Completes and QAs platform campaign setup</strong> across Shopify, TikTok Shop, Shopee, and Lazada — pricing, discounts, bundles, and campaign pages confirmed accurate.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ece">eCommerce Executive</span></span>
+            <span class="step-text"><strong>Confirms live streaming schedule</strong> and briefs KOLs on posting dates, content requirements, and campaign messaging ahead of launch week.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 4 -->
+      <div class="phase-block open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-week">Month X · Week 1</span>
+          <span class="phase-name">Stage 4: Execute — Launch Week</span>
+          <span class="phase-toggle">▶</span>
+        </div>
+        <div class="phase-body">
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Shopify homepage banner goes live</strong> — published and QA'd (desktop + mobile rendering, links, load time).</span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>EDMs send per schedule</strong> to correct segments in Klaviyo. Social content publishes per the content calendar across Instagram and TikTok.</span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-mm">Media Manager</span></span>
+            <span class="step-text"><strong>Paid ads activate</strong> across Meta, Google, and TikTok. Media Manager monitors daily — spend pacing, delivery, early performance signals.</span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ece">eCommerce Executive</span></span>
+            <span class="step-text"><strong>Live streaming sessions run</strong> on TikTok Shop, Shopee Live, and Lazada Live. KOLs post their campaign content.</span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Monitors platforms throughout launch week</strong> — listing health, price accuracy, promo mechanics, and ad budget pacing. Flags and resolves issues immediately.
+              <span class="note">Daily check: sufficient budget for GMV Products and GMV Live ads to run continuously.</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 5 -->
+      <div class="phase-block open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-week">Month X · Week 2–3</span>
+          <span class="phase-name">During Campaign: Monitor &amp; Optimise</span>
+          <span class="phase-toggle">▶</span>
+        </div>
+        <div class="phase-body">
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span> <span class="badge badge-mm" style="margin-left:4px;">Media Manager</span></span>
+            <span class="step-text"><strong>Weekly performance sync</strong> — DMM and Media Manager review Google Data Studio together. Discuss what's working, what's underperforming, what needs creative rotation or optimisation.
+              <span class="note"><span class="flag flag-tool">TOOL</span> Google Data Studio · Scheduled weekly meeting</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-mm">Media Manager</span></span>
+            <span class="step-text"><strong>Adjusts ad spend and targeting</strong> based on performance signals. Any budget changes require Brand Manager approval before execution.
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Budget changes → Brand Manager must approve before Media Manager acts.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Monitors EDM and social performance</strong> in Klaviyo and platform analytics. Flags notable drops or spikes to Brand Manager with proposed fixes.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Tracks platform GMV, conversion, and campaign uplift</strong> daily. Continues monitoring listing health and promo mechanics throughout the campaign window.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 6 -->
+      <div class="phase-block open">
+        <div class="phase-header" onclick="togglePhase(this)">
+          <span class="phase-week">Post-Campaign</span>
+          <span class="phase-name">Stage 5: Measure — Review &amp; Learn</span>
+          <span class="phase-toggle">▶</span>
+        </div>
+        <div class="phase-body">
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-mm">Media Manager</span></span>
+            <span class="step-text"><strong>Produces ad performance report</strong> — impressions, clicks, ROAS, total spend breakdown by platform and funnel stage.
+              <span class="note"><span class="flag flag-tool">TOOL</span> Google Data Studio</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-dmm">Digital Marketing Manager</span></span>
+            <span class="step-text"><strong>Reports EDM, social, and website performance</strong> — open rates, click rates, revenue attribution (Klaviyo), social engagement, website traffic uplift.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-ecm">eCommerce Manager</span></span>
+            <span class="step-text"><strong>Reports platform performance</strong> — GMV by platform, campaign uplift vs. baseline, conversion rate, live streaming contribution.
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
+            <span class="step-text"><strong>Synthesises all reports into a post-campaign review</strong> — what worked, what didn't, why, and specific recommendations for the next cycle.
+              <span class="note"><span class="flag flag-deadline">DEADLINE</span> Completed and shared with CEO within 1 week of campaign end.</span>
+            </span>
+          </div>
+          <div class="step-row">
+            <span class="step-badge"><span class="badge badge-s">CEO</span></span>
+            <span class="step-text"><strong>Reviews post-campaign summary with Brand Manager</strong>. Insights and decisions feed directly into the next campaign's Strategise stage — closing the loop.
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Role docs links -->
+  <div class="card" style="margin-top: 24px;">
+    <h3 style="margin: 0 0 12px; font-size: 15px; color: var(--navy);">Role Process Documentation</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 13.5px;">
+      <a href="Brand_Manager_Process_Doc.html" style="color: var(--red); font-weight: 600; text-decoration: none;">Brand Manager ↗</a>
+      <span style="color: var(--border);">|</span>
+      <a href="Digital_Marketing_Manager_Process_Doc.html" style="color: var(--red); font-weight: 600; text-decoration: none;">Digital Marketing Manager ↗</a>
+      <span style="color: var(--border);">|</span>
+      <a href="eCommerce_Manager_Process_Doc.html" style="color: var(--red); font-weight: 600; text-decoration: none;">eCommerce Manager ↗</a>
+      <span style="color: var(--border);">|</span>
+      <a href="eCommerce_Executive_Process_Doc.html" style="color: var(--red); font-weight: 600; text-decoration: none;">eCommerce Executive ↗</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>How We Work — Process Framework &mdash; Shortcutx</footer>
+
+<script>
+  function togglePhase(headerEl) {
+    headerEl.parentElement.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Team Wide Process Documentation</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --blue: #A6373C;
+    --blue-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+  header {
+    background: var(--navy);
+    color: #fff;
+    padding: 40px 32px 36px;
+    border-top: 6px solid var(--blue);
+    text-align: center;
+  }
+  header h1 { margin: 0 0 8px; font-size: 28px; letter-spacing: -0.02em; }
+  header p { margin: 0; font-size: 14px; color: #E8D0D0; max-width: 560px; margin: 0 auto; line-height: 1.5; }
+  .grid {
+    max-width: 1080px;
+    margin: 36px auto 60px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+    gap: 24px;
+  }
+  .role-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: box-shadow .15s ease, transform .15s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .role-card:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,.08);
+    transform: translateY(-2px);
+  }
+  .role-card .card-header {
+    background: var(--navy);
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .role-card .icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .role-card .icon-circle svg { width: 24px; height: 24px; }
+  .role-card .card-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .role-card .card-header .subtitle {
+    font-size: 12.5px;
+    color: #E8D0D0;
+    margin-top: 4px;
+  }
+  .role-card .card-body {
+    padding: 20px 24px 8px;
+    flex: 1;
+  }
+  .role-card .card-body p {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .section-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .section-list li {
+    font-size: 12px;
+    background: var(--blue-light);
+    color: var(--text);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .role-card .card-footer {
+    padding: 12px 24px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .role-card .card-footer a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue);
+    text-decoration: none;
+  }
+  .role-card .card-footer a:hover { text-decoration: underline; }
+  .role-card .card-footer a svg { width: 16px; height: 16px; }
+  .role-card.coming-soon {
+    opacity: 0.72;
+  }
+  .role-card.coming-soon:hover {
+    box-shadow: none;
+    transform: none;
+  }
+  .role-card.coming-soon .card-header {
+    background: #3A3A3A;
+  }
+  .role-card.coming-soon .icon-circle {
+    background: #5A5A5A;
+  }
+  .role-card.coming-soon .card-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .soon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--muted);
+    background: #F0EEEC;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+  }
+  .soon-badge::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #C8B8B4;
+  }
+  .framework-banner {
+    max-width: 1080px;
+    margin: 0 auto 0;
+    padding: 0 24px 32px;
+  }
+  .framework-banner a {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--navy);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-decoration: none;
+    color: #fff;
+    transition: background .15s;
+  }
+  .framework-banner a:hover { background: #2A2A2A; }
+  .framework-banner .fw-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .framework-banner .fw-icon svg { width: 22px; height: 22px; }
+  .framework-banner .fw-text h3 { margin: 0 0 3px; font-size: 16px; color: #fff; }
+  .framework-banner .fw-text p { margin: 0; font-size: 13px; color: #C8BFBF; }
+  .framework-banner .fw-arrow { margin-left: auto; font-size: 20px; color: var(--blue); }
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 0 0 40px; }
+  @media (max-width: 560px) {
+    .grid { grid-template-columns: 1fr; }
+    header { padding: 28px 20px 24px; }
+    header h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Team Wide Process Documentation</h1>
+  <p>Process documentation for every role on the team. Each document covers the full scope of responsibilities with detailed steps, RACI matrices, process flow diagrams, metrics, and exception handling.</p>
+</header>
+
+<div class="grid">
+
+  <!-- Brand Manager -->
+  <div class="role-card">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z"/></svg>
+      </div>
+      <div>
+        <h2>Brand Manager</h2>
+        <div class="subtitle">Shortcutx &middot; Tradishot &middot; Solulu Beauty &middot; Omiee</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Oversees all four brands — leading creative direction, upholding brand identity, overseeing asset production, curating social presence, tracking trends and competitors, leading the creative team, and aligning all business units under one cohesive brand vision with the CEO.</p>
+      <ul class="section-list">
+        <li>Brand Identity &amp; Guidelines</li>
+        <li>Creative Direction &amp; Campaigns</li>
+        <li>Marketing Asset Production</li>
+        <li>Social Media Presence</li>
+        <li>Trend &amp; Competitor Intelligence</li>
+        <li>Team Leadership</li>
+        <li>Strategic Alignment &amp; CEO Collaboration</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <a href="Brand_Manager_Process_Doc.html">Open process documentation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+
+  <!-- Digital Marketing Manager -->
+  <div class="role-card">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+      </div>
+      <div>
+        <h2>Digital Marketing Manager</h2>
+        <div class="subtitle">Cross-brand digital &amp; performance</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Owns the digital marketing engine across brands — managing the Shopify storefront, planning and executing EDM campaigns in Klaviyo, producing always-on ad creative, running eCommerce campaigns, managing social media, coordinating KOL partnerships, and supporting retail partners.</p>
+      <ul class="section-list">
+        <li>Website (Shopify)</li>
+        <li>EDMs</li>
+        <li>Ads (Always-On)</li>
+        <li>eCommerce Campaigns</li>
+        <li>Social Media</li>
+        <li>KOL Management</li>
+        <li>Retailers</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <a href="Digital_Marketing_Manager_Process_Doc.html">Open process documentation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+
+  <!-- eCommerce Manager -->
+  <div class="role-card">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+      </div>
+      <div>
+        <h2>eCommerce Manager</h2>
+        <div class="subtitle">Marketplace &amp; platform operations</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Manages the end-to-end eCommerce operation across marketplace platforms — owning the campaign calendar, monitoring and optimising platform performance, ensuring price accuracy and promo registrations, and tracking performance with regular reporting.</p>
+      <ul class="section-list">
+        <li>Campaign Calendar &amp; Platform Ops</li>
+        <li>Platform Monitoring &amp; Optimization</li>
+        <li>Price Accuracy &amp; Promo/Live Registrations</li>
+        <li>Performance Tracking &amp; Reporting</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <a href="eCommerce_Manager_Process_Doc.html">Open process documentation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+
+  <!-- eCommerce Executive -->
+  <div class="role-card">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <h2>eCommerce Executive</h2>
+        <div class="subtitle">Live streaming, KOLs &amp; eComm support</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Supports the eCommerce function hands-on — managing live streaming sessions across platforms, coordinating KOL partnerships and content delivery, and providing day-to-day operational support for eCommerce activities.</p>
+      <ul class="section-list">
+        <li>Live Streaming Management</li>
+        <li>KOL Management</li>
+        <li>eCommerce Support</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <a href="eCommerce_Executive_Process_Doc.html">Open process documentation <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+
+
+  <!-- Videographer -->
+  <div class="role-card coming-soon">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <div>
+        <h2>Videographer</h2>
+        <div class="subtitle">Video production &amp; post-production</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Responsible for end-to-end video production across all four brands — shooting, editing, and delivering brand films, product videos, social reels, ad creatives, and live streaming support.</p>
+      <ul class="section-list">
+        <li>Pre-Production &amp; Briefing</li>
+        <li>Shooting &amp; On-Set Production</li>
+        <li>Editing &amp; Post-Production</li>
+        <li>Asset Delivery &amp; Management</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <span class="soon-badge">Coming soon</span>
+    </div>
+  </div>
+
+  <!-- Media Manager -->
+  <div class="role-card coming-soon">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      </div>
+      <div>
+        <h2>Media Manager</h2>
+        <div class="subtitle">Paid media, buying &amp; performance reporting</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Owns paid media strategy and execution across Meta, Google, and TikTok — managing media buying, budget allocation, campaign setup, performance reporting via Google Data Studio, and weekly creative performance syncs.</p>
+      <ul class="section-list">
+        <li>Media Strategy &amp; Planning</li>
+        <li>Campaign Setup &amp; Buying</li>
+        <li>Budget Management</li>
+        <li>Performance Reporting</li>
+        <li>Creative Performance Sync</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <span class="soon-badge">Coming soon</span>
+    </div>
+  </div>
+
+  <!-- Content Creator -->
+  <div class="role-card coming-soon">
+    <div class="card-header">
+      <div class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      </div>
+      <div>
+        <h2>Content Creator</h2>
+        <div class="subtitle">EGC, social content &amp; creative production</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p>Creates engaging content across all four brands — producing EGC videos, social media content, and supporting ad creative production in collaboration with the Brand Manager and Digital Marketing Manager.</p>
+      <ul class="section-list">
+        <li>EGC Video Production</li>
+        <li>Social Media Content</li>
+        <li>Ad Creative Support</li>
+        <li>Content Planning &amp; Briefing</li>
+      </ul>
+    </div>
+    <div class="card-footer">
+      <span class="soon-badge">Coming soon</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="framework-banner">
+  <a href="Process_Framework.html">
+    <div class="fw-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M3 12h3m12 0h3M12 3v3m0 12v3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1"/></svg>
+    </div>
+    <div class="fw-text">
+      <h3>How We Work — Process Framework</h3>
+      <p>The 5-stage lifecycle, key approval gates, cross-role collaboration flows, and a month-by-month campaign walkthrough</p>
+    </div>
+    <span class="fw-arrow">→</span>
+  </a>
+</div>
+
+<footer>Team Wide Process Documentation &mdash; Shortcutx</footer>
+
+</body>
+</html>

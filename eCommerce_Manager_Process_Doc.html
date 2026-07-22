@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>eCommerce Manager — Process Documentation</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --blue: #A6373C;
+    --blue-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+    --confirm-bg: #FFF7E6;
+    --confirm-border: #F0B429;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 32px 22px;
+    border-top: 6px solid var(--blue);
+  }
+  header.top h1 { margin: 0 0 6px; font-size: 24px; }
+  header.top .meta { font-size: 13px; color: #E8D0D0; }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.side {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .section-tab {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .section-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .section-tab.disabled { color: var(--muted); cursor: not-allowed; opacity: 0.6; }
+  .jumplist { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; display: none; }
+  .jumplist.visible { display: block; }
+  .jumplist a {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .jumplist a:hover { background: var(--blue-light); color: var(--blue); }
+  main {
+    flex: 1;
+    padding: 24px 32px 80px;
+    min-width: 0;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 8px;
+  }
+  .card h3 { color: var(--blue); font-size: 15px; margin: 18px 0 6px; }
+  .card p { line-height: 1.55; font-size: 14px; margin: 0 0 10px; }
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  ul.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ul.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+  ol.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ol.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+  .scope-cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  .scope-cols > div { flex: 1; min-width: 240px; }
+  .scope-cols h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 13.5px;
+  }
+  table.data th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+  }
+  table.data td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: var(--blue-light); }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--blue-light);
+  }
+  .step-header:hover { background: #E8EFF8; }
+  .step-header .title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .step-header .chev { font-size: 13px; color: var(--muted); transition: transform .15s ease; }
+  .step.open .step-header .chev { transform: rotate(90deg); }
+  .step-body { display: none; padding: 14px 18px 18px; font-size: 14px; }
+  .step.open .step-body { display: block; }
+  .field { margin-bottom: 8px; }
+  .field .label { font-weight: 600; color: var(--navy); }
+  .quote {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-light);
+    padding: 12px 16px;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 8px 0 16px;
+    border-radius: 0 6px 6px 0;
+  }
+  .confirm-box {
+    background: var(--confirm-bg);
+    border: 1px solid var(--confirm-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .confirm-box h2 { border-bottom: none; color: #8A6300; }
+  .confirm-box ul.plain li { color: #6B4E00; }
+  a.ext-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+  a.ext-link:hover { text-decoration: underline; }
+  .links-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+  .links-list li { margin-bottom: 8px; font-size: 14px; }
+  .expand-all {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .expand-all:hover { background: var(--blue-light); }
+  footer.doc-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
+  .diagram-wrap { overflow-x: auto; }
+  .diagram-wrap svg { max-width: 640px; width: 100%; height: auto; display: block; margin: 0 auto; }
+  .coming-soon { font-size: 13px; color: var(--muted); text-align: center; padding: 40px 20px; }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.side { width: 100%; position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html" style="display:inline-block; font-size:12.5px; color:#E8D0D0; text-decoration:none; margin-bottom:10px;">&larr; All roles</a>
+  <h1>eCommerce Manager — Process Documentation</h1>
+  <div class="meta">Owner: eCommerce Manager &nbsp;|&nbsp; Last Updated: 21 July 2026 &nbsp;|&nbsp; Review Cadence: Quarterly</div>
+</header>
+
+<div class="layout">
+  <nav class="side">
+    <button class="section-tab active" data-tab="section1" onclick="showTab('section1', this)">Section 1: Campaign Calendar &amp; Platform Ops</button>
+    <div class="jumplist visible" id="jump-section1">
+      <a href="#s1-purpose">Purpose</a>
+      <a href="#s1-scope">Scope</a>
+      <a href="#s1-raci">RACI Matrix</a>
+      <a href="#s1-flow">Process Flow</a>
+      <a href="#s1-diagram">Process Flow Diagram</a>
+      <a href="#s1-steps">Detailed Steps</a>
+      <a href="#s1-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s1-metrics">Metrics</a>
+      <a href="#s1-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section2" onclick="showTab('section2', this)">Section 2: Platform Monitoring &amp; Optimization</button>
+    <div class="jumplist" id="jump-section2">
+      <a href="#s2-purpose">Purpose</a>
+      <a href="#s2-scope">Scope</a>
+      <a href="#s2-raci">RACI Matrix</a>
+      <a href="#s2-flow">Process Flow</a>
+      <a href="#s2-diagram">Process Flow Diagram</a>
+      <a href="#s2-steps">Detailed Steps</a>
+      <a href="#s2-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s2-metrics">Metrics</a>
+      <a href="#s2-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section3" onclick="showTab('section3', this)">Section 3: Price Accuracy &amp; Promo/Live Registrations</button>
+    <div class="jumplist" id="jump-section3">
+      <a href="#s3-purpose">Purpose</a>
+      <a href="#s3-scope">Scope</a>
+      <a href="#s3-raci">RACI Matrix</a>
+      <a href="#s3-flow">Process Flow</a>
+      <a href="#s3-diagram">Process Flow Diagram</a>
+      <a href="#s3-steps">Detailed Steps</a>
+      <a href="#s3-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s3-metrics">Metrics</a>
+      <a href="#s3-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section4" onclick="showTab('section4', this)">Section 4: Performance Tracking &amp; Reporting</button>
+    <div class="jumplist" id="jump-section4">
+      <a href="#s4-purpose">Purpose</a>
+      <a href="#s4-scope">Scope</a>
+      <a href="#s4-raci">RACI Matrix</a>
+      <a href="#s4-flow">Process Flow</a>
+      <a href="#s4-diagram">Process Flow Diagram</a>
+      <a href="#s4-steps">Detailed Steps</a>
+      <a href="#s4-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s4-metrics">Metrics</a>
+      <a href="#s4-related">Related Documents</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ================= SECTION 1: CAMPAIGN CALENDAR & PLATFORM OPS ================= -->
+    <div class="tab-content active" id="section1">
+
+      <div class="card" id="s1-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure eCommerce sales campaigns across Shopify, TikTok Shop, Shopee, and Lazada are pre-planned one quarter ahead — covering all 3 months of the upcoming quarter, so GWP (gift-with-purchase) sourcing has sufficient runway — and are registered, given accurate discount/bundle mechanics, and set up on each platform in close collaboration with the eCommerce Executive, with Head of Marketing approval on the calendar and mechanics before anything goes live.</p>
+      </div>
+
+      <div class="card" id="s1-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Planning the eCommerce campaign calendar one quarter ahead — covering all 3 months of the upcoming quarter — across Shopify (own site), TikTok Shop, Shopee, and Lazada, to ensure sufficient runway for GWP (gift-with-purchase) sourcing</li>
+              <li>Selecting which platform-run campaigns to participate in (6.6, 9.9, 11.11, 12.12, and platform-specific events) and submitting registration directly via each platform's seller center</li>
+              <li>Setting campaign mechanics: discount percentages, bundle offers, and voucher structures</li>
+              <li>Submitting the campaign calendar and mechanics to the Head of Marketing for approval</li>
+              <li>Briefing the Digital Marketing Manager (creative) and the in-house Media Manager (paid media) on upcoming campaigns, including a call with the Media Manager to align on required assets</li>
+              <li>Setting up and launching campaigns on each platform, working hand-in-hand with the eCommerce Executive — the eCommerce Manager holds ultimate accountability for accurate, on-time setup</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Producing campaign creative (ad video/static, on-platform banners and assets) — owned by the Digital Marketing Manager (Process Documentation, Section 4: eCommerce Campaigns)</li>
+              <li>The eCommerce Executive's own day-to-day platform execution outside campaigns (e.g. listing/catalog maintenance) — covered under the eCommerce Executive's own process documentation</li>
+              <li>Live streaming and KOL management — covered under the eCommerce Executive's own process documentation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Plan Campaign Calendar</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>Digital Marketing Manager (creative needs)</td><td>—</td></tr>
+          <tr><td>2. Register for Platform Campaigns</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>Head of Marketing</td></tr>
+          <tr><td>3. Set Campaign Mechanics</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Brief DMM &amp; Media Manager</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>Digital Marketing Manager, Media Manager</td></tr>
+          <tr><td>5. Submit for Approval</td><td>eCommerce Manager</td><td>Head of Marketing</td><td>Media Manager, Warehouse &amp; Production, CEO</td><td>—</td></tr>
+          <tr><td>6. Set Up &amp; Launch on Platforms</td><td>eCommerce Manager, eCommerce Executive (on request)</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Plan the eCommerce campaign calendar one quarter ahead — covering all 3 months of the upcoming quarter — across Shopify, TikTok Shop, Shopee, and Lazada, factoring in platform-run campaign windows and flagging GWP sourcing needs early.</li>
+          <li>Decide which platform-run campaigns to participate in, and submit registration directly via each platform's seller center.</li>
+          <li>Set campaign mechanics — discount percentages, bundles, and vouchers — for each campaign.</li>
+          <li>Share the draft calendar and mechanics with the Digital Marketing Manager, so campaign creative production can begin against the required lead time, and brief the Media Manager on upcoming campaigns via a call to align on required paid media assets.</li>
+          <li>Submit the calendar and mechanics to the Head of Marketing for approval.</li>
+          <li>If not approved, revise and resubmit.</li>
+          <li>Once approved, and once creative is ready, set up and launch the campaign on each platform, working hand-in-hand with the eCommerce Executive.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s1-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 640" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Campaign Calendar &amp; Platform Ops process flow</title>
+<desc>Flowchart from planning the campaign calendar, through platform registration, setting mechanics, briefing the Digital Marketing Manager, Head of Marketing approval (with a revise-and-resubmit loop if not approved), to setting up and launching campaigns on all platforms.</desc>
+<defs>
+  <marker id="arrowEcm1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .ecm1box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .ecm1dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .ecm1end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .ecm1title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .ecm1sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .ecm1lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .ecm1edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowEcm1); }
+  .ecm1dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowEcm1); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="640"/>
+
+<rect class="ecm1box" x="220" y="20" width="340" height="52" rx="10"/>
+<text x="390" y="42" text-anchor="middle" class="ecm1title">1. Plan Campaign Calendar</text>
+<text x="390" y="60" text-anchor="middle" class="ecm1sub">Shopify, TikTok Shop, Shopee, Lazada</text>
+<path class="ecm1edge" d="M390,72 L390,98"/>
+
+<rect class="ecm1box" x="220" y="98" width="340" height="52" rx="10"/>
+<text x="390" y="120" text-anchor="middle" class="ecm1title">2. Register for Platform Campaigns</text>
+<text x="390" y="138" text-anchor="middle" class="ecm1sub">Direct via each platform's seller center</text>
+<path class="ecm1edge" d="M390,150 L390,176"/>
+
+<rect class="ecm1box" x="220" y="176" width="340" height="52" rx="10"/>
+<text x="390" y="198" text-anchor="middle" class="ecm1title">3. Set Campaign Mechanics</text>
+<text x="390" y="216" text-anchor="middle" class="ecm1sub">Discounts, bundles, vouchers</text>
+<path class="ecm1edge" d="M390,228 L390,254"/>
+
+<rect class="ecm1box" x="220" y="254" width="340" height="52" rx="10"/>
+<text x="390" y="276" text-anchor="middle" class="ecm1title">4. Brief DMM &amp; Media Manager</text>
+<text x="390" y="294" text-anchor="middle" class="ecm1sub">Call w/ Media Manager on paid assets</text>
+<path class="ecm1edge" d="M390,306 L390,332"/>
+
+<rect class="ecm1dbox" x="220" y="332" width="340" height="52" rx="10"/>
+<text x="390" y="354" text-anchor="middle" class="ecm1title">5. Submit for Head of Marketing Approval</text>
+<text x="390" y="372" text-anchor="middle" class="ecm1sub">Approved?</text>
+<path class="ecm1edge" d="M390,384 L390,410"/>
+<text x="430" y="402" text-anchor="start" class="ecm1lbl">Yes</text>
+
+<path class="ecm1dedge" d="M560,358 L660,358 L660,220 L560,201"/>
+<text x="668" y="290" text-anchor="start" class="ecm1lbl" transform="rotate(90 668,290)">No — revise &amp; resubmit</text>
+
+<rect class="ecm1box" x="180" y="410" width="420" height="60" rx="10"/>
+<text x="390" y="434" text-anchor="middle" class="ecm1title">6. Set Up &amp; Launch on Platforms</text>
+<text x="390" y="452" text-anchor="middle" class="ecm1sub">eCommerce Manager + eCommerce Executive (hand-in-hand)</text>
+<path class="ecm1edge" d="M390,470 L390,496"/>
+
+<rect class="ecm1end" x="240" y="496" width="300" height="52" rx="10"/>
+<text x="390" y="518" text-anchor="middle" class="ecm1title">Campaigns Live &amp; Verified</text>
+<text x="390" y="536" text-anchor="middle" class="ecm1sub">Accurate, on time, across all platforms</text>
+
+<text x="390" y="605" text-anchor="middle" class="ecm1lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s1-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section1', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Plan Campaign Calendar</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> One quarter ahead of the upcoming quarter — all 3 months of the upcoming quarter's calendar must be planned during the current quarter, to give GWP (gift-with-purchase) sourcing sufficient runway</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Map out the campaign calendar across Shopify (own site), TikTok Shop, Shopee, and Lazada, covering all 3 months of the upcoming quarter.</li>
+                <li>Factor in major platform-run campaign windows (6.6, 9.9, 11.11, 12.12, and platform-specific events) alongside internally-driven promos.</li>
+                <li>Flag any campaigns requiring GWP (gift-with-purchase) early, so sourcing, design, production, and delivery have sufficient lead time.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A draft campaign calendar covering all 3 months of the upcoming quarter across all platforms, with GWP requirements flagged early.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Register for Platform Campaigns</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Per each platform's registration deadline</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Decide which platform-run campaigns to participate in.</li>
+                <li>Submit registration directly via each platform's seller center (TikTok Shop, Shopee, Lazada).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Confirmed campaign participation across platforms.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Set Campaign Mechanics</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Following campaign calendar planning</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Define discount percentages, bundle offers, and voucher structures for each campaign.</li>
+                <li>Ensure mechanics align with margin and inventory considerations.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Defined campaign mechanics, ready for approval and creative briefing.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Brief Digital Marketing Manager &amp; Media Manager</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> As soon as the calendar and mechanics are drafted, respecting the Digital Marketing Manager's required lead time (4-6 weeks for major campaigns) and giving the Media Manager enough runway to plan paid media</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Share the campaign calendar, dates, and mechanics with the Digital Marketing Manager, so campaign creative can be produced to the required lead time.</li>
+                <li>Brief the Media Manager (in-house) on upcoming campaigns and set up a call to discuss required paid media assets and boosting/dark-ad needs.</li>
+                <li>Confirm both the Digital Marketing Manager and Media Manager have what's needed to proceed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The Digital Marketing Manager and Media Manager briefed and able to begin creative and paid media planning.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Submit for Approval</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Once the calendar and mechanics are finalized; approval targeted within 1 week of submission</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Present the campaign calendar and mechanics to the Head of Marketing for approval, consulting with the Media Manager, Warehouse &amp; Production (for stock issues), and CEO.</li>
+                <li>Target turnaround is 1 week from submission to approval.</li>
+                <li>Revise and resubmit if not approved.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An approved campaign calendar and mechanics, cleared within 1 week.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Set Up &amp; Launch on Platforms</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager, working hand-in-hand with the eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Once mechanics are approved and creative is ready</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Configure the campaign on each platform (Shopify, TikTok Shop, Shopee, Lazada) — pricing, discounts, bundles, and campaign pages/banners.</li>
+                <li>Instruct and request help from the eCommerce Executive as needed, providing a demonstration of what's required, including a call to walk through it.</li>
+                <li>All pricing setting, setup, and final output remain the eCommerce Manager's responsibility.</li>
+                <li>Verify the campaign is live and configured correctly on each platform before the campaign start time.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Campaigns live, accurately configured, and on time across all platforms.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A platform registration deadline is missed</td><td>Reach out to the platform's Account Manager to request an extension; inform the Head of Marketing for mitigation, equipped with a proposed solution.</td></tr>
+          <tr><td>Campaign mechanics need to change after Head of Marketing approval (e.g. competitor move, stock issue)</td><td>Resubmit for approval before updating the planned or live mechanics.</td></tr>
+          <tr><td>Creative isn't ready in time for platform setup</td><td>Flag to the Digital Marketing Manager and Head of Marketing; consider a phased launch (mechanics live with placeholder assets, creative updated once ready).</td></tr>
+          <tr><td>A discrepancy is found between planned and live mechanics on a platform</td><td>Correct immediately and verify pricing/discount accuracy across all platforms.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Platform registrations submitted on time</td><td>100%, before each platform's deadline</td><td>Registration date vs. platform deadline</td></tr>
+          <tr><td>Campaign calendar approval turnaround</td><td>1 week from submission to approval</td><td>Time from submission to Head of Marketing approval</td></tr>
+          <tr><td>Campaign setup accuracy</td><td>100% — no pricing/mechanics errors at launch</td><td>Count of setup errors found post-launch</td></tr>
+          <tr><td>Campaigns launched on time</td><td>100%, live by scheduled campaign start time</td><td>Launch time vs. scheduled start</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>eCommerce campaign calendar <span class="note" style="margin:0;">[link to be added]</span></li>
+          <li>Platform seller center access — TikTok Shop, Shopee, Lazada (stored in the Passwords Marketing list; not reproduced here)</li>
+          <li>Cross-reference: Digital Marketing Manager Process Documentation — Section 4: eCommerce Campaigns (creative production)</li>
+          <li>Cross-reference: eCommerce Executive Process Documentation — eCommerce Support</li>
+          <li>Cross-reference: Media Manager (in-house, paid media/boosting) — process documentation not yet scoped</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ================= SECTION 2: PLATFORM MONITORING & OPTIMIZATION ================= -->
+    <div class="tab-content" id="section2">
+
+      <div class="card" id="s2-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to continuously monitor storefront and listing performance across Shopify, TikTok Shop, Shopee, and Lazada — listing health, traffic/conversion signals, competitor and price positioning, and ad/placement performance and budget, including daily confirmation that both GMV Products and GMV Live ads have sufficient budget to keep running — so that content, pricing, placement, and budget can be optimized on an ongoing basis.</p>
+      </div>
+
+      <div class="card" id="s2-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Monitoring listing health across all platforms (out-of-stock, broken, delisted, or flagged listings)</li>
+              <li>Monitoring traffic and conversion signals (CTR, conversion rate, add-to-cart drop-off) to identify underperforming listings</li>
+              <li>Monitoring competitor pricing and promos on the same platforms</li>
+              <li>Monitoring platform ad/sponsored-placement performance and ad budget pacing, including a daily check that sufficient budget is available to keep both GMV Products and GMV Live ads running</li>
+              <li>Revising listing content (titles, images, descriptions) and pricing/placement/bidding on an ongoing basis, based on performance data</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Campaign calendar planning, registration, and mechanics — covered under Section 1: Campaign Calendar &amp; Platform Ops</li>
+              <li>Price accuracy correction and promo/live-slot registrations — covered under Section 3: Price Accuracy &amp; Promo/Live Registrations</li>
+              <li>Producing new creative assets — owned by the Digital Marketing Manager</li>
+              <li>Paid social ad strategy and execution — owned by the Media Manager</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Monitor Listing Health</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>eCommerce Executive (fixes)</td><td>—</td></tr>
+          <tr><td>2. Monitor Traffic &amp; Conversion</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Monitor Competitor &amp; Price</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Monitor Ad/Placement &amp; Budget</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>Media Manager (paid media), Finance (budget shortfalls)</td><td>Head of Marketing (if issue)</td></tr>
+          <tr><td>5. Diagnose &amp; Decide</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>6. Revise &amp; Track Impact</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>eCommerce Executive (execution)</td><td>Head of Marketing (material changes)</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Monitor listing health, traffic/conversion signals, competitor/price positioning, and ad/placement performance and budget across all platforms.</li>
+          <li>Diagnose issues and opportunities from the combined signals.</li>
+          <li>Decide whether content, pricing, placement, or budget adjustments are warranted.</li>
+          <li>If yes, revise listing content and/or adjust pricing, placement, or bidding.</li>
+          <li>If no, continue monitoring.</li>
+          <li>Track the impact of any revisions made, and feed learnings back into the next monitoring cycle.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s2-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Platform Monitoring &amp; Optimization process flow</title>
+<desc>Flowchart from monitoring listing health, traffic/conversion, competitor/price, and ad/placement/budget signals, through diagnosing issues, deciding on action, revising content or pricing/placement, to tracking the impact of revisions.</desc>
+<defs>
+  <marker id="arrowEcm2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .ecm2box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .ecm2dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .ecm2end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .ecm2title { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #1A1A1A; }
+  .ecm2sub { font-family: Arial, sans-serif; font-size: 12px; fill: #6E6660; }
+  .ecm2lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .ecm2edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowEcm2); }
+  .ecm2dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowEcm2); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="500"/>
+
+<rect class="ecm2box" x="30" y="20" width="170" height="52" rx="8"/>
+<text x="115" y="42" text-anchor="middle" class="ecm2title">Listing Health</text>
+<text x="115" y="60" text-anchor="middle" class="ecm2sub">Stock, broken, flagged</text>
+
+<rect class="ecm2box" x="215" y="20" width="170" height="52" rx="8"/>
+<text x="300" y="42" text-anchor="middle" class="ecm2title">Traffic &amp; Conversion</text>
+<text x="300" y="60" text-anchor="middle" class="ecm2sub">CTR, CR, drop-off</text>
+
+<rect class="ecm2box" x="400" y="20" width="170" height="52" rx="8"/>
+<text x="485" y="42" text-anchor="middle" class="ecm2title">Competitor &amp; Price</text>
+<text x="485" y="60" text-anchor="middle" class="ecm2sub">Competitor moves</text>
+
+<rect class="ecm2box" x="585" y="20" width="170" height="52" rx="8"/>
+<text x="670" y="42" text-anchor="middle" class="ecm2title">Ad/Placement &amp; Budget</text>
+<text x="670" y="60" text-anchor="middle" class="ecm2sub">Spend, placement perf.</text>
+
+<path class="ecm2edge" d="M115,72 L115,110 L390,110"/>
+<path class="ecm2edge" d="M300,72 L300,110"/>
+<path class="ecm2edge" d="M485,72 L485,110 L390,110"/>
+<path class="ecm2edge" d="M670,72 L670,110 L390,110"/>
+
+<rect class="ecm2box" x="220" y="110" width="340" height="52" rx="8"/>
+<text x="390" y="132" text-anchor="middle" class="ecm2title">Diagnose Issues &amp; Opportunities</text>
+<text x="390" y="150" text-anchor="middle" class="ecm2sub">Daily/ongoing review of all signals</text>
+
+<path class="ecm2edge" d="M390,162 L390,188"/>
+
+<rect class="ecm2dbox" x="220" y="188" width="340" height="52" rx="8"/>
+<text x="390" y="210" text-anchor="middle" class="ecm2title">Action Needed?</text>
+<text x="390" y="228" text-anchor="middle" class="ecm2sub">Content, price, placement, or budget</text>
+
+<path class="ecm2edge" d="M390,240 L390,266"/>
+<text x="430" y="258" text-anchor="start" class="ecm2lbl">Yes</text>
+
+<rect class="ecm2box" x="80" y="266" width="280" height="56" rx="8"/>
+<text x="220" y="288" text-anchor="middle" class="ecm2title">Revise Listing Content</text>
+<text x="220" y="306" text-anchor="middle" class="ecm2sub">Title, images, description</text>
+
+<rect class="ecm2box" x="420" y="266" width="280" height="56" rx="8"/>
+<text x="560" y="288" text-anchor="middle" class="ecm2title">Adjust Pricing/Placement/Bidding</text>
+<text x="560" y="306" text-anchor="middle" class="ecm2sub">Ongoing, based on data</text>
+
+<path class="ecm2edge" d="M220,322 L220,348 L390,348"/>
+<path class="ecm2edge" d="M560,322 L560,348 L390,348"/>
+
+<path class="ecm2dedge" d="M700,220 L750,220 L750,140 L390,140"/>
+<text x="758" y="180" text-anchor="start" class="ecm2lbl" transform="rotate(90 758,180)">No — continue monitoring</text>
+
+<rect class="ecm2box" x="240" y="348" width="300" height="52" rx="8"/>
+<text x="390" y="370" text-anchor="middle" class="ecm2title">Track Impact of Revisions</text>
+<text x="390" y="388" text-anchor="middle" class="ecm2sub">Compare before/after performance</text>
+
+<path class="ecm2edge" d="M390,400 L390,426"/>
+
+<rect class="ecm2end" x="260" y="426" width="260" height="52" rx="8"/>
+<text x="390" y="448" text-anchor="middle" class="ecm2title">Listings Optimized</text>
+<text x="390" y="466" text-anchor="middle" class="ecm2sub">Continuous cycle</text>
+
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s2-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section2', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Monitor Listing Health</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly, across all platforms</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Check for out-of-stock, broken, delisted, or flagged listings across Shopify, TikTok Shop, Shopee, and Lazada.</li>
+                <li>Flag any listing content or image errors found.</li>
+                <li>Resolve text- or pricing-based issues within 4 hours of detection; resolve issues requiring image edits within 1 business day.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A current view of listing health issues across all platforms, resolved within target turnaround.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Monitor Traffic &amp; Conversion Signals</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly, across all platforms</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Track click-through rate, conversion rate, and add-to-cart drop-off by listing.</li>
+                <li>Flag underperforming listings relative to their historical baseline or category peers.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A list of underperforming listings needing attention.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Monitor Competitor &amp; Price Positioning</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly, across all platforms</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Check competitor pricing and promos on the same platforms.</li>
+                <li>Note any moves that materially affect Shortcutx's competitiveness.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An up-to-date view of competitive positioning.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Monitor Ad/Placement Performance &amp; Budget</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly for ad/placement performance review; daily for GMV Products &amp; GMV Live budget sufficiency checks</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Track platform ad and sponsored-placement performance (TikTok Shop ads, Shopee/Lazada sponsored listings), reviewed weekly.</li>
+                <li>Check daily that sufficient budget is available to keep both GMV Products and GMV Live ads running without interruption.</li>
+                <li>Track ad budget spend and pacing against allocation.</li>
+                <li>If budget is insufficient, understand why the shortfall occurred and resolve it with Finance; flag to the Head of Marketing immediately.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A current view of ad/placement performance and budget pacing, with GMV Products and GMV Live ads confirmed to have sufficient running budget.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Diagnose &amp; Decide on Action</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Following each monitoring cycle</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review findings from listing health, traffic/conversion, competitor, and ad/budget monitoring together.</li>
+                <li>Decide whether content, pricing, placement, or budget adjustments are warranted.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear decision on what, if anything, needs to be revised.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Revise &amp; Track Impact</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, as issues/opportunities are identified</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Revise listing content (titles, images, descriptions) where content is the driver.</li>
+                <li>Adjust pricing, placement, or bidding where that is the driver.</li>
+                <li>Track the impact of each revision against pre-change performance.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Listings and campaigns continuously optimized based on performance data.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A listing is delisted or flagged by a platform</td><td>Investigate the cause immediately and resolve or escalate to the platform's seller support; inform the Head of Marketing if sales-impacting.</td></tr>
+          <tr><td>Traffic or conversion drops more than 20% week-over-week for a listing (proposed threshold)</td><td>Check for listing errors, stockouts, or a competitor move before assuming a demand issue; escalate to the Head of Marketing if unresolved within 48 hours.</td></tr>
+          <tr><td>Ad budget is pacing more than 20% over or under the planned monthly budget by the mid-month point (proposed threshold)</td><td>Flag to the Media Manager and adjust pacing; escalate to the Head of Marketing if a budget reallocation is needed.</td></tr>
+          <tr><td>Insufficient budget to keep GMV Products or GMV Live ads running</td><td>Understand why the shortfall occurred, resolve with Finance, and flag to the Head of Marketing immediately.</td></tr>
+          <tr><td>A competitor price move requires a response</td><td>Assess margin impact before matching; escalate to the Head of Marketing if a mechanics change is required.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Listing health issues resolved</td><td>4 hours for text/pricing fixes; 1 business day for image edits</td><td>Time from detection to resolution, by issue type</td></tr>
+          <tr><td>Underperforming listings actioned</td><td>4 product listings per month across platforms (4 unique products, since the same PDP is used across platforms)</td><td>Count of unique products revised per month</td></tr>
+          <tr><td>Ad budget pacing accuracy</td><td>Within 80% of planned pacing</td><td>Actual vs. planned spend</td></tr>
+          <tr><td>GMV Products / GMV Live ads running without budget-related interruption</td><td>100% — no stoppages due to insufficient budget</td><td>Count of budget-related ad pauses/stops per month</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Platform seller dashboards — Shopify, TikTok Shop, Shopee, Lazada <span class="note" style="margin:0;">[links to be added]</span></li>
+          <li><a class="ext-link" href="https://docs.google.com/spreadsheets/d/1qCH5PA7sWrVsFYZfITWflSmYvu5ZDgWEXKalhYtbcCQ/edit?gid=382562974#gid=382562974" target="_blank" rel="noopener">Consolidated Platform Monitoring Dashboard (Google Sheet)</a></li>
+          <li>Cross-reference: Section 1 — Campaign Calendar &amp; Platform Ops</li>
+          <li>Cross-reference: Section 3 — Price Accuracy &amp; Promo/Live Registrations</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ================= SECTION 3: PRICE ACCURACY & PROMO/LIVE REGISTRATIONS ================= -->
+    <div class="tab-content" id="section3">
+
+      <div class="card" id="s3-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure pricing stays accurate across Shopify, TikTok Shop, Shopee, and Lazada at all times, and to capture platform promo and live-selling opportunities outside major campaigns — registering for available slots and coordinating execution with the eCommerce Executive.</p>
+      </div>
+
+      <div class="card" id="s3-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Monitoring price accuracy across all platforms against approved pricing and campaign mechanics</li>
+              <li>Correcting price discrepancies immediately when found</li>
+              <li>Tracking and registering for platform promo slots (flash sales, voucher programs) outside major campaigns</li>
+              <li>Tracking and registering for live-selling slots (TikTok LIVE, Shopee Live) outside major campaigns</li>
+              <li>Coordinating live-selling execution with the eCommerce Executive</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Major campaign registration and mechanics — covered under Section 1: Campaign Calendar &amp; Platform Ops</li>
+              <li>Live streaming execution itself — owned by the eCommerce Executive (Process Documentation, Live Streaming Management)</li>
+              <li>Broader listing/traffic/ad monitoring — covered under Section 2: Platform Monitoring &amp; Optimization</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Monitor Price Accuracy</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Correct Discrepancies</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>Head of Marketing (material errors)</td></tr>
+          <tr><td>3. Track Promo/Live Slots</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Register for Slots</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Coordinate Execution</td><td>eCommerce Manager, eCommerce Executive</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>6. Update Internal Calendar</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Monitor live pricing across all platforms against approved pricing and mechanics.</li>
+          <li>If a discrepancy is found, correct it immediately and verify.</li>
+          <li>Track upcoming promo slots and live-selling slots outside major campaigns, and assess fit against the calendar and stock.</li>
+          <li>If worth pursuing, register/apply for the slot via each platform's seller center.</li>
+          <li>Coordinate execution with the eCommerce Executive, who owns live-selling execution.</li>
+          <li>Update the internal calendar with confirmed slots and pricing status.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s3-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Price Accuracy &amp; Promo/Live Registrations process flow</title>
+<desc>Flowchart covering price accuracy monitoring and correction in parallel with tracking and registering for promo and live-selling slots, then coordinating execution with the eCommerce Executive and updating the internal calendar.</desc>
+<defs>
+  <marker id="arrowEcm3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .ecm3box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .ecm3dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .ecm3end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .ecm3title { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #1A1A1A; }
+  .ecm3sub { font-family: Arial, sans-serif; font-size: 12px; fill: #6E6660; }
+  .ecm3lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .ecm3edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowEcm3); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="500"/>
+
+<rect class="ecm3box" x="90" y="20" width="260" height="56" rx="8"/>
+<text x="220" y="44" text-anchor="middle" class="ecm3title">Monitor Price Accuracy</text>
+<text x="220" y="62" text-anchor="middle" class="ecm3sub">Vs. approved mechanics, all platforms</text>
+
+<rect class="ecm3box" x="430" y="20" width="260" height="56" rx="8"/>
+<text x="560" y="44" text-anchor="middle" class="ecm3title">Track Promo &amp; Live Slot Windows</text>
+<text x="560" y="62" text-anchor="middle" class="ecm3sub">Flash sales, TikTok LIVE, Shopee Live</text>
+
+<path class="ecm3edge" d="M220,76 L220,110"/>
+<path class="ecm3edge" d="M560,76 L560,110"/>
+
+<rect class="ecm3dbox" x="90" y="110" width="260" height="52" rx="8"/>
+<text x="220" y="132" text-anchor="middle" class="ecm3title">Discrepancy Found?</text>
+<text x="220" y="150" text-anchor="middle" class="ecm3sub">Price mismatch vs. approved</text>
+
+<rect class="ecm3box" x="430" y="110" width="260" height="52" rx="8"/>
+<text x="560" y="132" text-anchor="middle" class="ecm3title">Slot Available &amp; Worth Pursuing?</text>
+<text x="560" y="150" text-anchor="middle" class="ecm3sub">Assess fit vs. calendar/stock</text>
+
+<path class="ecm3edge" d="M220,162 L220,196"/>
+<text x="255" y="185" text-anchor="start" class="ecm3lbl">Yes</text>
+
+<rect class="ecm3box" x="90" y="196" width="260" height="52" rx="8"/>
+<text x="220" y="218" text-anchor="middle" class="ecm3title">Correct Price Immediately</text>
+<text x="220" y="236" text-anchor="middle" class="ecm3sub">Update on affected platform(s)</text>
+
+<path class="ecm3edge" d="M560,162 L560,196"/>
+<text x="595" y="185" text-anchor="start" class="ecm3lbl">Yes</text>
+
+<rect class="ecm3box" x="430" y="196" width="260" height="52" rx="8"/>
+<text x="560" y="218" text-anchor="middle" class="ecm3title">Register/Apply via Seller Center</text>
+<text x="560" y="236" text-anchor="middle" class="ecm3sub">Promo slot or live-selling slot</text>
+
+<path class="ecm3edge" d="M220,248 L220,282 L390,282"/>
+<path class="ecm3edge" d="M560,248 L560,282 L390,282"/>
+
+<rect class="ecm3box" x="230" y="282" width="320" height="56" rx="8"/>
+<text x="390" y="304" text-anchor="middle" class="ecm3title">Coordinate Execution</text>
+<text x="390" y="322" text-anchor="middle" class="ecm3sub">With eCommerce Executive (live-selling handoff)</text>
+
+<path class="ecm3edge" d="M390,338 L390,364"/>
+
+<rect class="ecm3box" x="230" y="364" width="320" height="52" rx="8"/>
+<text x="390" y="386" text-anchor="middle" class="ecm3title">Update Internal Calendar</text>
+<text x="390" y="404" text-anchor="middle" class="ecm3sub">Confirmed slots and price corrections</text>
+
+<path class="ecm3edge" d="M390,416 L390,442"/>
+
+<rect class="ecm3end" x="250" y="442" width="280" height="52" rx="8"/>
+<text x="390" y="464" text-anchor="middle" class="ecm3title">Pricing Accurate, Slots Secured</text>
+<text x="390" y="482" text-anchor="middle" class="ecm3sub">Ongoing cycle</text>
+
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s3-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section3', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Monitor Price Accuracy</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly, across all platforms</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Check live pricing on Shopify, TikTok Shop, Shopee, and Lazada against the master price list and campaign mechanics.</li>
+                <li>Identify any discrepancies between the master price list and live pricing.</li>
+                <li>Before flagging as a discrepancy, check that the difference isn't explained by a voucher or discount made available by the platform itself.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Confirmed pricing accuracy, or a list of genuine discrepancies to correct.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Correct Pricing Discrepancies</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Immediately upon discovery</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Correct the price on the affected platform(s) as soon as a discrepancy is found.</li>
+                <li>Verify the correction is live and accurate.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Accurate, corrected pricing live on all platforms.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Track Promo &amp; Live-Selling Slot Windows</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Track upcoming platform promo slots (flash sales, voucher programs) and live-selling slots (TikTok LIVE, Shopee Live) outside major campaigns.</li>
+                <li>Assess fit against the campaign calendar and stock availability.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A shortlist of promo/live slots worth pursuing.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Register for Promo &amp; Live-Selling Slots</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Within 48 hours of a platform opening registration for a slot, and no later than 24 hours before the registration window closes</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Register/apply for selected promo or live-selling slots directly via each platform's seller center, targeting within 48 hours of the registration window opening.</li>
+                <li>If the 48-hour target is missed, ensure registration is still submitted no later than 24 hours before the window closes.</li>
+                <li>Confirm slot approval and note the details (date, time, mechanics/requirements).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Confirmed promo/live-selling slot registrations, submitted within the target window.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Coordinate Execution with eCommerce Executive</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager, coordinating with the eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> The eCommerce Executive books streamers into the slot once it's confirmed; key streamer sessions are blocked on the calendar immediately upon confirmed availability</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Hand off live-selling slot details to the eCommerce Executive, who books streamers into the slot and owns live streaming execution.</li>
+                <li>For key streamers specifically, block the session on the calendar immediately upon confirmation — confirmation is only given after checking the streaming calendar for availability.</li>
+                <li>Confirm promo slot mechanics are reflected correctly on the platform ahead of the live window.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Promo and live-selling slots executed as planned, with key streamer sessions locked in immediately upon confirmed availability.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Update Internal Calendar</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> After each registration or correction</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Log confirmed promo/live-selling slots and any price corrections made.</li>
+                <li>Keep the internal calendar current for visibility across the team.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An internal calendar that reflects confirmed slots and pricing status.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A price discrepancy is found (live price differs from the master price list, and isn't explained by a platform voucher/discount)</td><td>Correct immediately and escalate to the Head of Marketing; assess if any orders were affected.</td></tr>
+          <tr><td>A promo or live-selling slot conflicts with the campaign calendar</td><td>Prioritize based on expected impact; consult the Head of Marketing if unclear.</td></tr>
+          <tr><td>A live-selling slot is confirmed but the eCommerce Executive is unavailable</td><td>Escalate to the Head of Marketing to find coverage or release the slot in time.</td></tr>
+          <tr><td>A platform changes promo/live slot terms after registration</td><td>Reassess fit and flag to the Head of Marketing if the change affects mechanics or stock commitments.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Price accuracy across platforms</td><td>100%, no live discrepancies (weekly check)</td><td>Count of discrepancies found per check</td></tr>
+          <tr><td>Time to correct a price discrepancy</td><td>Immediately upon discovery</td><td>Time from detection to correction</td></tr>
+          <tr><td>Promo/live slot registration turnaround</td><td>Within 48 hours of window opening (24 hours before closing at minimum)</td><td>Registration date vs. window open/close dates</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li><a class="ext-link" href="https://docs.google.com/spreadsheets/d/1qCH5PA7sWrVsFYZfITWflSmYvu5ZDgWEXKalhYtbcCQ/edit?gid=382562974#gid=382562974" target="_blank" rel="noopener">Master Price List &amp; Campaign Mechanics (Google Sheet)</a></li>
+          <li>Platform promo/live-selling program pages — TikTok Shop, Shopee, Lazada <span class="note" style="margin:0;">[to confirm]</span></li>
+          <li>Cross-reference: eCommerce Executive Process Documentation — Live Streaming Management</li>
+          <li>Cross-reference: Section 1 — Campaign Calendar &amp; Platform Ops</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ================= SECTION 4: PERFORMANCE TRACKING & REPORTING ================= -->
+    <div class="tab-content" id="section4">
+
+      <div class="card" id="s4-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to keep sales, traffic, and conversion performance across Shopify, TikTok Shop, Shopee, and Lazada visible on a regular cadence — a weekly summary to the Head of Marketing, and a fuller monthly report presented no later than the 10th of the month to the Head of Marketing, CEO, Brand Manager, and each brand's co-founder — so performance trends and issues are surfaced and acted on in time.</p>
+      </div>
+
+      <div class="card" id="s4-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Tracking daily sales, traffic, and conversion performance across all platforms</li>
+              <li>Compiling and submitting a weekly performance summary to the Head of Marketing</li>
+              <li>Compiling and presenting a fuller monthly performance report, no later than the 10th of the month, to the Head of Marketing, CEO, Brand Manager, and each brand's co-founder (or shared as a soft copy if attendance isn't possible)</li>
+              <li>Capturing follow-up actions from reporting discussions and routing them into calendar planning or optimization work</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Acting on the findings (calendar changes, listing revisions, price corrections) — covered under Sections 1-3</li>
+              <li>Social media and KOL reporting — covered under the Digital Marketing Manager's process documentation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Track Daily Performance</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Weekly Summary</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>Head of Marketing</td></tr>
+          <tr><td>3. Compile Monthly Report</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Present Monthly Report</td><td>eCommerce Manager</td><td>Head of Marketing</td><td>—</td><td>CEO (Miza), Brand Manager (Nick), brand co-founders (if available)</td></tr>
+          <tr><td>5. Capture Follow-Up Actions</td><td>eCommerce Manager</td><td>eCommerce Manager</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Track daily sales, traffic, and conversion performance across all platforms.</li>
+          <li>Compile a weekly performance summary and submit it to the Head of Marketing.</li>
+          <li>Compile a fuller monthly performance report covering trends, campaigns, and platform breakdown.</li>
+          <li>Present the monthly report to the Head of Marketing.</li>
+          <li>Capture follow-up actions and route them into campaign calendar planning, platform monitoring/optimization, or price/promo work.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s4-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 500" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Performance Tracking &amp; Reporting process flow</title>
+<desc>Flowchart from tracking daily performance, through compiling and submitting a weekly summary, compiling and presenting a fuller monthly report, to capturing follow-up actions.</desc>
+<defs>
+  <marker id="arrowEcm4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .ecm4box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .ecm4end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .ecm4title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .ecm4sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .ecm4edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowEcm4); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="500"/>
+
+<rect class="ecm4box" x="220" y="20" width="340" height="52" rx="8"/>
+<text x="390" y="42" text-anchor="middle" class="ecm4title">Track Daily Sales, Traffic &amp; Conversion</text>
+<text x="390" y="60" text-anchor="middle" class="ecm4sub">Across Shopify, TikTok Shop, Shopee, Lazada</text>
+<path class="ecm4edge" d="M390,72 L390,98"/>
+
+<rect class="ecm4box" x="220" y="98" width="340" height="52" rx="8"/>
+<text x="390" y="120" text-anchor="middle" class="ecm4title">Compile Weekly Performance Summary</text>
+<text x="390" y="138" text-anchor="middle" class="ecm4sub">Sales, traffic, conversion vs. prior week</text>
+<path class="ecm4edge" d="M390,150 L390,176"/>
+
+<rect class="ecm4box" x="220" y="176" width="340" height="52" rx="8"/>
+<text x="390" y="198" text-anchor="middle" class="ecm4title">Submit Weekly Summary</text>
+<text x="390" y="216" text-anchor="middle" class="ecm4sub">To Head of Marketing</text>
+<path class="ecm4edge" d="M390,228 L390,254"/>
+
+<rect class="ecm4box" x="220" y="254" width="340" height="52" rx="8"/>
+<text x="390" y="276" text-anchor="middle" class="ecm4title">Compile Monthly Performance Report</text>
+<text x="390" y="294" text-anchor="middle" class="ecm4sub">Deeper trend, campaign &amp; platform breakdown</text>
+<path class="ecm4edge" d="M390,306 L390,332"/>
+
+<rect class="ecm4box" x="220" y="332" width="340" height="52" rx="8"/>
+<text x="390" y="354" text-anchor="middle" class="ecm4title">Present Monthly Report</text>
+<text x="390" y="372" text-anchor="middle" class="ecm4sub">To Head of Marketing</text>
+<path class="ecm4edge" d="M390,384 L390,410"/>
+
+<rect class="ecm4box" x="220" y="410" width="340" height="52" rx="8"/>
+<text x="390" y="432" text-anchor="middle" class="ecm4title">Capture Follow-Up Actions</text>
+<text x="390" y="450" text-anchor="middle" class="ecm4sub">Feed into calendar &amp; optimization (Sections 1-3)</text>
+<path class="ecm4edge" d="M390,462 L390,488"/>
+
+<rect class="ecm4end" x="240" y="488" width="300" height="10" rx="4"/>
+
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s4-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section4', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Track Daily Sales, Traffic &amp; Conversion</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, daily</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Track sales, traffic, and conversion metrics across Shopify, TikTok Shop, Shopee, and Lazada.</li>
+                <li>Note any notable spikes or drops for follow-up.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An up-to-date view of platform performance.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Compile &amp; Submit Weekly Performance Summary</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compile a weekly summary of sales, traffic, and conversion performance vs. the prior week.</li>
+                <li>Submit the summary to the Head of Marketing.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A weekly performance summary delivered to the Head of Marketing.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Compile Monthly Performance Report</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Monthly, no later than the 10th of the month (week 2)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compile a fuller monthly report covering trend performance, campaign results, and platform-by-platform breakdown, using the reporting template on Canva.</li>
+                <li>Include commentary on notable wins, misses, and drivers.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A monthly performance report ready for review, completed no later than the 10th of the month.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Present Monthly Report</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Monthly, no later than the 10th of the month (week 2)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Send a calendar invite in advance to lock in the presentation session.</li>
+                <li>Present the monthly report to the Head of Marketing, CEO (Miza), Brand Manager (Nick), and each brand's co-founder if available.</li>
+                <li>If a co-founder or other invited stakeholder isn't available, send them the final soft copy for visibility instead of rescheduling.</li>
+                <li>Capture any follow-up questions or requested deep-dives.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The monthly report presented and discussed with the full audience, or shared as a soft copy with anyone unable to attend.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Capture Follow-Up Actions</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Manager</div>
+            <div class="field"><span class="label">When:</span> Following each weekly or monthly report</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Capture any resulting follow-up actions from reporting discussions.</li>
+                <li>Feed relevant actions into campaign calendar planning (Section 1) and platform monitoring/optimization (Section 2) or price/promo actions (Section 3).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Follow-up actions logged and routed to the relevant process.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>The Head of Marketing is unavailable for the monthly report presentation</td><td>Reschedule promptly and share the report in writing in the meantime.</td></tr>
+          <tr><td>A co-founder or other invited stakeholder can't attend the monthly presentation</td><td>Send them the final soft copy for visibility; no need to reschedule solely for their attendance.</td></tr>
+          <tr><td>A significant performance drop is discovered mid-week</td><td>Flag to the Head of Marketing immediately rather than waiting for the weekly summary.</td></tr>
+          <tr><td>Data from a platform is unavailable or delayed</td><td>Note the gap in the report and follow up with the platform or update once available.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Weekly summary submitted on time</td><td>100%, per agreed weekly cadence</td><td>Submission date vs. agreed cadence</td></tr>
+          <tr><td>Monthly report presented on time</td><td>100%, no later than the 10th of the month</td><td>Presentation date vs. the 10th of the month</td></tr>
+          <tr><td>Follow-up actions captured and routed</td><td>100% of agreed actions logged</td><td>Count of actions logged vs. discussed</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Weekly/monthly reporting template — on Canva</li>
+          <li>Platform sales/analytics dashboards — Shopify, TikTok Shop, Shopee, Lazada <span class="note" style="margin:0;">[links to be added]</span></li>
+          <li>Cross-reference: Sections 1-3 (actions arising from reporting)</li>
+        </ul>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<footer class="doc-footer">eCommerce Manager — Process Documentation</footer>
+
+<script>
+  function showTab(id, btn) {
+    if (btn.classList.contains('disabled')) return;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.section-tab').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.jumplist').forEach(el => el.classList.remove('visible'));
+    const jl = document.getElementById('jump-' + id);
+    if (jl) jl.classList.add('visible');
+  }
+  function toggleStep(headerEl) {
+    headerEl.parentElement.classList.toggle('open');
+  }
+  function toggleAll(sectionId, btn) {
+    const steps = document.querySelectorAll('#' + sectionId + ' .step');
+    const anyClosed = Array.from(steps).some(s => !s.classList.contains('open'));
+    steps.forEach(s => s.classList.toggle('open', anyClosed));
+    btn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
+  }
+</script>
+
+</body>
+</html>

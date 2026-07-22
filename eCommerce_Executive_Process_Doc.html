@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>eCommerce Executive — Process Documentation</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --blue: #A6373C;
+    --blue-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+    --confirm-bg: #FFF7E6;
+    --confirm-border: #F0B429;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 32px 22px;
+    border-top: 6px solid var(--blue);
+  }
+  header.top h1 { margin: 0 0 6px; font-size: 24px; }
+  header.top .meta { font-size: 13px; color: #E8D0D0; }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.side {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .section-tab {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .section-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .section-tab.disabled { color: var(--muted); cursor: not-allowed; opacity: 0.6; }
+  .jumplist { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; display: none; }
+  .jumplist.visible { display: block; }
+  .jumplist a {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .jumplist a:hover { background: var(--blue-light); color: var(--blue); }
+  main {
+    flex: 1;
+    padding: 24px 32px 80px;
+    min-width: 0;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 8px;
+  }
+  .card h3 { color: var(--blue); font-size: 15px; margin: 18px 0 6px; }
+  .card p { line-height: 1.55; font-size: 14px; margin: 0 0 10px; }
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  ul.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ul.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+  ol.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ol.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+  .scope-cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  .scope-cols > div { flex: 1; min-width: 240px; }
+  .scope-cols h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 13.5px;
+  }
+  table.data th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+  }
+  table.data td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: var(--blue-light); }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--blue-light);
+  }
+  .step-header:hover { background: #E8EFF8; }
+  .step-header .title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .step-header .chev { font-size: 13px; color: var(--muted); transition: transform .15s ease; }
+  .step.open .step-header .chev { transform: rotate(90deg); }
+  .step-body { display: none; padding: 14px 18px 18px; font-size: 14px; }
+  .step.open .step-body { display: block; }
+  .field { margin-bottom: 8px; }
+  .field .label { font-weight: 600; color: var(--navy); }
+  .quote {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-light);
+    padding: 12px 16px;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 8px 0 16px;
+    border-radius: 0 6px 6px 0;
+  }
+  .confirm-box {
+    background: var(--confirm-bg);
+    border: 1px solid var(--confirm-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .confirm-box h2 { border-bottom: none; color: #8A6300; }
+  .confirm-box ul.plain li { color: #6B4E00; }
+  a.ext-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+  a.ext-link:hover { text-decoration: underline; }
+  .links-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+  .links-list li { margin-bottom: 8px; font-size: 14px; }
+  .expand-all {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .expand-all:hover { background: var(--blue-light); }
+  footer.doc-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
+  .diagram-wrap { overflow-x: auto; }
+  .diagram-wrap svg { max-width: 640px; width: 100%; height: auto; display: block; margin: 0 auto; }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.side { width: 100%; position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html" style="display:inline-block; font-size:12.5px; color:#E8D0D0; text-decoration:none; margin-bottom:10px;">&larr; All roles</a>
+  <h1>eCommerce Executive — Process Documentation</h1>
+  <div class="meta">Owner: eCommerce Executive &nbsp;|&nbsp; Last Updated: 14 July 2026 &nbsp;|&nbsp; Review Cadence: Quarterly</div>
+</header>
+
+<div class="layout">
+  <nav class="side">
+    <button class="section-tab active" data-tab="section1" onclick="showTab('section1', this)">Section 1: Live Streaming Management</button>
+    <div class="jumplist visible" id="jump-section1">
+      <a href="#s1-purpose">Purpose</a>
+      <a href="#s1-scope">Scope</a>
+      <a href="#s1-raci">RACI Matrix</a>
+      <a href="#s1-flow">Process Flow</a>
+      <a href="#s1-diagram">Process Flow Diagram</a>
+      <a href="#s1-steps">Detailed Steps</a>
+      <a href="#s1-exceptions">Exceptions & Edge Cases</a>
+      <a href="#s1-metrics">Metrics</a>
+      <a href="#s1-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section2" onclick="showTab('section2', this)">Section 2: KOL Management</button>
+    <div class="jumplist" id="jump-section2">
+      <a href="#s2-purpose">Purpose</a>
+      <a href="#s2-scope">Scope</a>
+      <a href="#s2-criteria">Brand Creator Criteria</a>
+      <a href="#s2-budget">Budget & Collaboration Type</a>
+      <a href="#s2-raci">RACI Matrix</a>
+      <a href="#s2-flow">Process Flow</a>
+      <a href="#s2-diagram">Process Flow Diagram</a>
+      <a href="#s2-steps">Detailed Steps</a>
+      <a href="#s2-templates">Outreach Message Templates</a>
+      <a href="#s2-handoff">Handoff Boundary</a>
+      <a href="#s2-exceptions">Exceptions & Edge Cases</a>
+      <a href="#s2-metrics">Metrics</a>
+      <a href="#s2-related">Related Documents</a>
+      <a href="#s2-confirm">Items to Confirm</a>
+    </div>
+
+    <button class="section-tab" data-tab="section3" onclick="showTab('section3', this)">Section 3: eCommerce Support</button>
+    <div class="jumplist" id="jump-section3">
+      <a href="#s3-purpose">Purpose</a>
+      <a href="#s3-structure">Reporting File Structure</a>
+      <a href="#s3-scope">Scope</a>
+      <a href="#s3-raci">RACI Matrix</a>
+      <a href="#s3-flow">Process Flow</a>
+      <a href="#s3-diagram">Process Flow Diagram</a>
+      <a href="#s3-steps">Detailed Steps</a>
+      <a href="#s3-exceptions">Exceptions & Edge Cases</a>
+      <a href="#s3-metrics">Metrics</a>
+      <a href="#s3-related">Related Documents</a>
+      <a href="#s3-confirm">Items to Confirm</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ================= SECTION 1 ================= -->
+    <div class="tab-content active" id="section1">
+
+      <div class="card" id="s1-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure a consistent, well-managed pipeline of live streamers driving sales for the brand on Shopee and TikTok — from recruitment and onboarding through to performance tracking and payment. It defines how streamers are sourced, filtered, rated, onboarded, equipped, kept engaged, tracked, paid, and supported.</p>
+      </div>
+
+      <div class="card" id="s1-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Streamer application intake and filtering</li>
+              <li>Rate negotiation and agreement</li>
+              <li>Onboarding via WhatsApp</li>
+              <li>Live stream kit distribution and Shopee/TikTok Seller account access</li>
+              <li>Bi-monthly promotional updates and session follow-up</li>
+              <li>Registering TikTok live sessions for platform voucher eligibility</li>
+              <li>Tracking of sales, commission, media spend, and MER</li>
+              <li>Bi-monthly HR payment reporting</li>
+              <li>Ongoing streamer support and query resolution</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>KOL Management (Section 2)</li>
+              <li>General eCommerce Support (Section 3)</li>
+              <li>Production/creative direction of the live show format itself</li>
+              <li>Platform-side technical configuration unrelated to streamer access</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Application Intake & Filtering</td><td>eComm Executive</td><td>eComm Executive</td><td>Referring agencies/streamers</td><td>eComm Manager</td></tr>
+          <tr><td>2. Rate Negotiation</td><td>eComm Executive</td><td>eComm Executive</td><td>eComm Manager (above-threshold rates)</td><td>Finance</td></tr>
+          <tr><td>3. Onboarding (WhatsApp)</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>eComm Manager</td></tr>
+          <tr><td>4. Kit & Platform Access</td><td>eComm Executive</td><td>eComm Executive</td><td>IT/Platform Admin</td><td>eComm Manager</td></tr>
+          <tr><td>5. Promo Updates & Follow-Up</td><td>eComm Executive</td><td>eComm Executive</td><td>Marketing (promo calendar)</td><td>eComm Manager</td></tr>
+          <tr><td>6. Performance Tracking (MER)</td><td>eComm Executive</td><td>eComm Executive</td><td>Finance (media spend)</td><td>eComm Manager</td></tr>
+          <tr><td>7. HR Payment Reporting</td><td>eComm Executive</td><td>eComm Manager</td><td>Finance</td><td>HR</td></tr>
+          <tr><td>8. Streamer Support</td><td>eComm Executive</td><td>eComm Executive</td><td>eComm Manager (escalations)</td><td>—</td></tr>
+        </table>
+        <div class="note">Note: "eComm Manager" refers to the eCommerce Executive's direct manager/Head of eCommerce — update the title as needed.</div>
+      </div>
+
+      <div class="card" id="s1-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Streamer applies (form, direct inbound, or referral) and is filtered against criteria, including past brands worked with and sample videos.</li>
+          <li>Rate is negotiated using the rate card as a baseline; manager sign-off is needed above 10% commission or $25–$50/hour.</li>
+          <li>Streamer is onboarded via WhatsApp and required details are collected.</li>
+          <li>Live stream kit and product samples are shared; Shopee and TikTok access is granted.</li>
+          <li>Promotional updates are sent in Week 1 and Week 3 (two weeks ahead of go-live); under-booked streamers are followed up, and TikTok sessions are registered for voucher eligibility.</li>
+          <li>Sales, commission, and media spend are logged in the Google Sheet tracker and MER is calculated.</li>
+          <li>A payment report is sent to HR every Monday evening of Week 2 and Week 4 (latest Tuesday morning).</li>
+          <li>Streamer questions are answered within 10 minutes during working hours/live sessions; escalations go to the eComm Manager.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s1-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 1080" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Live Streaming Management process flow</title>
+<desc>Flowchart from streamer application through filtering, rate negotiation, onboarding, live sessions, performance tracking, and bi-monthly HR payment reporting, with decision points for filtering criteria, rate escalation thresholds, and session follow-up.</desc>
+<defs>
+  <marker id="arrowS1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .s1box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .s1dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .s1end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .s1title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .s1sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .s1lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .s1edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowS1); }
+  .s1dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowS1); }
+</style>
+
+<rect class="s1dbox" x="560" y="20" width="190" height="66" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="46" text-anchor="middle" class="s1title">Ongoing: Support</text>
+<text x="655" y="64" text-anchor="middle" class="s1sub">Reply within 10 min</text>
+
+<rect class="s1box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="s1title">Application Received</text>
+<text x="260" y="60" text-anchor="middle" class="s1sub">Form · DM · Referral</text>
+<path class="s1edge" d="M260,76 L260,100"/>
+
+<rect class="s1box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="s1title">Screen &amp; Filter</text>
+<text x="260" y="140" text-anchor="middle" class="s1sub">Criteria + sample videos</text>
+<path class="s1edge" d="M260,156 L260,180"/>
+
+<polygon class="s1dbox" points="260,180 360,220 260,260 160,220"/>
+<text x="260" y="216" text-anchor="middle" class="s1title" font-size="14">Meets</text>
+<text x="260" y="230" text-anchor="middle" class="s1title" font-size="14">criteria?</text>
+<path class="s1edge" d="M360,220 L558,220"/>
+<text x="450" y="212" text-anchor="middle" class="s1lbl">No</text>
+<path class="s1edge" d="M260,260 L260,284"/>
+<text x="278" y="276" class="s1lbl">Yes</text>
+
+<rect class="s1dbox" x="560" y="192" width="190" height="56" rx="10"/>
+<text x="655" y="214" text-anchor="middle" class="s1title">Decline Politely</text>
+<text x="655" y="232" text-anchor="middle" class="s1sub">Notify applicant</text>
+
+<rect class="s1box" x="150" y="284" width="220" height="56" rx="10"/>
+<text x="260" y="306" text-anchor="middle" class="s1title">Negotiate Rate</text>
+<text x="260" y="324" text-anchor="middle" class="s1sub">Rate card baseline</text>
+<path class="s1edge" d="M260,340 L260,364"/>
+
+<polygon class="s1dbox" points="260,364 360,404 260,444 160,404"/>
+<text x="260" y="400" text-anchor="middle" class="s1title" font-size="14">Above</text>
+<text x="260" y="414" text-anchor="middle" class="s1title" font-size="14">threshold?</text>
+<path class="s1edge" d="M360,404 L558,404"/>
+<text x="450" y="396" text-anchor="middle" class="s1lbl">Yes</text>
+<path class="s1edge" d="M260,444 L260,480"/>
+<text x="278" y="466" class="s1lbl">No</text>
+
+<rect class="s1dbox" x="560" y="376" width="190" height="56" rx="10"/>
+<text x="655" y="398" text-anchor="middle" class="s1title">Escalate to Manager</text>
+<text x="655" y="416" text-anchor="middle" class="s1sub">&gt;10% comm or $25–50/hr</text>
+<path class="s1dedge" d="M655,432 L655,452 L365,452 L365,480"/>
+
+<rect class="s1box" x="150" y="480" width="220" height="56" rx="10"/>
+<text x="260" y="502" text-anchor="middle" class="s1title">Onboard via WhatsApp</text>
+<text x="260" y="520" text-anchor="middle" class="s1sub">Collect required details</text>
+<path class="s1edge" d="M260,536 L260,560"/>
+
+<rect class="s1box" x="150" y="560" width="220" height="56" rx="10"/>
+<text x="260" y="582" text-anchor="middle" class="s1title">Share Kit &amp; Access</text>
+<text x="260" y="600" text-anchor="middle" class="s1sub">Shopee + TikTok login</text>
+<path class="s1edge" d="M260,616 L260,640"/>
+
+<rect class="s1box" x="150" y="640" width="220" height="56" rx="10"/>
+<text x="260" y="662" text-anchor="middle" class="s1title">Live Sessions Begin</text>
+<text x="260" y="680" text-anchor="middle" class="s1sub">Promo sent Wk1 &amp; Wk3</text>
+<path class="s1edge" d="M260,696 L260,720"/>
+
+<polygon class="s1dbox" points="260,720 360,760 260,800 160,760"/>
+<text x="260" y="756" text-anchor="middle" class="s1title" font-size="14">&lt;4 sessions</text>
+<text x="260" y="770" text-anchor="middle" class="s1title" font-size="14">booked?</text>
+<path class="s1edge" d="M360,760 L558,760"/>
+<text x="450" y="752" text-anchor="middle" class="s1lbl">Yes</text>
+<path class="s1edge" d="M260,800 L260,836"/>
+<text x="278" y="822" class="s1lbl">No</text>
+
+<rect class="s1dbox" x="560" y="732" width="190" height="56" rx="10"/>
+<text x="655" y="754" text-anchor="middle" class="s1title">Send Follow-Up</text>
+<text x="655" y="772" text-anchor="middle" class="s1sub">Encourage registration</text>
+<path class="s1dedge" d="M655,788 L655,808 L365,808 L365,836"/>
+
+<rect class="s1box" x="150" y="836" width="220" height="56" rx="10"/>
+<text x="260" y="858" text-anchor="middle" class="s1title">Track Sales &amp; MER</text>
+<text x="260" y="876" text-anchor="middle" class="s1sub">Google Sheet tracker</text>
+<path class="s1edge" d="M260,892 L260,916"/>
+
+<rect class="s1box" x="150" y="916" width="220" height="56" rx="10"/>
+<text x="260" y="938" text-anchor="middle" class="s1title">Send HR Report</text>
+<text x="260" y="956" text-anchor="middle" class="s1sub">Mon eve, Wk2 &amp; Wk4</text>
+<path class="s1edge" d="M260,972 L260,996"/>
+
+<rect class="s1end" x="150" y="996" width="220" height="56" rx="10"/>
+<text x="260" y="1018" text-anchor="middle" class="s1title">Payment Processed</text>
+<text x="260" y="1036" text-anchor="middle" class="s1sub">Streamer paid on schedule</text>
+
+<text x="390" y="1065" text-anchor="middle" class="s1lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s1-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section1', this)">Expand all</button>
+        <div id="s1-step-1" class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Streamer Application Intake & Filtering</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Ongoing, as applications are received</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Monitor all three application channels daily: the streamer application form, direct inbound requests (WhatsApp/social DM), and referrals from agencies or existing streamers.</li>
+                <li>Log every applicant in the streamer pipeline tracker: name, platform(s), follower count/engagement, niche, contact details, and source channel.</li>
+                <li>Screen each applicant against filtering criteria: platform reach and engagement rate, content/niche fit with the brand, and professionalism or track record (for referrals).</li>
+                <li>Check which other brands the applicant has previously gone live for, and request sample videos of past live sessions to assess presentation and fit.</li>
+                <li>Shortlist applicants who meet the criteria and move them to rate negotiation (Step 2). Send a polite decline to applicants who do not qualify.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A shortlist of qualified streamer candidates, logged in the tracker and ready for rate discussion.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Rate Negotiation & Agreement</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Once a candidate is shortlisted</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Reference the internal rate card to determine the baseline rate for the streamer's tier (e.g. follower/engagement band).</li>
+                <li>For high-demand or top-tier streamers, negotiate above the card rate where justified.</li>
+                <li>Manager sign-off is required if the proposed commission exceeds 10% of sales, or if the hourly rate exceeds $25–$50/hour.</li>
+                <li>Communicate the proposed rate to the streamer, typically via WhatsApp.</li>
+                <li>Confirm the final agreed rate in writing before proceeding to onboarding, and record it in the streamer tracker.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A documented, agreed rate for the streamer, ready for onboarding.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Onboarding via WhatsApp</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Immediately after the rate is agreed</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Add the streamer to the onboarding WhatsApp thread.</li>
+                <li>Send a welcome message covering brand overview, points of contact, and next steps.</li>
+                <li>Collect required details for setup and payment (e.g. bank/payment information).</li>
+                <li>Confirm the streamer has the necessary app(s) installed and is ready to proceed to kit distribution and platform access (Step 4).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Streamer onboarded and ready to receive their kit and platform access.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Live Stream Kit Distribution & Platform Access</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> After onboarding, before the streamer's first live session</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Share the Live Stream Kit via WhatsApp: brand guidelines and talking points, plus arrange delivery or pickup of product samples for the streamer to showcase live.</li>
+                <li>Grant Shopee Seller account access by collecting the streamer's registered email and mobile number and adding them as an authorized user.</li>
+                <li>Grant TikTok Shop access by sharing the shared TikTok Seller login credentials securely, reminding the streamer these credentials are confidential and must not be shared further.</li>
+                <li>Confirm the streamer can log in and access both platforms before their first scheduled session.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Streamer fully equipped with brand materials, product samples, and working platform access.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Bi-Monthly Promotional Updates & Session Follow-Up</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Twice per month — Week 1 and Week 3, sent two weeks ahead of each promotion period</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compile upcoming Shopee/TikTok promotions and campaigns relevant to live sessions.</li>
+                <li>Send the Week 1 update covering promotion mechanics going live in Week 3; send the Week 3 update covering promotion mechanics going live in the following month's Week 1.</li>
+                <li>Broadcast the update to all active streamers via WhatsApp, highlighting promotions and available session slots to register for.</li>
+                <li>Cross-check the session tracker for streamers who have registered for fewer than 4 live sessions in the month.</li>
+                <li>Send a personalized follow-up message to those streamers, encouraging them to register for their preferred session slots.</li>
+                <li>For sessions on TikTok, additionally register each live stream via TikTok's LIVE registration so it is recognised by TikTok and eligible for additional platform vouchers.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Streamers kept informed of promotions; under-booked streamers re-engaged and prompted to register; TikTok sessions registered for voucher eligibility.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Performance Tracking — Sales, Commission, Media Spend & MER</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Ongoing; updated after each live session, at minimum weekly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Open the existing Google Sheet tracker used for this purpose.</li>
+                <li>Record, per streamer per session: date, platform, recorded sales, commission earned, and media budget spent behind the session.</li>
+                <li>Ensure the Marketing Efficiency Ratio (MER = Total Sales Revenue ÷ Total Media Spend) is calculated correctly per streamer/session and rolled up to a brand-level MER.</li>
+                <li>Flag any discrepancies (missing sales data, unclear media spend) to Marketing or Finance for resolution before they feed into reporting.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An accurate, up-to-date record of sales, commission, and MER for the brand.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 7: HR Payment Reporting (Bi-Monthly)</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Twice per month — Week 2 and Week 4, sent every Monday evening (at the latest, Tuesday morning)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Pull the latest figures from the Google Sheet tracker for the relevant reporting period.</li>
+                <li>Compile the HR payment report, including: streamer name and bank/payment details, sessions completed and agreed rate, and sales and commission earned.</li>
+                <li>Review figures for accuracy against the tracker before submission.</li>
+                <li>Send the report to HR every Monday evening of Week 2 and Week 4, at the latest by Tuesday morning, so payment can be processed on schedule.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> HR receives accurate, timely data to process streamer payments twice a month.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 8: Streamer Support & Query Resolution</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Ongoing, as needed</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Monitor WhatsApp for questions from live streamers regarding schedules, rates, platform access, or session logistics.</li>
+                <li>Respond to queries within 10 minutes during working hours and during live sessions.</li>
+                <li>Resolve straightforward issues directly; escalate rate disputes, contractual issues, or anything beyond the Executive's authority to the eCommerce Manager.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Streamers feel supported; issues are resolved promptly or escalated appropriately.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Applicant fails filtering criteria but has a strong social following</td><td>Escalate to eComm Manager for a discretionary review before declining.</td></tr>
+          <tr><td>Streamer requests a commission above 10% of sales, or an hourly rate above $25–$50/hour</td><td>Escalate to eComm Manager for approval before confirming the rate.</td></tr>
+          <tr><td>Streamer loses or forgets the shared TikTok login</td><td>Verify the streamer's identity before resending credentials; rotate the password if the streamer offboards.</td></tr>
+          <tr><td>Streamer registers 0 sessions for 2 consecutive months</td><td>Flag to eComm Manager for review — consider re-engagement or replacement.</td></tr>
+          <tr><td>Sheet figures don't match the platform dashboard</td><td>Reconcile the discrepancy before sending the HR report; delay the report if unresolved rather than submit unverified figures.</td></tr>
+          <tr><td>Streamer disputes their commission calculation</td><td>Review the tracker with the streamer directly; escalate to eComm Manager if unresolved.</td></tr>
+          <tr><td>A streamer is among the 10% who miss the follow-up response target</td><td>Document the specific reason for the miss (e.g. unresponsive, declined, on hiatus) in the tracker.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>New streamers onboarded per month</td><td>5</td><td>Count from the application tracker</td></tr>
+          <tr><td>Follow-up response rate</td><td>90% (the remaining 10% must have a documented reason for missing)</td><td>% of nudged streamers who register after follow-up</td></tr>
+          <tr><td>Marketing Efficiency Ratio (MER)</td><td>Shortcutx: 5.5 | Tradishot: 8.5 | Solulu: 11</td><td>Total Sales ÷ Total Media Spend, from the Google Sheet tracker, per brand</td></tr>
+          <tr><td>HR report on-time submission</td><td>100%, Monday evening of Week 2 & Week 4 (latest Tuesday morning)</td><td>Submission date/time vs. deadline</td></tr>
+          <tr><td>Streamer query response time</td><td>10 minutes (during working hours and live sessions)</td><td>Timestamp of query vs. timestamp of response</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Live Streamer Rate Card</li>
+          <li>Live Stream Kit (brand guidelines & talking points)</li>
+          <li>Google Sheet — Streamer Sales, Commission & MER Tracker</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ================= SECTION 2 ================= -->
+    <div class="tab-content" id="section2">
+
+      <div class="card" id="s2-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to identify, vet, and secure relevant social media creators (KOLs) across the brand portfolio — Shortcutx, Tradishot, Solulu Beauty, and Omiee — on TikTok and Instagram. It covers discovery, direct outreach, content and rate negotiation, and handoff to each brand's manager for execution.</p>
+      </div>
+
+      <div class="card" id="s2-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Creator discovery and identification on TikTok and Instagram, per brand-specific criteria</li>
+              <li>Duplicate/history checks before outreach</li>
+              <li>Direct outreach via each brand's own social media accounts</li>
+              <li>Content format briefing and rate negotiation</li>
+              <li>Logging confirmed creators in ClickUp and assigning to the brand manager for review</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Creative revisions once a creator is onboarded</li>
+              <li>Ongoing communication with the creator after ClickUp assignment</li>
+              <li>Invoicing and billing</li>
+              <li>Content shooting, filming, or editing</li>
+              <li>Managing the ClickUp card after it has been assigned to the brand manager</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note">Note: unlike Live Streaming (Section 1), no manager check-in is required before reaching out to a creator — the eCommerce Executive proceeds with outreach directly once a candidate is identified.</div>
+      </div>
+
+      <div class="card" id="s2-criteria">
+        <h2>Brand Creator Criteria</h2>
+        <table class="data">
+          <tr><th>Brand</th><th>What to Look For</th><th>Gender Focus</th><th>Monthly Target</th></tr>
+          <tr><td>Shortcutx</td><td>Healthy-looking, not big-sized (weight loss brand); interested in health & wellness, exercise, sports, athletics; healthy lifestyle content</td><td>Both genders</td><td>10 creators/month</td></tr>
+          <tr><td>Tradishot</td><td>Pleasant demeanour, healthy look, interested in health & wellness</td><td>Both genders</td><td>3-5 creators/month</td></tr>
+          <tr><td>Solulu Beauty</td><td>Good, glowing skin; pretty/beautiful; simple, minimal makeup; interested in the beauty category</td><td>Both genders, mostly female</td><td>3-5 creators/month</td></tr>
+          <tr><td>Omiee</td><td>Parents/mums with kids under 12; content suited to showing enhanced immunity, brain development, and gut health benefits for kids</td><td>Primarily mums</td><td>3-5 creators/month</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-budget">
+        <h2>Budget & Collaboration Type by Brand</h2>
+        <table class="data">
+          <tr><th>Brand</th><th>Monthly Budget</th><th>Collaboration Type</th><th>Creator Mix</th></tr>
+          <tr><td>Shortcutx</td><td>$9,000/month (incl. content creation for collab post, ads, and platform loading fees)</td><td>Paid</td><td>Mix of macro & micro</td></tr>
+          <tr><td>Tradishot</td><td>$3,000/month</td><td>Paid</td><td>Mix of macro & micro</td></tr>
+          <tr><td>Solulu Beauty</td><td>$1,000/month</td><td>Paid (barter also welcomed, and often easier)</td><td>Mix of macro & micro</td></tr>
+          <tr><td>Omiee</td><td>No cash budget</td><td>Barter only — product sent in exchange for content</td><td>Mix of macro & micro</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Creator Discovery</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Duplicate/History Check</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Direct Outreach</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Content Briefing & Rate Request</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Rate Review & Negotiation</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>Brand Manager (via ClickUp)</td></tr>
+          <tr><td>6. Log in ClickUp & Assign</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>Brand Manager</td></tr>
+        </table>
+        <div class="note">Note: no manager check-in is required through discovery, outreach, and negotiation. The brand manager becomes involved once the creator is assigned in ClickUp, taking over creative revisions, communication, invoicing, and billing.</div>
+      </div>
+
+      <div class="card" id="s2-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Search TikTok & Instagram to identify creators matching brand-specific criteria and monthly volume targets, aiming for ~4x the volume of creators actually needed.</li>
+          <li>Check the creator's DM history on Instagram/TikTok to confirm there's no duplicate or ongoing outreach.</li>
+          <li>Reach out directly using the brand's official social media account and outreach template, customized to the creator's content where possible.</li>
+          <li>If there's no response after 3 days, send one follow-up message; if still no response, move on.</li>
+          <li>Once the creator responds with interest, brief them on the content format and ask for their rate for 1 IG Reel (Collab) + 1 month of loading.</li>
+          <li>If the quote exceeds the remaining budget, negotiate a lower rate, emphasizing the simple/authentic format required.</li>
+          <li>Create a new ClickUp card with the creator's details, rate, loading fee, and period, and move it through the pipeline stages.</li>
+          <li>Assign the card to the brand's manager for review once terms are confirmed — the Executive's involvement ends there.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s2-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 950" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>KOL Management process flow</title>
+<desc>Flowchart from creator discovery through duplicate checks, outreach, follow-up, rate negotiation, and ClickUp handoff to the brand manager.</desc>
+<defs>
+  <marker id="arrowS2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .s2box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .s2dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .s2exit { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .s2end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .s2title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .s2sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .s2lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .s2edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowS2); }
+  .s2dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowS2); }
+</style>
+
+<rect class="s2box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="s2title">Discover Creators</text>
+<text x="260" y="60" text-anchor="middle" class="s2sub">TikTok/IG, ~4x volume</text>
+<path class="s2edge" d="M260,76 L260,100"/>
+
+<rect class="s2box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="s2title">Duplicate Check</text>
+<text x="260" y="140" text-anchor="middle" class="s2sub">Review DM history</text>
+<path class="s2edge" d="M260,156 L260,180"/>
+
+<polygon class="s2dbox" points="260,180 360,220 260,260 160,220"/>
+<text x="260" y="216" text-anchor="middle" class="s2title" font-size="14">Prior</text>
+<text x="260" y="230" text-anchor="middle" class="s2title" font-size="14">thread?</text>
+<path class="s2edge" d="M360,220 L558,220"/>
+<text x="450" y="212" text-anchor="middle" class="s2lbl">Yes</text>
+<path class="s2edge" d="M260,260 L260,284"/>
+<text x="278" y="276" class="s2lbl">No</text>
+
+<rect class="s2dbox" x="560" y="192" width="190" height="56" rx="10"/>
+<text x="655" y="214" text-anchor="middle" class="s2title">Continue Thread</text>
+<text x="655" y="232" text-anchor="middle" class="s2sub">Skip fresh outreach</text>
+<path class="s2dedge" d="M655,248 L655,268 L365,268 L365,284"/>
+
+<rect class="s2box" x="150" y="284" width="220" height="56" rx="10"/>
+<text x="260" y="306" text-anchor="middle" class="s2title">Send Outreach</text>
+<text x="260" y="324" text-anchor="middle" class="s2sub">Brand-specific template</text>
+<path class="s2edge" d="M260,340 L260,364"/>
+
+<polygon class="s2dbox" points="260,364 360,404 260,444 160,404"/>
+<text x="260" y="400" text-anchor="middle" class="s2title" font-size="14">Responded?</text>
+<path class="s2edge" d="M360,404 L558,404"/>
+<text x="450" y="396" text-anchor="middle" class="s2lbl">No</text>
+<path class="s2edge" d="M260,444 L260,520"/>
+<text x="278" y="480" class="s2lbl">Yes</text>
+
+<rect class="s2dbox" x="560" y="376" width="190" height="56" rx="10"/>
+<text x="655" y="398" text-anchor="middle" class="s2title">Follow Up (Day 3)</text>
+<text x="655" y="416" text-anchor="middle" class="s2sub">One nudge only</text>
+<path class="s2edge" d="M655,432 L655,452"/>
+
+<polygon class="s2dbox" points="655,452 730,487 655,522 580,487"/>
+<text x="655" y="491" text-anchor="middle" class="s2title" font-size="13">Responded?</text>
+<path class="s2dedge" d="M580,487 L400,487 L400,520"/>
+<text x="470" y="480" text-anchor="middle" class="s2lbl">Yes</text>
+<path class="s2edge" d="M655,522 L655,548"/>
+<text x="672" y="538" class="s2lbl">No</text>
+
+<rect class="s2exit" x="560" y="548" width="190" height="56" rx="10"/>
+<text x="655" y="570" text-anchor="middle" class="s2title">Candidate Dropped</text>
+<text x="655" y="588" text-anchor="middle" class="s2sub">No further follow-up</text>
+
+<rect class="s2box" x="150" y="520" width="220" height="56" rx="10"/>
+<text x="260" y="542" text-anchor="middle" class="s2title">Content Brief &amp; Rate Ask</text>
+<text x="260" y="560" text-anchor="middle" class="s2sub">Talking-head, 30s–1min</text>
+<path class="s2edge" d="M260,576 L260,600"/>
+
+<polygon class="s2dbox" points="260,600 360,640 260,680 160,640"/>
+<text x="260" y="636" text-anchor="middle" class="s2title" font-size="14">Within</text>
+<text x="260" y="650" text-anchor="middle" class="s2title" font-size="14">budget?</text>
+<path class="s2edge" d="M360,640 L558,640"/>
+<text x="450" y="632" text-anchor="middle" class="s2lbl">No</text>
+<path class="s2edge" d="M260,680 L260,704"/>
+<text x="278" y="696" class="s2lbl">Yes</text>
+
+<rect class="s2dbox" x="560" y="612" width="190" height="56" rx="10"/>
+<text x="655" y="634" text-anchor="middle" class="s2title">Negotiate Lower</text>
+<text x="655" y="652" text-anchor="middle" class="s2sub">Simple, authentic format</text>
+<path class="s2dedge" d="M655,668 L655,692 L260,692 L260,704"/>
+
+<rect class="s2box" x="150" y="704" width="220" height="56" rx="10"/>
+<text x="260" y="726" text-anchor="middle" class="s2title">Log in ClickUp</text>
+<text x="260" y="744" text-anchor="middle" class="s2sub">Move through pipeline stages</text>
+<path class="s2edge" d="M260,760 L260,784"/>
+
+<rect class="s2box" x="150" y="784" width="220" height="56" rx="10"/>
+<text x="260" y="806" text-anchor="middle" class="s2title">Assign to Brand Manager</text>
+<text x="260" y="824" text-anchor="middle" class="s2sub">Executive's role ends here</text>
+<path class="s2edge" d="M260,840 L260,864"/>
+
+<rect class="s2end" x="150" y="864" width="220" height="56" rx="10"/>
+<text x="260" y="886" text-anchor="middle" class="s2title">Manager Takes Over</text>
+<text x="260" y="904" text-anchor="middle" class="s2sub">Creative, comms, billing</text>
+
+<text x="390" y="935" text-anchor="middle" class="s2lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s2-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section2', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Creator Discovery & Identification</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Ongoing, to meet each brand's monthly onboarding target</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Search TikTok and Instagram for creators whose look, demeanour, and content match the brand's persona and interest criteria (see Brand Creator Criteria table).</li>
+                <li>Consider a mix of macro and micro creators — there is no strict follower threshold; the priority is meeting each brand's monthly volume target with relevant, on-brand creators.</li>
+                <li>Aim to reach out to at least 4x the number of creators needed, to account for response and conversion rates — e.g. Shortcutx should contact roughly 40 candidates/month to onboard 10; Solulu, Tradishot, and Omiee roughly 12-20/month to onboard 3-5.</li>
+                <li>Track progress against each brand's monthly onboarding target: Shortcutx (10), Solulu (3-5), Tradishot (3-5), Omiee (3-5).</li>
+                <li>Note the creator's profile link and a few specific details from their feed to personalize the outreach message later.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A shortlist of on-brand creator candidates per brand, ready for a duplicate check.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Duplicate / History Check</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Before reaching out to each candidate</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Check the creator's DM history on the brand's Instagram or TikTok account for any prior communication or engagement.</li>
+                <li>If there's a recent or ongoing conversation, continue in the existing thread rather than sending a fresh outreach message.</li>
+                <li>If a prior conversation was already declined or closed out, use judgement on whether to re-approach or move to the next candidate.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Confirmation that outreach won't duplicate or contradict a prior conversation.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Direct Outreach via Brand Social Accounts</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> After the duplicate check — no manager check-in required before proceeding</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Log in to the relevant brand's Instagram/TikTok account (login details provided separately).</li>
+                <li>Send the brand-specific outreach message (see Outreach Message Templates below), customizing it with a reference to the creator's content or feed where possible.</li>
+                <li>If there is no response after 3 days, send one follow-up message.</li>
+                <li>If there is still no response after the follow-up, move on to the next candidate — no further follow-up is sent.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Creator has been contacted; their response (or lack of one) determines the next step.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Content Format Briefing & Rate Request</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Once a creator responds with interest</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Explain the content requirement: a simple talking-head video, no heavy editing, subtitles and key points overlaid, 30 seconds to 1 minute long.</li>
+                <li>Ask the creator for their rate for 1 IG Reel (Collab) + 1 month of platform loading fee.</li>
+                <li>For Omiee specifically, clarify upfront that this is a barter collaboration — product is sent in exchange for one video, with no cash payment discussed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A rate quote from the creator (or a confirmed barter agreement for Omiee).</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Rate Review & Negotiation</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Once the creator's rate quote is received</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compare the quoted rate (content creation + loading fee) against the brand's remaining monthly KOL budget: Shortcutx $9,000/month, Solulu $1,000/month, Tradishot $3,000/month — all inclusive of content creation, ads, and platform loading fees. Omiee has no cash budget; it is barter-only.</li>
+                <li>If the quote exceeds what's available, negotiate directly with the creator for a lower rate, emphasizing that the brand wants a simple, authentic talking-head video rather than a highly stylised or heavily produced one.</li>
+                <li>Confirm the final agreed rate (or barter terms for Omiee) and the collaboration period with the creator.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A finalized rate and collaboration period, ready to be logged in ClickUp.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Log Creator in ClickUp & Assign for Review</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Once terms are confirmed with the creator</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Open the relevant brand's ClickUp list (see Related Documents for links: Shortcutx, Tradishot, Solulu, Omiee).</li>
+                <li>Create a new card for the creator with: name, profile link, content creation rate, loading fee, and collaboration period.</li>
+                <li>Move the card through the pipeline stages as the conversation progresses (e.g. New → Outreach Sent → Rate Confirmed, plus any additional stages already set up in each brand's ClickUp list).</li>
+                <li>Once terms are confirmed, assign the card to the relevant brand's manager for their review.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A complete, assigned ClickUp card, ready for the brand manager to take over.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-templates">
+        <h2>Outreach Message Templates</h2>
+        <p>Customize each message with details from the creator's feed where possible (e.g. referencing a recent post or their content niche).</p>
+
+        <h3>Shortcutx</h3>
+        <div class="quote">Hello! We're currently partnering with creators who focus on long-term well-being and healthy everyday habits, and your content really stood out to us. Hope you've been doing well — I'm reaching out from Shortcutx as we'd love to explore a potential collaboration with you. We offer products like our Max+ Juice, designed to support energy boosting and hydration to be more mindful and sustainable lifestyle. Would you be open to discussing this further? Looking forward to hearing from you!</div>
+
+        <h3>Solulu Beauty</h3>
+        <div class="quote">Hi! We've been following your content and really love how you share your routines. It feels super genuine and aligns really well with Solulu. Solulu is a dual-action collagen shot with sun protection, designed to support glowing skin and everyday wellness. We'd love to explore a barter collaboration and send you some to try. If you're interested, let us know and we can share more details. Hope to connect soon! — Solulu Team</div>
+
+        <h3>Tradishot</h3>
+        <div class="quote">Hi, We've been following your content and really love how you share videos. Your content feels genuine and aligns closely with what we're building at Tradishot. We're currently looking to partner with creators for a long-term collaboration focused on wellness and everyday healthy habits, and we'd love to explore this with you. Tradishot is a range of ready-to-drink jamu wellness shots. If you're open to collaborating, we'd love to hear from you. Feel free to send through your rates and loading fee, and we can discuss further.</div>
+
+        <h3>Omiee</h3>
+        <div class="quote">Hi, I've been following your content and really love how you share your life as a mum. Your content feels so genuine and relatable. I'm reaching out from Omiee, a brain booster + immunity jelly for kids, created by a mum who knows what matters most. It's designed to support sharper focus, better memory, and stronger immunity for little ones. We'd love to send you some Omiee to try with your kids, in exchange for creating a short video sharing your experience as a mum using the product in your daily routine. If this sounds like something you're open to, let me know and I'd be happy to share more details.</div>
+
+        <div class="note">Note: Omiee is the only brand run as a barter-only collaboration (product exchange, no cash payment).</div>
+      </div>
+
+      <div class="card" id="s2-handoff">
+        <h2>Handoff Boundary</h2>
+        <p>Once a creator's card is assigned to the brand manager in ClickUp, the eCommerce Executive's role in that collaboration ends. Creative revisions, ongoing communication, invoicing, and billing with the creator are handled by the individual brand manager.</p>
+      </div>
+
+      <div class="card" id="s2-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Creator's rate is still above budget even after negotiation</td><td>Log the card in ClickUp with a note flagging the gap; assign to the brand manager for a decision on whether to proceed, negotiate further, or pass.</td></tr>
+          <tr><td>Creator only wants to do TikTok, or only Instagram, not both</td><td>Note this in the ClickUp card; the brand manager decides if a single-platform collaboration is acceptable.</td></tr>
+          <tr><td>Creator has an ongoing/prior conversation from a previous month</td><td>Continue in the same DM thread rather than restarting outreach; treat as a fresh negotiation if the prior collaboration had lapsed.</td></tr>
+          <tr><td>Omiee creator asks for cash payment instead of barter</td><td>Politely reiterate the barter-only policy; if they decline, move on to the next candidate.</td></tr>
+          <tr><td>Monthly volume target isn't met by month-end</td><td>Flag to the brand manager for visibility, along with a brief reason why the target wasn't met (e.g. low response rate, budget constraints, insufficient on-brand candidates).</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Creators onboarded per month, per brand</td><td>Shortcutx: 10 | Solulu/Tradishot/Omiee: 3-5 each</td><td>Count of ClickUp cards assigned per brand per month</td></tr>
+          <tr><td>Outreach volume</td><td>At least 4x the monthly onboarding target per brand (e.g. Shortcutx ≥ ~40 contacted/month)</td><td>Count of outreach messages sent ÷ monthly onboarding target</td></tr>
+          <tr><td>Outreach response rate</td><td>50%</td><td>Responses received ÷ total outreach messages sent</td></tr>
+          <tr><td>Follow-up conversion rate</td><td>75%</td><td>Creators who respond after the 3-day follow-up ÷ total follow-ups sent</td></tr>
+          <tr><td>Budget adherence</td><td>100% within monthly cap (Shortcutx $9,000 | Tradishot $3,000 | Solulu $1,000)</td><td>Sum of confirmed rates vs. monthly budget, per brand</td></tr>
+          <tr><td>Time from first contact to ClickUp assignment</td><td>[To confirm]</td><td>Date of first outreach vs. date of ClickUp assignment</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li><a class="ext-link" href="https://app.clickup.com/90182527480/v/l/6-901817409865-1?pr=901810190376" target="_blank" rel="noopener">ClickUp — Shortcutx KOL List ↗</a></li>
+          <li><a class="ext-link" href="https://app.clickup.com/90182527480/v/l/li/901817579996" target="_blank" rel="noopener">ClickUp — Tradishot KOL List ↗</a></li>
+          <li><a class="ext-link" href="https://app.clickup.com/90182527480/v/l/li/901817610017?pr=901810346015" target="_blank" rel="noopener">ClickUp — Solulu KOL List ↗</a></li>
+          <li><a class="ext-link" href="https://app.clickup.com/90182527480/v/l/li/901817763569?pr=901810344402" target="_blank" rel="noopener">ClickUp — Omiee KOL List ↗</a></li>
+        </ul>
+        <ul class="plain">
+          <li>Brand social media login credentials (provided separately — not stored in this document)</li>
+          <li>Section 1: Live Streaming Management</li>
+          <li>Section 3: eCommerce Support</li>
+        </ul>
+      </div>
+
+      <div class="card confirm-box" id="s2-confirm">
+        <h2>Items to Confirm</h2>
+        <p>The following remains open and should be confirmed before this section is finalized:</p>
+        <ul class="plain">
+          <li>Target for time-to-assignment (from first contact to ClickUp assignment)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 3 ================= -->
+    <div class="tab-content" id="section3">
+
+      <div class="card" id="s3-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to give the business accurate, consistent, weekly visibility into sales performance across all eCommerce channels — Shopify, Shopee, TikTok, and Lazada — for every brand, and to keep stakeholders informed of upcoming platform campaigns. It supports clean month-to-month trend comparison via the shared Canva sales performance reporting file.</p>
+      </div>
+
+      <div class="card" id="s3-structure">
+        <h2>Reporting File Structure</h2>
+        <p>The Canva file contains one slide per brand (Shortcutx, Tradishot, Solulu Beauty, Omiee), plus a cover slide stating the current reporting period (e.g. "6/7–12/7"). Each brand's slide includes:</p>
+        <ul class="plain">
+          <li>The brand logo and an "eCommerce Sales Report" title</li>
+          <li>A "Campaign Calendar" listing upcoming campaigns per platform, with dates</li>
+          <li>A stacked bar chart with one bar per platform the brand is active on (not every brand sells on all four platforms) — each week adds a new stacked segment in a new colour, labelled with its date range</li>
+          <li>A footer note showing the previous month's final total per platform, for month-to-month comparison</li>
+        </ul>
+      </div>
+
+      <div class="card" id="s3-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Weekly (every Monday, from 10am) data pull from Shopify, Shopee, TikTok, and Lazada, per brand</li>
+              <li>Updating the Canva sales performance reporting file with revenue/GMV figures</li>
+              <li>Starting a new chart each calendar month and closing it on the last day of that month</li>
+              <li>Referencing the upcoming campaigns Canva file and reflecting relevant campaigns per platform in the report</li>
+              <li>Notifying the brand's eCommerce Manager and Head of Marketing via Slack/Teams once updated</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Building or redesigning the Canva file's chart templates (only updating data within existing charts)</li>
+              <li>Campaign planning or creation (only referencing the campaigns file maintained elsewhere)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note">Note: monthly eCommerce reporting support has been confirmed as an additional upcoming responsibility for this section — its exact scope and steps are still to be defined and will be added once briefed.</div>
+      </div>
+
+      <div class="card" id="s3-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Weekly Data Extraction</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Canva Chart Update</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Upcoming Campaigns Update</td><td>eComm Executive</td><td>eComm Executive</td><td>Marketing (campaigns file owner)</td><td>—</td></tr>
+          <tr><td>4. Data Quality Check</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>eComm Manager (if flagged)</td></tr>
+          <tr><td>5. Stakeholder Notification</td><td>eComm Executive</td><td>eComm Executive</td><td>—</td><td>eComm Manager, Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Every Monday at 10am, log into Shopify, Shopee, TikTok, and Lazada for each brand.</li>
+          <li>Pull last week's (Monday–Sunday) revenue/GMV from each platform's reporting section.</li>
+          <li>Check whether the current month already has an active chart in the Canva file; start a new chart on the 1st if not.</li>
+          <li>Add the week's revenue/GMV data point(s) to the correct month's chart, per brand and platform.</li>
+          <li>Reference the upcoming campaigns Canva file and update the campaigns section per platform.</li>
+          <li>If any platform's data looks off or is inaccessible, flag it with a note and proceed with available data.</li>
+          <li>Message the brand's eCommerce Manager and Head of Marketing on Slack/Teams once the update is complete.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s3-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 780" xmlns="http://www.w3.org/2000/svg" role="img" style="max-width:520px;">
+<title>eCommerce Support weekly reporting process flow</title>
+<desc>Flowchart from logging into Shopify, Shopee, TikTok, and Lazada through pulling weekly revenue, updating the Canva chart with correct monthly boundaries, updating upcoming campaigns, handling data issues, and notifying stakeholders.</desc>
+<defs>
+  <marker id="arrowS3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .s3box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .s3dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .s3end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .s3title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .s3sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .s3lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .s3edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowS3); }
+  .s3dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowS3); }
+</style>
+
+<rect class="s3box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="s3title">Log Into Platforms</text>
+<text x="260" y="60" text-anchor="middle" class="s3sub">Every Monday, 10am</text>
+<path class="s3edge" d="M260,76 L260,100"/>
+
+<rect class="s3box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="s3title">Pull Weekly Revenue</text>
+<text x="260" y="140" text-anchor="middle" class="s3sub">Last Mon–Sun, per brand</text>
+<path class="s3edge" d="M260,156 L260,180"/>
+
+<polygon class="s3dbox" points="260,180 360,220 260,260 160,220"/>
+<text x="260" y="216" text-anchor="middle" class="s3title" font-size="14">New</text>
+<text x="260" y="230" text-anchor="middle" class="s3title" font-size="14">month?</text>
+<path class="s3edge" d="M360,220 L558,220"/>
+<text x="450" y="212" text-anchor="middle" class="s3lbl">Yes</text>
+<path class="s3edge" d="M260,260 L260,284"/>
+<text x="278" y="276" class="s3lbl">No</text>
+
+<rect class="s3dbox" x="560" y="192" width="190" height="56" rx="10"/>
+<text x="655" y="214" text-anchor="middle" class="s3title">Start New Chart</text>
+<text x="655" y="232" text-anchor="middle" class="s3sub">Begins on the 1st</text>
+<path class="s3dedge" d="M655,248 L655,268 L365,268 L365,284"/>
+
+<rect class="s3box" x="150" y="284" width="220" height="56" rx="10"/>
+<text x="260" y="306" text-anchor="middle" class="s3title">Update Canva Chart</text>
+<text x="260" y="324" text-anchor="middle" class="s3sub">Add data point, per brand</text>
+<path class="s3edge" d="M260,340 L260,364"/>
+
+<rect class="s3box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="s3title">Update Campaigns</text>
+<text x="260" y="404" text-anchor="middle" class="s3sub">From campaigns file</text>
+<path class="s3edge" d="M260,420 L260,444"/>
+
+<polygon class="s3dbox" points="260,444 360,484 260,524 160,484"/>
+<text x="260" y="480" text-anchor="middle" class="s3title" font-size="14">Data</text>
+<text x="260" y="494" text-anchor="middle" class="s3title" font-size="14">issue?</text>
+<path class="s3edge" d="M360,484 L558,484"/>
+<text x="450" y="476" text-anchor="middle" class="s3lbl">Yes</text>
+<path class="s3edge" d="M260,524 L260,560"/>
+<text x="278" y="546" class="s3lbl">No</text>
+
+<rect class="s3dbox" x="560" y="456" width="190" height="56" rx="10"/>
+<text x="655" y="478" text-anchor="middle" class="s3title">Flag &amp; Note Gap</text>
+<text x="655" y="496" text-anchor="middle" class="s3sub">Proceed with available data</text>
+<path class="s3dedge" d="M655,512 L655,532 L365,532 L365,560"/>
+
+<rect class="s3box" x="150" y="560" width="220" height="56" rx="10"/>
+<text x="260" y="582" text-anchor="middle" class="s3title">Notify Stakeholders</text>
+<text x="260" y="600" text-anchor="middle" class="s3sub">Slack: Manager + Head of Marketing</text>
+<path class="s3edge" d="M260,616 L260,640"/>
+
+<rect class="s3end" x="150" y="640" width="220" height="56" rx="10"/>
+<text x="260" y="662" text-anchor="middle" class="s3title">Report Live</text>
+<text x="260" y="680" text-anchor="middle" class="s3sub">Ready for review</text>
+
+<text x="390" y="720" text-anchor="middle" class="s3lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s3-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section3', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Weekly Data Extraction</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Every Monday, from 10am (data may not be ready before this time)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Log into each brand's Shopify admin, Shopee Seller Center, TikTok Shop Seller Center, and Lazada Seller Center (login details provided separately).</li>
+                <li>Pull this week's revenue/GMV per brand, per platform: Shopify → Analytics → filter by time period; Shopee → Data → Business Insights → filter by date (adding each date individually for the period); TikTok → Data → Business Insights → filter by time period; Lazada → Data Insight → Business Advisor.</li>
+                <li>Only pull data for platforms the brand actually sells on — not every brand is active on all four platforms (e.g. Solulu has no Shopify presence; Omiee currently sells only via Shopee and TikTok).</li>
+                <li>Record net revenue/GMV — i.e. after returns and cancellations — not gross, for every platform.</li>
+                <li>Record the figures for each brand/platform combination before moving to the Canva file.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A complete set of this week's revenue/GMV figures for every brand, across the platforms each brand is actually active on.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Canva Chart Update</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Immediately after data extraction, same Monday</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Open the sales performance reporting file in Canva. Update the cover slide's period label to the current reporting window (e.g. "6/7–12/7").</li>
+                <li>Confirm whether a chart already exists for the current calendar month on each brand's slide; if not, start a new chart beginning on the 1st of the month — never on the 30th, 2nd, or any other mid-month date. The first weekly segment of a new month runs from the 1st through the end of that first partial week.</li>
+                <li>On each brand's slide, add this week's revenue/GMV as a new stacked segment (in a new legend colour) on top of the existing bar, per platform the brand is active on — each bar is one platform (Shopify, Shopee, TikTok, Lazada), stacked week by week through the month. Label the new segment with its exact date range (e.g. "6/7–12/7") in the legend.</li>
+                <li>Ensure the final segment of the month ends on the last calendar day of that month, even if it's a partial week; never let it stretch into the next month, so month-to-month comparison stays clean.</li>
+                <li>When starting a new month's chart, update the footer note on each brand's slide with the previous month's final total per platform (e.g. "June 2026: Shopify $179,142 | Shopee $436,751 | TikTok $23,338 | Lazada $15,095") for month-to-month comparison.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An up-to-date monthly chart per brand, with this week's data stacked on, ready for the next comparison point.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Upcoming Campaigns Update</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Same Monday, after the chart is updated</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Open the upcoming campaigns Canva file.</li>
+                <li>Review campaigns planned per platform for the coming period, for each brand.</li>
+                <li>Update the "Campaign Calendar" section on each brand's slide in the sales performance reporting file, listing the campaign name and date range per platform.</li>
+                <li>Leave out platforms the brand isn't running campaigns on for that brand, consistent with the file's existing convention (e.g. marked "NA" or simply omitted).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Each brand's slide reflects both past performance and upcoming campaign context, matching the platforms that brand is actually active on.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Data Quality Check</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Throughout data extraction and chart update</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Cross-check pulled figures against each platform's dashboard totals for the period.</li>
+                <li>If a discrepancy is found, or a platform's Business Insights page is inaccessible, proceed with the data that is available rather than delaying the report.</li>
+                <li>Add a note in the reporting file flagging the specific gap or discrepancy.</li>
+                <li>Follow up to resolve and backfill the figure once the issue is fixed.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The report is published on time even when data hiccups occur, with issues transparently flagged rather than silently omitted.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Stakeholder Notification</span><span class="chev">▶</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> eCommerce Executive</div>
+            <div class="field"><span class="label">When:</span> Once the chart and campaigns section are both updated</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Send a Slack/Teams message to the brand's eCommerce Manager and the Head of Marketing.</li>
+                <li>Include a link to the updated Canva file and a one-line summary of the week (e.g. notable movement, flagged data gaps).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Stakeholders are promptly informed that the week's report is ready to review.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>Data not yet available by 10am Monday (platform lag)</td><td>Proceed with the platforms that are ready, flag the missing ones, update the chart once available, then notify stakeholders.</td></tr>
+          <tr><td>New brand or platform added mid-month</td><td>Start that brand/platform's chart from its first full week, and note the mid-month start in the file.</td></tr>
+          <tr><td>A public holiday falls within the reporting week</td><td>Still record the actual data for the week; add a note if the holiday visibly affected sales.</td></tr>
+          <tr><td>Platform seller center login fails or access is revoked</td><td>Escalate to whoever manages the platform credentials to restore access before proceeding.</td></tr>
+          <tr><td>Campaigns file hasn't been updated by Marketing that week</td><td>Use the last known campaign info, note that it may be outdated, and prompt Marketing for the latest version.</td></tr>
+          <tr><td>A brand isn't active on a given platform (e.g. Solulu has no Shopify presence)</td><td>Omit that platform's bar and campaign entry entirely for that brand — don't show a zero or blank placeholder.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Weekly report timeliness</td><td>100% notified by end of day Monday</td><td>Notification timestamp vs. Monday 10am start</td></tr>
+          <tr><td>Chart data completeness</td><td>100% of applicable brand/platform combinations filled weekly</td><td>Count of data points entered vs. expected per week, per brand's active platforms</td></tr>
+          <tr><td>Data discrepancy flags</td><td>Flagged immediately on discovery; resolved/backfilled within 1 hour of a fix being available</td><td>Count of weeks with a flagged data issue, and time from fix to backfill</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li><a class="ext-link" href="https://canva.link/66btkla63q8fjuk" target="_blank" rel="noopener">Canva — Sales Performance Reporting File ↗</a></li>
+          <li><a class="ext-link" href="https://canva.link/l3ty10cbgvka7or" target="_blank" rel="noopener">Canva — Upcoming Campaigns File ↗</a></li>
+        </ul>
+        <ul class="plain">
+          <li>Platform login credentials (provided separately — not stored in this document)</li>
+          <li>Section 1: Live Streaming Management</li>
+          <li>Section 2: KOL Management</li>
+        </ul>
+      </div>
+
+      <div class="card confirm-box" id="s3-confirm">
+        <h2>Items to Confirm</h2>
+        <p>The following remains open and should be confirmed before this section is finalized:</p>
+        <ul class="plain">
+          <li>Scope and steps for the upcoming monthly eCommerce reporting responsibility (confirmed as needed, not yet defined)</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="doc-footer">eCommerce Executive — Process Documentation</footer>
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.section-tab').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.jumplist').forEach(el => el.classList.remove('visible'));
+    document.getElementById('jump-' + id).classList.add('visible');
+  }
+  function toggleStep(headerEl) {
+    headerEl.parentElement.classList.toggle('open');
+  }
+  function toggleAll(sectionId, btn) {
+    const steps = document.querySelectorAll('#' + sectionId + ' .step');
+    const anyClosed = Array.from(steps).some(s => !s.classList.contains('open'));
+    steps.forEach(s => s.classList.toggle('open', anyClosed));
+    btn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
+  }
+</script>
+
+</body>
+</html>

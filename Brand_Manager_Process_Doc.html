@@ -1,0 +1,2007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Brand Manager — Process Documentation</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --blue: #A6373C;
+    --blue-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+    --confirm-bg: #FFF7E6;
+    --confirm-border: #F0B429;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 32px 22px;
+    border-top: 6px solid var(--blue);
+  }
+  header.top h1 { margin: 0 0 6px; font-size: 24px; }
+  header.top .meta { font-size: 13px; color: #E8D0D0; }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.side {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .section-tab {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .section-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .section-tab.disabled { color: var(--muted); cursor: not-allowed; opacity: 0.6; }
+  .jumplist { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; display: none; }
+  .jumplist.visible { display: block; }
+  .jumplist a {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .jumplist a:hover { background: var(--blue-light); color: var(--blue); }
+  main {
+    flex: 1;
+    padding: 24px 32px 80px;
+    min-width: 0;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 8px;
+  }
+  .card h3 { color: var(--blue); font-size: 15px; margin: 18px 0 6px; }
+  .card p { line-height: 1.55; font-size: 14px; margin: 0 0 10px; }
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  ul.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ul.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+  ol.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ol.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+  .scope-cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  .scope-cols > div { flex: 1; min-width: 240px; }
+  .scope-cols h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 13.5px;
+  }
+  table.data th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+  }
+  table.data td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: var(--blue-light); }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--blue-light);
+  }
+  .step-header:hover { background: #E8EFF8; }
+  .step-header .title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .step-header .chev { font-size: 13px; color: var(--muted); transition: transform .15s ease; }
+  .step.open .step-header .chev { transform: rotate(90deg); }
+  .step-body { display: none; padding: 14px 18px 18px; font-size: 14px; }
+  .step.open .step-body { display: block; }
+  .field { margin-bottom: 8px; }
+  .field .label { font-weight: 600; color: var(--navy); }
+  .quote {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-light);
+    padding: 12px 16px;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 8px 0 16px;
+    border-radius: 0 6px 6px 0;
+  }
+  .confirm-box {
+    background: var(--confirm-bg);
+    border: 1px solid var(--confirm-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .confirm-box h2 { border-bottom: none; color: #8A6300; }
+  .confirm-box ul.plain li { color: #6B4E00; }
+  a.ext-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+  a.ext-link:hover { text-decoration: underline; }
+  .links-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+  .links-list li { margin-bottom: 8px; font-size: 14px; }
+  .expand-all {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .expand-all:hover { background: var(--blue-light); }
+  footer.doc-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
+  .diagram-wrap { overflow-x: auto; }
+  .diagram-wrap svg { max-width: 640px; width: 100%; height: auto; display: block; margin: 0 auto; }
+  .coming-soon { font-size: 13px; color: var(--muted); text-align: center; padding: 40px 20px; }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.side { width: 100%; position: static; max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html" style="display:inline-block; font-size:12.5px; color:#E8D0D0; text-decoration:none; margin-bottom:10px;">&larr; All roles</a>
+  <h1>Brand Manager — Process Documentation</h1>
+  <div class="meta">Owner: Brand Manager &nbsp;|&nbsp; Brands: Shortcutx, Tradishot, Solulu Beauty, Omiee &nbsp;|&nbsp; Last Updated: 22 July 2026 &nbsp;|&nbsp; Review Cadence: Quarterly</div>
+</header>
+
+<div class="layout">
+  <nav class="side">
+    <button class="section-tab active" data-tab="section1" onclick="showTab('section1', this)">Section 1: Brand Identity &amp; Guidelines</button>
+    <div class="jumplist visible" id="jump-section1">
+      <a href="#s1-purpose">Purpose</a>
+      <a href="#s1-scope">Scope</a>
+      <a href="#s1-raci">RACI Matrix</a>
+      <a href="#s1-flow">Process Flow</a>
+      <a href="#s1-diagram">Process Flow Diagram</a>
+      <a href="#s1-steps">Detailed Steps</a>
+      <a href="#s1-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s1-metrics">Metrics</a>
+      <a href="#s1-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section2" onclick="showTab('section2', this)">Section 2: Creative Direction &amp; Campaigns</button>
+    <div class="jumplist" id="jump-section2">
+      <a href="#s2-purpose">Purpose</a>
+      <a href="#s2-scope">Scope</a>
+      <a href="#s2-raci">RACI Matrix</a>
+      <a href="#s2-flow">Process Flow</a>
+      <a href="#s2-diagram">Process Flow Diagram</a>
+      <a href="#s2-steps">Detailed Steps</a>
+      <a href="#s2-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s2-metrics">Metrics</a>
+      <a href="#s2-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section3" onclick="showTab('section3', this)">Section 3: Marketing Asset Production</button>
+    <div class="jumplist" id="jump-section3">
+      <a href="#s3-purpose">Purpose</a>
+      <a href="#s3-scope">Scope</a>
+      <a href="#s3-raci">RACI Matrix</a>
+      <a href="#s3-flow">Process Flow</a>
+      <a href="#s3-diagram">Process Flow Diagram</a>
+      <a href="#s3-steps">Detailed Steps</a>
+      <a href="#s3-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s3-metrics">Metrics</a>
+      <a href="#s3-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section4" onclick="showTab('section4', this)">Section 4: Social Media Presence</button>
+    <div class="jumplist" id="jump-section4">
+      <a href="#s4-purpose">Purpose</a>
+      <a href="#s4-scope">Scope</a>
+      <a href="#s4-raci">RACI Matrix</a>
+      <a href="#s4-flow">Process Flow</a>
+      <a href="#s4-diagram">Process Flow Diagram</a>
+      <a href="#s4-steps">Detailed Steps</a>
+      <a href="#s4-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s4-metrics">Metrics</a>
+      <a href="#s4-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section5" onclick="showTab('section5', this)">Section 5: Trend &amp; Competitor Intelligence</button>
+    <div class="jumplist" id="jump-section5">
+      <a href="#s5-purpose">Purpose</a>
+      <a href="#s5-scope">Scope</a>
+      <a href="#s5-raci">RACI Matrix</a>
+      <a href="#s5-flow">Process Flow</a>
+      <a href="#s5-diagram">Process Flow Diagram</a>
+      <a href="#s5-steps">Detailed Steps</a>
+      <a href="#s5-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s5-metrics">Metrics</a>
+      <a href="#s5-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section6" onclick="showTab('section6', this)">Section 6: Team Leadership</button>
+    <div class="jumplist" id="jump-section6">
+      <a href="#s6-purpose">Purpose</a>
+      <a href="#s6-scope">Scope</a>
+      <a href="#s6-raci">RACI Matrix</a>
+      <a href="#s6-flow">Process Flow</a>
+      <a href="#s6-diagram">Process Flow Diagram</a>
+      <a href="#s6-steps">Detailed Steps</a>
+      <a href="#s6-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s6-metrics">Metrics</a>
+      <a href="#s6-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section7" onclick="showTab('section7', this)">Section 7: Strategic Alignment &amp; CEO Collaboration</button>
+    <div class="jumplist" id="jump-section7">
+      <a href="#s7-purpose">Purpose</a>
+      <a href="#s7-scope">Scope</a>
+      <a href="#s7-raci">RACI Matrix</a>
+      <a href="#s7-flow">Process Flow</a>
+      <a href="#s7-diagram">Process Flow Diagram</a>
+      <a href="#s7-steps">Detailed Steps</a>
+      <a href="#s7-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s7-metrics">Metrics</a>
+      <a href="#s7-related">Related Documents</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ================= SECTION 1: BRAND IDENTITY & GUIDELINES ================= -->
+    <div class="tab-content active" id="section1">
+
+      <div class="card" id="s1-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to establish, maintain, and enforce a strong, cohesive brand identity for each of the four brands — Shortcutx, Tradishot, Solulu Beauty, and Omiee — ensuring consistency across all platforms, touchpoints, and materials, from digital to physical.</p>
+      </div>
+
+      <div class="card" id="s1-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Defining and documenting brand guidelines for each brand — fonts, colours, tone of voice, visual style, logo usage, and imagery direction</li>
+              <li>Reviewing all outgoing creative and marketing materials for brand guideline compliance before publication</li>
+              <li>Updating and evolving brand guidelines as each brand matures, with CEO alignment</li>
+              <li>Conducting periodic brand audits across all active channels and touchpoints (website, social, packaging, ads, retail)</li>
+              <li>Onboarding new team members and external partners on brand standards</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Hands-on execution of every individual asset — the Brand Manager oversees, reviews, and directs; production is handled by the creative team, Digital Marketing Manager, and external partners</li>
+              <li>Media buying and ad budget allocation — owned by the Media Manager</li>
+              <li>Shopify storefront technical management — owned by the Digital Marketing Manager</li>
+              <li>eCommerce operations (pricing, inventory, fulfilment) — owned by the eCommerce Manager and Executive</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Define / Update Brand Guidelines</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>All team members</td></tr>
+          <tr><td>2. Review Materials for Compliance</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>Asset creator</td></tr>
+          <tr><td>3. Conduct Brand Audit</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>CEO, Head of Marketing</td></tr>
+          <tr><td>4. Enforce &amp; Correct Deviations</td><td>Brand Manager</td><td>Brand Manager</td><td>Relevant team member</td><td>—</td></tr>
+          <tr><td>5. Onboard on Brand Standards</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>New hires / external partners</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Define or update brand guidelines for each brand (fonts, colours, tone of voice, logo usage, imagery style), aligned with the CEO.</li>
+          <li>Document the guidelines in a shared, accessible brand book per brand and distribute to all relevant team members and external partners.</li>
+          <li>Review all outgoing marketing and creative materials against brand guidelines before they go live — flag and correct any deviations.</li>
+          <li>Conduct a quarterly brand audit across all active channels (website, social, ads, packaging, retail POSM) to identify inconsistencies.</li>
+          <li>Address any deviations found in the audit — brief corrective updates to the responsible team member with a clear deadline.</li>
+          <li>Onboard any new team members or external partners (agencies, freelancers) on the brand standards for all relevant brands.</li>
+          <li>Evolve the guidelines over time as each brand matures — propose changes to the CEO, update the brand book, and communicate changes to the team.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s1-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 620" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Brand Identity &amp; Guidelines process flow</title>
+<desc>Flowchart from defining brand guidelines through documentation, review of materials, quarterly brand audits, correcting deviations, and evolving guidelines over time.</desc>
+<defs>
+  <marker id="arrowBm1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm1box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm1dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .bm1end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm1title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm1sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm1lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm1edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm1); }
+  .bm1dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm1); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="620"/>
+
+<rect class="bm1box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="bm1title">Define / Update Guidelines</text>
+<text x="260" y="60" text-anchor="middle" class="bm1sub">Per brand, aligned with CEO</text>
+<path class="bm1edge" d="M260,76 L260,100"/>
+
+<rect class="bm1box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="bm1title">Document &amp; Distribute</text>
+<text x="260" y="140" text-anchor="middle" class="bm1sub">Brand book per brand</text>
+<path class="bm1edge" d="M260,156 L260,180"/>
+
+<rect class="bm1box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="bm1title">Review Materials</text>
+<text x="260" y="220" text-anchor="middle" class="bm1sub">Check compliance before publish</text>
+<path class="bm1edge" d="M260,236 L260,260"/>
+
+<polygon class="bm1dbox" points="260,260 360,300 260,340 160,300"/>
+<text x="260" y="296" text-anchor="middle" class="bm1title" font-size="14">On</text>
+<text x="260" y="310" text-anchor="middle" class="bm1title" font-size="14">brand?</text>
+<path class="bm1edge" d="M360,300 L558,300"/>
+<text x="450" y="292" text-anchor="middle" class="bm1lbl">No</text>
+<path class="bm1edge" d="M260,340 L260,364"/>
+<text x="278" y="356" class="bm1lbl">Yes</text>
+
+<rect class="bm1dbox" x="560" y="272" width="190" height="56" rx="10"/>
+<text x="655" y="294" text-anchor="middle" class="bm1title">Flag &amp; Correct</text>
+<text x="655" y="312" text-anchor="middle" class="bm1sub">Brief corrective update</text>
+<path class="bm1dedge" d="M655,272 L655,252 L260,252 L260,260"/>
+
+<rect class="bm1box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="bm1title">Quarterly Brand Audit</text>
+<text x="260" y="404" text-anchor="middle" class="bm1sub">All channels &amp; touchpoints</text>
+<path class="bm1edge" d="M260,420 L260,444"/>
+
+<rect class="bm1box" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="bm1title">Evolve Guidelines</text>
+<text x="260" y="484" text-anchor="middle" class="bm1sub">Propose changes via CEO</text>
+<path class="bm1edge" d="M260,500 L260,524"/>
+
+<rect class="bm1end" x="150" y="524" width="220" height="56" rx="10"/>
+<text x="260" y="546" text-anchor="middle" class="bm1title">Brand Cohesion Maintained</text>
+<text x="260" y="564" text-anchor="middle" class="bm1sub">Across all 4 brands</text>
+
+<path class="bm1dedge" d="M150,552 L60,552 L60,48 L150,48"/>
+<text x="65" y="300" text-anchor="middle" class="bm1lbl" transform="rotate(-90 65 300)">Continuous cycle</text>
+
+<text x="390" y="605" text-anchor="middle" class="bm1lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s1-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section1', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Define / Update Brand Guidelines</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> At brand launch, and revisited quarterly or when a significant brand evolution is needed</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>For each brand (Shortcutx, Tradishot, Solulu Beauty, Omiee), define the core brand elements: primary and secondary colour palettes, typography (fonts, weights, hierarchy), logo usage rules (clear space, minimum size, acceptable placements), tone of voice, and imagery style.</li>
+                <li>Align proposed guidelines or any changes with the CEO before finalising.</li>
+                <li>Ensure each brand's identity is distinct yet sits coherently under the wider company portfolio.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A finalised, CEO-aligned set of brand guidelines for each brand.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Document &amp; Distribute Brand Book</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> After guidelines are finalised, and updated whenever guidelines change</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compile guidelines into a structured brand book (digital document or deck) per brand, covering all visual and verbal standards.</li>
+                <li>Store in the shared Google Drive (or equivalent) so all team members and external partners can access the latest version.</li>
+                <li>Notify all relevant stakeholders when a new or updated brand book is published.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> An accessible, up-to-date brand book per brand.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Review Materials for Brand Compliance</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing — before any creative or marketing material goes live</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review submitted creative and marketing assets (ads, social posts, packaging, website banners, EDMs, POSM) against the brand guidelines for the relevant brand.</li>
+                <li>Check fonts, colours, logo placement, tone of voice, imagery style, and overall visual coherence.</li>
+                <li>Approve compliant materials for publication; flag non-compliant materials with specific feedback for the creator to revise.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Only on-brand materials reach publication.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Conduct Quarterly Brand Audit</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Quarterly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Audit all live touchpoints for each brand — website, social media profiles, active ads, packaging, retail POSM, and email templates.</li>
+                <li>Identify any inconsistencies or deviations from the brand guidelines.</li>
+                <li>Document findings and brief corrective updates to the responsible team member with a clear deadline.</li>
+                <li>Share audit findings and corrective actions with the CEO and Head of Marketing.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A quarterly brand audit report with tracked corrective actions.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Onboard on Brand Standards</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> When a new team member joins or a new external partner (agency, freelancer, KOL) is engaged</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Walk the new team member or partner through the brand book for each brand they will work on.</li>
+                <li>Highlight the most common compliance pitfalls and the review process they will need to follow.</li>
+                <li>Provide access to the brand book and any supporting assets (logo files, colour swatches, font files).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> New team members and partners are equipped to produce on-brand work from day one.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A piece of creative is submitted for a brand whose guidelines are not yet finalised (e.g. Solulu Beauty or Omiee pre-launch)</td><td>Review against the draft guidelines and flag that the brand book is pending finalisation — approve provisionally if aligned, but note it will need re-checking once guidelines are locked.</td></tr>
+          <tr><td>An external partner repeatedly deviates from brand guidelines</td><td>Escalate to the CEO and consider providing additional onboarding, closer review checkpoints, or replacing the partner.</td></tr>
+          <tr><td>A campaign concept requires deliberately bending a brand guideline (e.g. a special-edition colour palette)</td><td>The Brand Manager approves the exception explicitly and documents it — exceptions must not set a silent precedent.</td></tr>
+          <tr><td>A brand audit reveals widespread off-brand content already live</td><td>Prioritise corrections by visibility (highest-traffic or customer-facing channels first) and set a deadline for full remediation.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Brand guideline compliance rate</td><td>100% of published materials pass brand review</td><td>Count of materials approved vs. flagged for revision before publication</td></tr>
+          <tr><td>Brand audit completion</td><td>1 per quarter, per brand</td><td>Audit report submitted on schedule</td></tr>
+          <tr><td>Audit deviation resolution</td><td>All flagged deviations corrected within 2 weeks of the audit</td><td>Time from flagging to correction</td></tr>
+          <tr><td>Onboarding coverage</td><td>100% of new team members / external partners onboarded within their first week</td><td>Onboarding completion tracked per new joiner</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Brand book per brand — Shortcutx, Tradishot, Solulu Beauty, Omiee (Google Drive)</li>
+          <li>Logo and asset library per brand (Google Drive)</li>
+          <li>Brand guideline review checklist</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 2: CREATIVE DIRECTION & CAMPAIGNS ================= -->
+    <div class="tab-content" id="section2">
+
+      <div class="card" id="s2-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure the Brand Manager leads the overall creative and marketing direction across all four brands — driving fresh ideas, conceptualising product launches, brand activations, and campaigns, and planning and executing high-performing marketing campaigns across digital, social, and offline channels.</p>
+      </div>
+
+      <div class="card" id="s2-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Setting the overall creative and marketing direction for each brand, per quarter and per campaign</li>
+              <li>Conceptualising ideas for product launches, brand activations, and campaigns — from initial concept through to creative brief</li>
+              <li>Planning marketing campaigns across digital, social, and offline channels, including timelines, messaging, and channel mix</li>
+              <li>Briefing the creative/marketing team on campaign execution</li>
+              <li>Reviewing campaign output to ensure creative quality and strategic alignment before launch</li>
+              <li>Post-campaign review — assessing what worked, what didn't, and feeding insights into future campaigns</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Hands-on day-to-day execution of individual campaign assets — delegated to the creative team, Digital Marketing Manager, and eCommerce team</li>
+              <li>Media buying, budget pacing, and ad platform management — owned by the Media Manager</li>
+              <li>EDM scheduling and Klaviyo management — owned by the Digital Marketing Manager</li>
+              <li>eCommerce campaign execution (discount setup, landing pages, Shopify configuration) — owned by the eCommerce Manager/Executive</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Set Creative Direction</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>All team leads</td></tr>
+          <tr><td>2. Conceptualise Campaign / Launch</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO, Head of Marketing</td><td>—</td></tr>
+          <tr><td>3. Plan Campaign (Timeline, Channels, Messaging)</td><td>Brand Manager</td><td>Brand Manager</td><td>Digital Marketing Manager, eCommerce Manager, Media Manager</td><td>—</td></tr>
+          <tr><td>4. Brief the Team</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>All executing team members</td></tr>
+          <tr><td>5. Review Campaign Output</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>Executing team members</td></tr>
+          <tr><td>6. Post-Campaign Review</td><td>Brand Manager</td><td>Brand Manager</td><td>Digital Marketing Manager, eCommerce Manager, Media Manager</td><td>CEO</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Set the overall creative and marketing direction for the quarter, per brand, aligned with the CEO's strategic priorities.</li>
+          <li>Conceptualise campaign or product launch ideas — develop the creative concept, key messaging, and the story the campaign will tell.</li>
+          <li>Plan the campaign: define the timeline, channel mix (digital, social, offline), target audience, key deliverables, and success criteria.</li>
+          <li>Brief the creative and marketing team on the campaign — communicate the concept, timeline, deliverables, and brand standards to follow.</li>
+          <li>Review all campaign output before launch — ensure creative quality, strategic alignment, and brand compliance.</li>
+          <li>If output is not up to standard, provide specific feedback and request revisions before clearing for launch.</li>
+          <li>After the campaign, conduct a post-campaign review — gather performance data, assess what worked and what didn't, and document insights for future campaigns.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s2-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 620" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Creative Direction &amp; Campaigns process flow</title>
+<desc>Flowchart from setting creative direction, through conceptualising, planning, briefing the team, reviewing output with a quality gate, and conducting a post-campaign review.</desc>
+<defs>
+  <marker id="arrowBm2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm2box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm2dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .bm2end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm2title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm2sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm2lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm2edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm2); }
+  .bm2dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm2); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="620"/>
+
+<rect class="bm2box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="bm2title">Set Creative Direction</text>
+<text x="260" y="60" text-anchor="middle" class="bm2sub">Quarterly, per brand, with CEO</text>
+<path class="bm2edge" d="M260,76 L260,100"/>
+
+<rect class="bm2box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="bm2title">Conceptualise Campaign</text>
+<text x="260" y="140" text-anchor="middle" class="bm2sub">Concept, messaging, story</text>
+<path class="bm2edge" d="M260,156 L260,180"/>
+
+<rect class="bm2box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="bm2title">Plan Campaign</text>
+<text x="260" y="220" text-anchor="middle" class="bm2sub">Timeline, channels, deliverables</text>
+<path class="bm2edge" d="M260,236 L260,260"/>
+
+<rect class="bm2box" x="150" y="260" width="220" height="56" rx="10"/>
+<text x="260" y="282" text-anchor="middle" class="bm2title">Brief the Team</text>
+<text x="260" y="300" text-anchor="middle" class="bm2sub">Concept, timeline, standards</text>
+<path class="bm2edge" d="M260,316 L260,340"/>
+
+<polygon class="bm2dbox" points="260,340 370,380 260,420 150,380"/>
+<text x="260" y="376" text-anchor="middle" class="bm2title" font-size="14">Output</text>
+<text x="260" y="390" text-anchor="middle" class="bm2title" font-size="14">on standard?</text>
+<path class="bm2edge" d="M370,380 L558,380"/>
+<text x="460" y="372" text-anchor="middle" class="bm2lbl">No</text>
+<path class="bm2edge" d="M260,420 L260,444"/>
+<text x="278" y="436" class="bm2lbl">Yes</text>
+
+<rect class="bm2dbox" x="560" y="352" width="190" height="56" rx="10"/>
+<text x="655" y="374" text-anchor="middle" class="bm2title">Revise</text>
+<text x="655" y="392" text-anchor="middle" class="bm2sub">Specific feedback to creator</text>
+<path class="bm2dedge" d="M655,352 L655,332 L260,332 L260,340"/>
+
+<rect class="bm2box" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="bm2title">Launch Campaign</text>
+<text x="260" y="484" text-anchor="middle" class="bm2sub">Cleared for go-live</text>
+<path class="bm2edge" d="M260,500 L260,524"/>
+
+<rect class="bm2end" x="150" y="524" width="220" height="56" rx="10"/>
+<text x="260" y="546" text-anchor="middle" class="bm2title">Post-Campaign Review</text>
+<text x="260" y="564" text-anchor="middle" class="bm2sub">Insights fed into next cycle</text>
+
+<text x="390" y="605" text-anchor="middle" class="bm2lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s2-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section2', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Set the Overall Creative &amp; Marketing Direction</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Quarterly, with mid-quarter adjustments as needed</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review each brand's positioning, recent performance, and market context to identify the creative themes and priorities for the quarter.</li>
+                <li>Align the creative direction with the CEO's strategic priorities for each brand.</li>
+                <li>Communicate the direction to all team leads so campaign-level planning can begin from a shared foundation.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear creative direction for each brand for the quarter.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Conceptualise Campaign / Product Launch</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Per campaign or product launch, as driven by the calendar or opportunity</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Develop the creative concept: the central idea, visual direction, and emotional tone of the campaign or launch.</li>
+                <li>Define the key messaging and the story the campaign will tell — what the audience should feel, know, and do.</li>
+                <li>Consult with the CEO and Head of Marketing for input on strategic fit and ambition level.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A campaign concept ready to be turned into a plan and brief.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Plan Campaign (Timeline, Channels, Messaging)</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> After concept is finalised</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Define the campaign timeline: key milestones, asset deadlines, and go-live date.</li>
+                <li>Select the channel mix — which digital, social, and offline channels will carry the campaign, and what role each plays.</li>
+                <li>Specify the target audience and any segmentation the campaign requires.</li>
+                <li>List all key deliverables (e.g. hero visuals, social posts, EDMs, landing page, packaging, POSM) and assign ownership to the relevant team members.</li>
+                <li>Define success criteria — what the campaign needs to achieve to be considered effective.</li>
+                <li>Consult with the Digital Marketing Manager, eCommerce Manager, and Media Manager to confirm feasibility and timing.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A complete campaign plan ready to brief to the team.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Brief the Team</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Once the campaign plan is finalised</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Communicate the campaign concept, timeline, deliverables, and brand standards to all executing team members.</li>
+                <li>Ensure each team member understands their specific deliverables and deadlines.</li>
+                <li>Make the brief available in a shared location (ClickUp or Google Drive) so it can be referenced throughout execution.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The team is aligned and clear on what to deliver, by when.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Review Campaign Output Before Launch</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Before any campaign material goes live</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review all campaign deliverables for creative quality, strategic alignment with the concept, and brand guideline compliance.</li>
+                <li>Approve materials that meet the standard; flag those that don't with specific, actionable feedback for revision.</li>
+                <li>Do not clear a campaign for launch until all key materials meet the required standard.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Campaign materials cleared for go-live.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 6: Post-Campaign Review</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Within 1 week of campaign end</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Gather performance data from the Digital Marketing Manager (EDM, social, website), eCommerce Manager (sales, conversion), and Media Manager (ad performance).</li>
+                <li>Assess what worked, what didn't, and why — creative execution, channel effectiveness, audience resonance, timing.</li>
+                <li>Document insights and actionable recommendations for future campaigns.</li>
+                <li>Share the review summary with the CEO.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A post-campaign review document with insights feeding into the next campaign cycle.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>An urgent campaign opportunity arises outside the quarterly plan (e.g. trending moment, competitor response)</td><td>Fast-track the concept and brief process — compress timelines but do not skip the review step before launch.</td></tr>
+          <tr><td>Campaign output from the team consistently misses the brief</td><td>Debrief with the team to identify the gap (brief clarity, capability, workload) and adjust the briefing or resourcing for the next campaign.</td></tr>
+          <tr><td>A campaign is underperforming mid-flight</td><td>Assess whether a mid-campaign creative or messaging pivot is feasible; if so, brief a rapid revision; if not, document the learning for the post-campaign review.</td></tr>
+          <tr><td>Multiple brands have overlapping campaign timelines</td><td>Prioritise by strategic impact and stagger where possible; ensure the team's workload is manageable and flag resource conflicts to the CEO early.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Campaign briefs issued on time</td><td>100% — brief issued at least 2 weeks before the earliest asset deadline</td><td>Brief issue date vs. first asset deadline</td></tr>
+          <tr><td>Campaign output review turnaround</td><td>2 business days from submission to Brand Manager approval or feedback</td><td>Time from asset submission to Brand Manager response</td></tr>
+          <tr><td>Post-campaign review completion</td><td>100% — completed within 1 week of campaign end</td><td>Review document submitted on schedule</td></tr>
+          <tr><td>Campaign success rate</td><td>Track against success criteria defined in the campaign plan</td><td>Per-campaign assessment vs. defined criteria</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Quarterly creative direction deck per brand</li>
+          <li>Campaign brief template (ClickUp / Google Drive)</li>
+          <li>Campaign calendar</li>
+          <li>Post-campaign review template</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 3: MARKETING ASSET PRODUCTION ================= -->
+    <div class="tab-content" id="section3">
+
+      <div class="card" id="s3-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure the Brand Manager oversees the production of impactful marketing assets — videos, posters, social media content, and packaging — across all four brands, ensuring every asset meets the creative vision and brand standards before it reaches the audience.</p>
+      </div>
+
+      <div class="card" id="s3-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Overseeing the production pipeline for all marketing assets: video content (brand films, product videos, reels), static visuals (posters, key visuals, social media graphics), and packaging design</li>
+              <li>Directing the creative team, content creators, videographers, and external partners on asset requirements and quality standards</li>
+              <li>Producing static ad creative (10 assets per funnel stage, 30 total across TOFU, MOFU, BOFU) as part of the hyper-personalised ad strategy</li>
+              <li>Reviewing and approving all produced assets before handoff or publication</li>
+              <li>Managing production timelines to ensure assets are ready ahead of campaign and launch deadlines</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Video ad creative production (EGC/UGC) for always-on ads — owned by the Digital Marketing Manager</li>
+              <li>EDM content creation and Klaviyo build — owned by the Digital Marketing Manager</li>
+              <li>Website banner and storefront updates — owned by the Digital Marketing Manager</li>
+              <li>Printing and physical distribution of packaging or POSM — coordinated with vendors/logistics</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Identify Asset Requirements</td><td>Brand Manager</td><td>Brand Manager</td><td>Digital Marketing Manager, eCommerce Manager</td><td>—</td></tr>
+          <tr><td>2. Brief Production</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>Creative team, videographer, external partners</td></tr>
+          <tr><td>3. Oversee Production</td><td>Brand Manager</td><td>Brand Manager</td><td>Content Creator, Videographer</td><td>—</td></tr>
+          <tr><td>4. Review &amp; Approve Assets</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>Requesting team member</td></tr>
+          <tr><td>5. Hand Off Assets</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>Digital Marketing Manager, Media Manager, eCommerce team</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Identify asset requirements from the campaign plan, product launch timeline, or ad-hoc requests from other team members.</li>
+          <li>Brief the production — communicate the creative direction, brand guidelines, specifications (dimensions, formats, platform requirements), and deadline to the relevant creator (creative team, videographer, or external partner).</li>
+          <li>Oversee production progress — check in at key milestones (concept/storyboard, rough cut/draft, final) to ensure the output is tracking to the brief.</li>
+          <li>Review and approve completed assets — confirm creative quality, brand compliance, and technical specifications before clearing for use.</li>
+          <li>If an asset does not meet the standard, provide specific feedback and request a revision with a clear deadline.</li>
+          <li>Hand off approved assets to the relevant team member (Digital Marketing Manager, Media Manager, eCommerce team) or upload to the shared asset library.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s3-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Marketing Asset Production process flow</title>
+<desc>Flowchart from identifying asset requirements, through briefing production, overseeing progress, review and approval with a quality gate, and handing off approved assets.</desc>
+<defs>
+  <marker id="arrowBm3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm3box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm3dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .bm3end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm3title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm3sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm3lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm3edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm3); }
+  .bm3dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm3); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="560"/>
+
+<rect class="bm3box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="bm3title">Identify Asset Needs</text>
+<text x="260" y="60" text-anchor="middle" class="bm3sub">Campaign plan or ad-hoc request</text>
+<path class="bm3edge" d="M260,76 L260,100"/>
+
+<rect class="bm3box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="bm3title">Brief Production</text>
+<text x="260" y="140" text-anchor="middle" class="bm3sub">Direction, specs, deadline</text>
+<path class="bm3edge" d="M260,156 L260,180"/>
+
+<rect class="bm3box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="bm3title">Oversee Production</text>
+<text x="260" y="220" text-anchor="middle" class="bm3sub">Milestone check-ins</text>
+<path class="bm3edge" d="M260,236 L260,260"/>
+
+<polygon class="bm3dbox" points="260,260 370,300 260,340 150,300"/>
+<text x="260" y="296" text-anchor="middle" class="bm3title" font-size="14">Meets</text>
+<text x="260" y="310" text-anchor="middle" class="bm3title" font-size="14">standard?</text>
+<path class="bm3edge" d="M370,300 L558,300"/>
+<text x="460" y="292" text-anchor="middle" class="bm3lbl">No</text>
+<path class="bm3edge" d="M260,340 L260,364"/>
+<text x="278" y="356" class="bm3lbl">Yes</text>
+
+<rect class="bm3dbox" x="560" y="272" width="190" height="56" rx="10"/>
+<text x="655" y="294" text-anchor="middle" class="bm3title">Request Revision</text>
+<text x="655" y="312" text-anchor="middle" class="bm3sub">Specific feedback + deadline</text>
+<path class="bm3dedge" d="M655,272 L655,252 L260,252 L260,260"/>
+
+<rect class="bm3box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="bm3title">Approve &amp; Hand Off</text>
+<text x="260" y="404" text-anchor="middle" class="bm3sub">To team or shared asset library</text>
+<path class="bm3edge" d="M260,420 L260,444"/>
+
+<rect class="bm3end" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="bm3title">Assets Ready for Use</text>
+<text x="260" y="484" text-anchor="middle" class="bm3sub">On-brand, on-spec, on-time</text>
+
+<text x="390" y="540" text-anchor="middle" class="bm3lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s3-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section3', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Identify Asset Requirements</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ahead of each campaign or product launch, and on ad-hoc requests</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Reference the campaign plan, product launch timeline, or incoming requests from the Digital Marketing Manager, eCommerce Manager, or Media Manager to determine what assets are needed.</li>
+                <li>List the required assets: type (video, static visual, packaging), format, dimensions, platform, and deadline.</li>
+                <li>For always-on ads, prepare the static ad creative batch (10 assets per funnel stage — TOFU, MOFU, BOFU — 30 total) as part of the hyper-personalised ad strategy.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear asset requirements list with deadlines.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Brief Production</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Once asset requirements are defined</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Create a production brief for each asset or batch, covering: creative direction, brand guidelines reference, technical specifications (dimensions, format, resolution), platform requirements, and deadline.</li>
+                <li>Assign to the appropriate creator — creative team member, content creator, videographer, or external partner.</li>
+                <li>Share the brief via ClickUp or Google Drive for reference throughout production.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Production briefs issued to creators with clear expectations.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Oversee Production</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Throughout the production period</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Check in at key milestones: concept/storyboard stage, rough cut or draft stage, and final delivery.</li>
+                <li>Provide directional feedback early to avoid major rework at the final stage.</li>
+                <li>Monitor progress against the deadline and flag risks early if production is falling behind.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Production stays on-track and aligned with the brief.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Review &amp; Approve Assets</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> When final assets are submitted</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review each asset for creative quality, alignment with the brief and campaign concept, and brand guideline compliance.</li>
+                <li>Confirm technical specifications (dimensions, format, file size, resolution) match the requirements.</li>
+                <li>Approve assets that meet the standard; flag those that don't with specific, actionable feedback and a revision deadline.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Approved assets ready for handoff or publication.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Hand Off Approved Assets</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Once assets are approved</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Upload approved assets to the shared Google Drive asset library, organised by brand, campaign, and asset type.</li>
+                <li>Notify the relevant team member (Digital Marketing Manager, Media Manager, eCommerce team) that assets are ready for use.</li>
+                <li>For static ad creative, hand off the batch to the Media Manager via the Google Shared Drive for platform upload.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Assets delivered to the right team members, ready for deployment.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>An asset deadline is at risk because the creator is behind schedule</td><td>Assess what can be simplified or deprioritised; if critical, escalate resourcing to the CEO or bring in external support.</td></tr>
+          <tr><td>An external partner delivers assets that are significantly off-brief</td><td>Provide a detailed revision brief; if the pattern persists, consider replacing the partner and onboarding a new one.</td></tr>
+          <tr><td>A last-minute asset request comes in with no lead time</td><td>Assess feasibility — if it can be done without compromising quality, prioritise it; if not, negotiate a realistic deadline with the requester.</td></tr>
+          <tr><td>Packaging design changes are needed after production has begun</td><td>Coordinate with the vendor to assess cost and timeline impact; escalate to the CEO if the change is significant.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Assets delivered on time</td><td>100% of approved assets delivered by the campaign deadline</td><td>Delivery date vs. campaign deadline</td></tr>
+          <tr><td>First-pass approval rate</td><td>Improve over time — track the proportion of assets approved without revision</td><td>Count of assets approved first time vs. requiring revision</td></tr>
+          <tr><td>Review turnaround time</td><td>2 business days from final asset submission to Brand Manager approval or feedback</td><td>Time from submission to response</td></tr>
+          <tr><td>Static ad creative batch completion</td><td>30 assets (10 per funnel stage) per monthly refresh cycle</td><td>Count of completed static ad assets per cycle</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Production brief template (ClickUp / Google Drive)</li>
+          <li>Brand guidelines per brand</li>
+          <li>Shared asset library — Google Drive, organised by brand</li>
+          <li>Vendor contact list (external partners, print vendors)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 4: SOCIAL MEDIA PRESENCE ================= -->
+    <div class="tab-content" id="section4">
+
+      <div class="card" id="s4-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure the Brand Manager curates and elevates each brand's social media presence — particularly on Instagram and TikTok — delivering aesthetic, engaging, and on-brand content that builds community and drives brand affinity across Shortcutx, Tradishot, Solulu Beauty, and Omiee.</p>
+      </div>
+
+      <div class="card" id="s4-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Setting the visual and content direction for each brand's social media profiles (Instagram, TikTok, and any future platforms)</li>
+              <li>Curating the content calendar — themes, post types, visual style, and cadence per brand</li>
+              <li>Reviewing and approving all social content before publication for aesthetic quality and brand alignment</li>
+              <li>Directing the content creator and creative team on social-specific content production</li>
+              <li>Monitoring overall social presence quality and adjusting direction as needed</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Day-to-day social media scheduling, posting, and community management — owned by the Digital Marketing Manager</li>
+              <li>Paid social ad management and budget — owned by the Media Manager</li>
+              <li>Social media performance reporting and analytics deep-dives — owned by the Digital Marketing Manager</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Set Social Content Direction</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>Digital Marketing Manager, Content Creator</td></tr>
+          <tr><td>2. Curate Content Calendar</td><td>Brand Manager</td><td>Brand Manager</td><td>Digital Marketing Manager</td><td>Content Creator</td></tr>
+          <tr><td>3. Direct Content Production</td><td>Brand Manager</td><td>Brand Manager</td><td>Content Creator, Videographer</td><td>—</td></tr>
+          <tr><td>4. Review &amp; Approve Social Content</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>Digital Marketing Manager</td></tr>
+          <tr><td>5. Monitor &amp; Adjust Presence</td><td>Brand Manager</td><td>Brand Manager</td><td>Digital Marketing Manager</td><td>CEO</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Set the social content direction for each brand — define the visual aesthetic, content pillars, and tone that will drive the feed, per platform (Instagram, TikTok).</li>
+          <li>Curate the monthly content calendar: plan the mix of post types (reels, carousels, stories, static posts, TikToks), themes, and cadence for each brand.</li>
+          <li>Direct content production — brief the content creator and creative team on the specific content needed, including visual references, captions, and hashtag strategy.</li>
+          <li>Review and approve all social content before it is scheduled or published — check aesthetic quality, brand alignment, caption copy, and hashtags.</li>
+          <li>If content does not meet the visual or brand standard, provide specific feedback and request a revision before clearing for publication.</li>
+          <li>Monitor the overall social presence quality on an ongoing basis — assess feed aesthetics, engagement patterns, and audience growth — and adjust the content direction as needed.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s4-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Social Media Presence process flow</title>
+<desc>Flowchart from setting social content direction, through curating the content calendar, directing production, review and approval with a quality gate, and ongoing monitoring of presence quality.</desc>
+<defs>
+  <marker id="arrowBm4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm4box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm4dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .bm4end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm4title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm4sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm4lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm4edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm4); }
+  .bm4dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm4); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="560"/>
+
+<rect class="bm4box" x="150" y="20" width="220" height="56" rx="10"/>
+<text x="260" y="42" text-anchor="middle" class="bm4title">Set Content Direction</text>
+<text x="260" y="60" text-anchor="middle" class="bm4sub">Visual aesthetic, pillars, tone</text>
+<path class="bm4edge" d="M260,76 L260,100"/>
+
+<rect class="bm4box" x="150" y="100" width="220" height="56" rx="10"/>
+<text x="260" y="122" text-anchor="middle" class="bm4title">Curate Content Calendar</text>
+<text x="260" y="140" text-anchor="middle" class="bm4sub">Monthly, per brand &amp; platform</text>
+<path class="bm4edge" d="M260,156 L260,180"/>
+
+<rect class="bm4box" x="150" y="180" width="220" height="56" rx="10"/>
+<text x="260" y="202" text-anchor="middle" class="bm4title">Direct Content Production</text>
+<text x="260" y="220" text-anchor="middle" class="bm4sub">Brief creator on visuals &amp; copy</text>
+<path class="bm4edge" d="M260,236 L260,260"/>
+
+<polygon class="bm4dbox" points="260,260 370,300 260,340 150,300"/>
+<text x="260" y="296" text-anchor="middle" class="bm4title" font-size="14">Meets</text>
+<text x="260" y="310" text-anchor="middle" class="bm4title" font-size="14">standard?</text>
+<path class="bm4edge" d="M370,300 L558,300"/>
+<text x="460" y="292" text-anchor="middle" class="bm4lbl">No</text>
+<path class="bm4edge" d="M260,340 L260,364"/>
+<text x="278" y="356" class="bm4lbl">Yes</text>
+
+<rect class="bm4dbox" x="560" y="272" width="190" height="56" rx="10"/>
+<text x="655" y="294" text-anchor="middle" class="bm4title">Revise Content</text>
+<text x="655" y="312" text-anchor="middle" class="bm4sub">Specific feedback to creator</text>
+<path class="bm4dedge" d="M655,272 L655,252 L260,252 L260,260"/>
+
+<rect class="bm4box" x="150" y="364" width="220" height="56" rx="10"/>
+<text x="260" y="386" text-anchor="middle" class="bm4title">Publish Content</text>
+<text x="260" y="404" text-anchor="middle" class="bm4sub">Cleared for scheduling</text>
+<path class="bm4edge" d="M260,420 L260,444"/>
+
+<rect class="bm4end" x="150" y="444" width="220" height="56" rx="10"/>
+<text x="260" y="466" text-anchor="middle" class="bm4title">Monitor &amp; Adjust</text>
+<text x="260" y="484" text-anchor="middle" class="bm4sub">Feed quality, engagement, growth</text>
+
+<path class="bm4dedge" d="M150,472 L60,472 L60,48 L150,48"/>
+<text x="65" y="260" text-anchor="middle" class="bm4lbl" transform="rotate(-90 65 260)">Continuous cycle</text>
+
+<text x="390" y="540" text-anchor="middle" class="bm4lbl">Blue = process step   ·   Amber = decision or exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s4-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section4', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Set Social Content Direction</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Quarterly, with monthly refinements</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Define the visual aesthetic for each brand's social profiles — colour palette in practice, photography style, graphic treatments, and overall feed look.</li>
+                <li>Establish content pillars (e.g. product education, behind-the-scenes, user-generated content, lifestyle, promotions) and the weighting of each.</li>
+                <li>Set the tone of voice for social captions and interactions, consistent with the broader brand guidelines.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A documented social content direction per brand, guiding all social content creation.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Curate Monthly Content Calendar</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Monthly, ahead of the content month</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Plan the month's social content mix — post types (reels, carousels, stories, static posts, TikToks), themes, and posting cadence per brand per platform.</li>
+                <li>Align the calendar with the campaign calendar and any product launches or activations happening that month.</li>
+                <li>Coordinate with the Digital Marketing Manager to avoid scheduling conflicts and ensure cross-channel coherence.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A monthly social content calendar per brand, ready for production.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Direct Content Production</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> After the content calendar is set</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Brief the content creator and creative team on each piece of content needed — including visual references, caption direction, and hashtag strategy.</li>
+                <li>Provide mood boards or visual references where the content needs a specific look or feel.</li>
+                <li>Set clear deadlines aligned to the content calendar.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Content creators briefed and producing against the calendar.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Review &amp; Approve Social Content</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Before any content is scheduled or published</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Review each piece of content for visual quality, brand alignment, feed aesthetic coherence, caption copy, and hashtags.</li>
+                <li>Approve content that meets the standard; provide specific feedback on anything that needs adjustment.</li>
+                <li>Clear approved content for the Digital Marketing Manager to schedule and publish.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Only approved, on-brand content reaches the audience.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Monitor &amp; Adjust Social Presence</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Periodically review each brand's social profiles holistically — does the feed look cohesive and on-brand? Is the content mix working?</li>
+                <li>Review engagement and growth trends (provided by the Digital Marketing Manager) to assess what content types resonate.</li>
+                <li>Adjust the content direction, pillar weighting, or visual style based on what's working and evolving audience preferences.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A continuously refined social presence that stays relevant and visually compelling.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A trending moment or viral opportunity arises that isn't on the calendar</td><td>Fast-track the content creation — the Brand Manager approves the concept and visual before posting, even if expedited.</td></tr>
+          <tr><td>Content quality from the creator consistently falls below the visual standard</td><td>Provide additional visual references and direction; if the gap persists, assess whether the creator needs further development or replacement.</td></tr>
+          <tr><td>A brand's social growth has plateaued</td><td>Conduct a content audit, review competitor and category benchmarks, and propose a refreshed content direction to the CEO.</td></tr>
+          <tr><td>Negative or sensitive comments arise on social posts</td><td>Coordinate with the Digital Marketing Manager on the response — the Brand Manager sets the tone and messaging for any brand-sensitive replies.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Content calendar completion</td><td>100% of planned posts produced and published on schedule</td><td>Published posts vs. planned calendar</td></tr>
+          <tr><td>Content review turnaround</td><td>1 business day from content submission to Brand Manager approval or feedback</td><td>Time from submission to response</td></tr>
+          <tr><td>Feed aesthetic consistency</td><td>Qualitative — assessed in the Brand Manager's monthly feed review</td><td>Monthly visual audit of each brand's feed</td></tr>
+          <tr><td>Engagement trend</td><td>No fixed target — monitor trend and adjust content direction based on performance</td><td>Engagement rate trend per platform, per brand</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Social content direction document per brand</li>
+          <li>Monthly social content calendar per brand</li>
+          <li>Brand guidelines per brand (visual and tone of voice)</li>
+          <li>Mood boards and visual reference library (Google Drive)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 5: TREND & COMPETITOR INTELLIGENCE ================= -->
+    <div class="tab-content" id="section5">
+
+      <div class="card" id="s5-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure the Brand Manager stays ahead of industry trends, competitor activity, and emerging best practices — and translates those insights into actionable recommendations that keep all four brands relevant, differentiated, and inspiring.</p>
+      </div>
+
+      <div class="card" id="s5-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Monitoring competitor brands (local and international) across product, marketing, social, and retail activity</li>
+              <li>Tracking industry trends — product innovation, design trends, marketing tactics, content formats, platform changes</li>
+              <li>Translating trend and competitor insights into actionable recommendations for brand, creative, and campaign strategy</li>
+              <li>Presenting insights and recommendations to the CEO and team on a regular cadence</li>
+              <li>Introducing best practices from outside the industry that could elevate brand performance</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Pricing and promotional benchmarking — owned by the eCommerce Manager</li>
+              <li>Media and ad platform trend analysis — owned by the Media Manager</li>
+              <li>Market research and customer surveys — conducted ad-hoc or by external partners as needed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s5-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Monitor Competitors</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Track Industry Trends</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Translate Insights into Recommendations</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>All team leads</td></tr>
+          <tr><td>4. Present to CEO &amp; Team</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>CEO, all team leads</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Continuously monitor key competitor brands — track their product launches, campaigns, social content, packaging, retail presence, and any notable marketing moves.</li>
+          <li>Track broader industry trends — product innovation, design and visual trends, emerging content formats, platform updates (Instagram, TikTok), and shifts in consumer behaviour.</li>
+          <li>Identify what's relevant and actionable for each of the four brands — not everything trending is worth adopting; filter for strategic fit.</li>
+          <li>Translate insights into specific, actionable recommendations — e.g. a new content format to test, a visual trend to adopt, a campaign angle inspired by a competitor's approach, or a best practice from another industry.</li>
+          <li>Present findings and recommendations to the CEO and relevant team members monthly, and flag urgent insights (e.g. a competitor move that requires a response) immediately.</li>
+          <li>Track the adoption and impact of implemented recommendations over time.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s5-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 520" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Trend &amp; Competitor Intelligence process flow</title>
+<desc>Flowchart from monitoring competitors and tracking trends, through filtering for relevance, translating into recommendations, presenting to CEO, and tracking adoption impact.</desc>
+<defs>
+  <marker id="arrowBm5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm5box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm5dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .bm5end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm5title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm5sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm5lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm5edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm5); }
+  .bm5dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm5); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="520"/>
+
+<rect class="bm5box" x="80" y="20" width="200" height="56" rx="10"/>
+<text x="180" y="42" text-anchor="middle" class="bm5title">Monitor Competitors</text>
+<text x="180" y="60" text-anchor="middle" class="bm5sub">Products, campaigns, social</text>
+
+<rect class="bm5box" x="320" y="20" width="200" height="56" rx="10"/>
+<text x="420" y="42" text-anchor="middle" class="bm5title">Track Industry Trends</text>
+<text x="420" y="60" text-anchor="middle" class="bm5sub">Innovation, formats, platforms</text>
+
+<path class="bm5edge" d="M180,76 L260,120"/>
+<path class="bm5edge" d="M420,76 L340,120"/>
+
+<rect class="bm5box" x="190" y="120" width="220" height="56" rx="10"/>
+<text x="300" y="142" text-anchor="middle" class="bm5title">Filter for Relevance</text>
+<text x="300" y="160" text-anchor="middle" class="bm5sub">Strategic fit per brand</text>
+<path class="bm5edge" d="M300,176 L300,210"/>
+
+<rect class="bm5box" x="190" y="210" width="220" height="56" rx="10"/>
+<text x="300" y="232" text-anchor="middle" class="bm5title">Develop Recommendations</text>
+<text x="300" y="250" text-anchor="middle" class="bm5sub">Specific, actionable proposals</text>
+<path class="bm5edge" d="M300,266 L300,300"/>
+
+<rect class="bm5box" x="190" y="300" width="220" height="56" rx="10"/>
+<text x="300" y="322" text-anchor="middle" class="bm5title">Present to CEO &amp; Team</text>
+<text x="300" y="340" text-anchor="middle" class="bm5sub">Monthly + urgent ad-hoc</text>
+<path class="bm5edge" d="M300,356 L300,390"/>
+
+<rect class="bm5end" x="190" y="390" width="220" height="56" rx="10"/>
+<text x="300" y="412" text-anchor="middle" class="bm5title">Track Adoption &amp; Impact</text>
+<text x="300" y="430" text-anchor="middle" class="bm5sub">Implemented recommendations</text>
+
+<rect class="bm5dbox" x="560" y="210" width="190" height="56" rx="10" stroke-dasharray="4 3"/>
+<text x="655" y="232" text-anchor="middle" class="bm5title" font-size="14">Urgent: Flag Immediately</text>
+<text x="655" y="250" text-anchor="middle" class="bm5sub">Competitor move needing response</text>
+
+<path class="bm5dedge" d="M410,238 L558,238"/>
+
+<path class="bm5dedge" d="M190,418 L80,418 L80,48 L80,48"/>
+<text x="85" y="240" text-anchor="middle" class="bm5lbl" transform="rotate(-90 85 240)">Continuous cycle</text>
+
+<text x="390" y="490" text-anchor="middle" class="bm5lbl">Blue = process step   ·   Amber = urgent exception path</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s5-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section5', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Monitor Competitor Brands</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing — dedicated review at least weekly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Maintain a shortlist of key competitor brands (local and international) relevant to each of the four brands.</li>
+                <li>Track their product launches, campaigns, social content, packaging updates, retail presence, and any notable marketing moves.</li>
+                <li>Note what they're doing well, what they're doing differently, and any gaps or opportunities they're missing.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Ongoing competitor intelligence, logged for reference.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Track Industry Trends</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Follow industry publications, social media trend reports, platform updates (Instagram, TikTok), design trend forecasts, and relevant thought leaders.</li>
+                <li>Track emerging content formats, visual styles, and marketing tactics that could be relevant to the brands.</li>
+                <li>Look beyond the immediate industry — identify best practices from adjacent or unrelated categories that could be adapted.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A running log of relevant trends and observations.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Translate Insights into Recommendations</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Monthly, and immediately for urgent insights</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Filter the month's competitor and trend observations for what's relevant and actionable — not every trend warrants a response.</li>
+                <li>Develop specific recommendations tied to a brand, a channel, or a campaign — e.g. "Test carousel format on Tradishot Instagram based on competitor X's strong engagement with this format."</li>
+                <li>For urgent insights (e.g. a direct competitor launching a similar product or campaign), flag and recommend a response immediately, without waiting for the monthly cadence.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Actionable recommendations ready for CEO and team discussion.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Present to CEO &amp; Team</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Monthly, plus urgent ad-hoc as needed</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Compile the month's key insights and recommendations into a concise summary — focus on what's actionable, not an exhaustive list of everything observed.</li>
+                <li>Present to the CEO and relevant team leads; discuss which recommendations to adopt, test, or deprioritise.</li>
+                <li>Track adopted recommendations and their impact over subsequent months.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Monthly insights shared, with agreed-upon actions tracked.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s5-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A competitor launches a campaign or product that directly targets one of our brands</td><td>Flag immediately to the CEO with a proposed response — do not wait for the monthly review.</td></tr>
+          <tr><td>A trending format or platform feature could benefit the brands but the team lacks the capability to execute it</td><td>Recommend it with a note on the capability gap; propose a solution (training, external partner, or simplified execution).</td></tr>
+          <tr><td>The team is already at capacity and cannot take on a new recommendation</td><td>Prioritise against existing work — recommend what to deprioritise or defer, rather than adding to an already full plate.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Monthly insight report delivered</td><td>1 per month, on schedule</td><td>Report delivery date</td></tr>
+          <tr><td>Recommendations adopted</td><td>Track adoption rate — no fixed target, but a consistent flow of implemented recommendations</td><td>Count of recommendations implemented vs. total proposed</td></tr>
+          <tr><td>Urgent insights flagged promptly</td><td>Within 1 business day of the competitor move or trend emerging</td><td>Time from observation to CEO notification</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Competitor tracking log (Google Drive or ClickUp)</li>
+          <li>Monthly trend and insight report</li>
+          <li>Recommendation adoption tracker</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 6: TEAM LEADERSHIP ================= -->
+    <div class="tab-content" id="section6">
+
+      <div class="card" id="s6-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure the Brand Manager leads, mentors, and inspires the creative and marketing team — maintaining smooth workflows, timely delivery of all outputs, and consistently high-quality work across all four brands.</p>
+      </div>
+
+      <div class="card" id="s6-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Leading and mentoring the creative and marketing team — content creators, designers, videographers, and coordinators working across the four brands</li>
+              <li>Managing team workflows — ensuring work is prioritised, deadlines are met, and bottlenecks are resolved quickly</li>
+              <li>Conducting regular team check-ins and 1-on-1s to maintain alignment, morale, and development</li>
+              <li>Setting quality standards and providing constructive feedback to elevate the team's output over time</li>
+              <li>Identifying skill gaps and recommending development or hiring to the CEO</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>HR administration (contracts, payroll, leave management) — handled by operations/HR</li>
+              <li>Performance reviews and formal appraisals — conducted in collaboration with the CEO per company policy</li>
+              <li>Hiring final decisions — the Brand Manager recommends; the CEO approves</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s6-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Set Quality Standards &amp; Expectations</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>All team members</td></tr>
+          <tr><td>2. Manage Workflow &amp; Priorities</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>All team members</td></tr>
+          <tr><td>3. Conduct Team Check-ins &amp; 1-on-1s</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Mentor &amp; Develop Team Members</td><td>Brand Manager</td><td>Brand Manager</td><td>—</td><td>CEO</td></tr>
+          <tr><td>5. Identify &amp; Address Gaps</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Set clear quality standards and expectations for the creative/marketing team — what "good" looks like, timelines to adhere to, and the review process to follow.</li>
+          <li>Manage the team's workflow on an ongoing basis — prioritise tasks, assign ownership, balance workload across brands, and unblock bottlenecks quickly.</li>
+          <li>Conduct regular team check-ins (weekly) and 1-on-1s (fortnightly or monthly) to maintain alignment, address issues early, and keep morale high.</li>
+          <li>Provide constructive, specific feedback on work output — not just what needs fixing, but why and how to improve, to build the team's capability over time.</li>
+          <li>Identify skill gaps or resourcing constraints that are impacting output quality or timelines; recommend development (training, mentoring) or hiring to the CEO.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s6-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 480" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Team Leadership process flow</title>
+<desc>Flowchart from setting quality standards, through managing workflow, conducting check-ins, mentoring, and identifying and addressing gaps — a continuous leadership cycle.</desc>
+<defs>
+  <marker id="arrowBm6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm6box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm6end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm6title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm6sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm6lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm6edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm6); }
+  .bm6dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm6); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="480"/>
+
+<rect class="bm6box" x="190" y="20" width="220" height="56" rx="10"/>
+<text x="300" y="42" text-anchor="middle" class="bm6title">Set Quality Standards</text>
+<text x="300" y="60" text-anchor="middle" class="bm6sub">Expectations, timelines, process</text>
+<path class="bm6edge" d="M300,76 L300,100"/>
+
+<rect class="bm6box" x="190" y="100" width="220" height="56" rx="10"/>
+<text x="300" y="122" text-anchor="middle" class="bm6title">Manage Workflow</text>
+<text x="300" y="140" text-anchor="middle" class="bm6sub">Prioritise, assign, unblock</text>
+<path class="bm6edge" d="M300,156 L300,180"/>
+
+<rect class="bm6box" x="190" y="180" width="220" height="56" rx="10"/>
+<text x="300" y="202" text-anchor="middle" class="bm6title">Team Check-ins &amp; 1-on-1s</text>
+<text x="300" y="220" text-anchor="middle" class="bm6sub">Weekly team, fortnightly 1-on-1</text>
+<path class="bm6edge" d="M300,236 L300,260"/>
+
+<rect class="bm6box" x="190" y="260" width="220" height="56" rx="10"/>
+<text x="300" y="282" text-anchor="middle" class="bm6title">Mentor &amp; Develop</text>
+<text x="300" y="300" text-anchor="middle" class="bm6sub">Feedback, coaching, growth</text>
+<path class="bm6edge" d="M300,316 L300,340"/>
+
+<rect class="bm6end" x="190" y="340" width="220" height="56" rx="10"/>
+<text x="300" y="362" text-anchor="middle" class="bm6title">Identify &amp; Address Gaps</text>
+<text x="300" y="380" text-anchor="middle" class="bm6sub">Skills, resourcing, hiring</text>
+
+<path class="bm6dedge" d="M190,368 L80,368 L80,48 L190,48"/>
+<text x="85" y="210" text-anchor="middle" class="bm6lbl" transform="rotate(-90 85 210)">Continuous cycle</text>
+
+<text x="390" y="445" text-anchor="middle" class="bm6lbl">Blue = process step   ·   Dashed loop = continuous leadership cycle</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s6-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section6', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Set Quality Standards &amp; Expectations</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> At onboarding and revisited quarterly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Define what "good" looks like for each type of output the team produces — design assets, video content, social posts, packaging — with visual examples where possible.</li>
+                <li>Set clear expectations on timelines, the review/approval process, and the level of polish expected before submission.</li>
+                <li>Communicate these standards to the team and make them accessible for ongoing reference.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The team has a shared, clear understanding of what's expected.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Manage Workflow &amp; Priorities</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing — daily attention</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Maintain visibility over all active tasks across brands — use ClickUp (or the team's task management tool) to track progress and deadlines.</li>
+                <li>Prioritise tasks when competing deadlines arise, balancing urgency and strategic importance across the four brands.</li>
+                <li>Identify and resolve bottlenecks quickly — whether they are resource constraints, approval delays, or unclear briefs.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A well-prioritised, unblocked workflow delivering on time.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: Conduct Team Check-ins &amp; 1-on-1s</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Weekly (team) and fortnightly or monthly (1-on-1s)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Run a weekly team stand-up or check-in to review the week's priorities, surface blockers, and ensure alignment across brands.</li>
+                <li>Conduct fortnightly or monthly 1-on-1s with each direct report to discuss workload, development, concerns, and feedback.</li>
+                <li>Use these touchpoints to maintain morale, catch issues early, and reinforce the team's connection to the brand vision.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> The team stays aligned, heard, and motivated.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Mentor &amp; Develop Team Members</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing, integrated into daily work and 1-on-1s</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Provide constructive, specific feedback on work output — explain not just what to fix, but why and how to improve.</li>
+                <li>Identify each team member's strengths and growth areas; tailor coaching accordingly.</li>
+                <li>Create opportunities for team members to stretch — e.g. leading a small campaign, presenting an idea, or owning a new content format.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A team that improves steadily and feels invested in.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Identify &amp; Address Gaps</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Quarterly review, or sooner if a gap is impacting output</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Assess the team's skill set against the demands of all four brands — where are the strengths, and where are the gaps (e.g. video editing, motion graphics, packaging design)?</li>
+                <li>Assess resourcing — is the team's capacity sufficient to deliver the required output across brands without consistent overload?</li>
+                <li>Recommend to the CEO: training or upskilling for existing team members, or a hiring recommendation if the gap is structural.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> Gaps identified with a clear recommendation for how to close them.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s6-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A team member is consistently underperforming despite feedback and coaching</td><td>Document the pattern, escalate to the CEO, and agree on a formal improvement plan or next steps.</td></tr>
+          <tr><td>The team is overloaded and deadlines are at risk across multiple brands</td><td>Reprioritise — recommend to the CEO what to defer or descope, or propose bringing in temporary external support.</td></tr>
+          <tr><td>A key team member leaves or is unavailable unexpectedly</td><td>Redistribute their active tasks immediately; assess whether coverage is sustainable short-term or if an urgent replacement is needed.</td></tr>
+          <tr><td>Conflict between team members is affecting collaboration or output</td><td>Address it directly and promptly in 1-on-1s; escalate to the CEO if it cannot be resolved within the team.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>On-time delivery rate</td><td>90%+ of tasks delivered by deadline</td><td>ClickUp task completion vs. due dates</td></tr>
+          <tr><td>Team check-in cadence</td><td>Weekly team check-in, fortnightly/monthly 1-on-1s — no missed sessions</td><td>Calendar/log of completed sessions</td></tr>
+          <tr><td>Skill gap review</td><td>1 per quarter</td><td>Quarterly assessment completed and shared with CEO</td></tr>
+          <tr><td>Team output quality trend</td><td>Improvement over time — tracked via first-pass approval rate on assets</td><td>Proportion of assets approved without revision, trended quarterly</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>ClickUp — team task board</li>
+          <li>1-on-1 meeting notes (Google Drive)</li>
+          <li>Quarterly skill gap assessment template</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ================= SECTION 7: STRATEGIC ALIGNMENT & CEO COLLABORATION ================= -->
+    <div class="tab-content" id="section7">
+
+      <div class="card" id="s7-purpose">
+        <h2>Purpose</h2>
+        <p>This process exists to ensure all business units and sub-brands are aligned under one cohesive brand vision, and that the Brand Manager collaborates closely with the CEO — sharing insights, creative strategies, and recommendations that drive brand growth across Shortcutx, Tradishot, Solulu Beauty, and Omiee.</p>
+      </div>
+
+      <div class="card" id="s7-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Aligning all business units — eCommerce, digital marketing, creative, retail — under a unified brand vision per brand and across the portfolio</li>
+              <li>Regular strategic check-ins with the CEO to share creative insights, campaign strategies, brand health updates, and growth recommendations</li>
+              <li>Proposing brand-level strategic initiatives — new brand directions, repositioning, sub-brand launches, or portfolio-level branding decisions</li>
+              <li>Ensuring cross-functional alignment on brand priorities — all teams pulling in the same direction</li>
+              <li>Representing the brand perspective in business-level decisions (e.g. new product categories, market entry, partnerships)</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Financial planning and P&amp;L management — owned by the CEO / finance</li>
+              <li>Operational decisions (logistics, fulfilment, supply chain) — owned by operations</li>
+              <li>Final strategic decisions — the Brand Manager recommends; the CEO decides</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s7-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Define / Refresh Brand Vision</td><td>Brand Manager</td><td>CEO</td><td>—</td><td>All team leads</td></tr>
+          <tr><td>2. Align Business Units</td><td>Brand Manager</td><td>Brand Manager</td><td>All team leads</td><td>CEO</td></tr>
+          <tr><td>3. CEO Strategic Check-ins</td><td>Brand Manager</td><td>Brand Manager</td><td>CEO</td><td>—</td></tr>
+          <tr><td>4. Propose Strategic Initiatives</td><td>Brand Manager</td><td>CEO</td><td>—</td><td>Relevant team leads</td></tr>
+          <tr><td>5. Cross-Functional Brand Alignment</td><td>Brand Manager</td><td>Brand Manager</td><td>All team leads</td><td>CEO</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s7-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Define or refresh the overarching brand vision for the portfolio — what each brand stands for, how they relate to each other, and what the portfolio collectively represents — aligned with the CEO.</li>
+          <li>Communicate the brand vision to all business units and ensure every team understands how their work connects to it.</li>
+          <li>Conduct regular strategic check-ins with the CEO (fortnightly or as agreed) — share creative insights, campaign results, brand health observations, competitor intelligence, and growth recommendations.</li>
+          <li>Propose brand-level strategic initiatives when opportunities or needs arise — new brand directions, positioning shifts, sub-brand launches, or partnerships.</li>
+          <li>Ensure cross-functional alignment by proactively checking that eCommerce, digital marketing, creative, and retail activities are consistent with the brand vision — flag and correct misalignment early.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s7-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 780 480" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Strategic Alignment &amp; CEO Collaboration process flow</title>
+<desc>Flowchart from defining brand vision with the CEO, through communicating to business units, regular CEO strategic check-ins, proposing strategic initiatives, and ensuring cross-functional alignment — a continuous strategic cycle.</desc>
+<defs>
+  <marker id="arrowBm7" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .bm7box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .bm7end { fill: #F7EFEF; stroke: #A6373C; stroke-width: 2; }
+  .bm7title { font-family: Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #1A1A1A; }
+  .bm7sub { font-family: Arial, sans-serif; font-size: 13px; fill: #6E6660; }
+  .bm7lbl { font-family: Arial, sans-serif; font-size: 12.5px; fill: #6E6660; font-style: italic; }
+  .bm7edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowBm7); }
+  .bm7dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowBm7); }
+</style>
+
+<rect fill="#ffffff" x="0" y="0" width="780" height="480"/>
+
+<rect class="bm7box" x="190" y="20" width="220" height="56" rx="10"/>
+<text x="300" y="42" text-anchor="middle" class="bm7title">Define Brand Vision</text>
+<text x="300" y="60" text-anchor="middle" class="bm7sub">Portfolio-level, with CEO</text>
+<path class="bm7edge" d="M300,76 L300,100"/>
+
+<rect class="bm7box" x="190" y="100" width="220" height="56" rx="10"/>
+<text x="300" y="122" text-anchor="middle" class="bm7title">Communicate to All BUs</text>
+<text x="300" y="140" text-anchor="middle" class="bm7sub">eComm, digital, creative, retail</text>
+<path class="bm7edge" d="M300,156 L300,180"/>
+
+<rect class="bm7box" x="190" y="180" width="220" height="56" rx="10"/>
+<text x="300" y="202" text-anchor="middle" class="bm7title">CEO Strategic Check-ins</text>
+<text x="300" y="220" text-anchor="middle" class="bm7sub">Fortnightly — insights &amp; recs</text>
+<path class="bm7edge" d="M300,236 L300,260"/>
+
+<rect class="bm7box" x="190" y="260" width="220" height="56" rx="10"/>
+<text x="300" y="282" text-anchor="middle" class="bm7title">Propose Strategic Initiatives</text>
+<text x="300" y="300" text-anchor="middle" class="bm7sub">New directions, partnerships</text>
+<path class="bm7edge" d="M300,316 L300,340"/>
+
+<rect class="bm7end" x="190" y="340" width="220" height="56" rx="10"/>
+<text x="300" y="362" text-anchor="middle" class="bm7title">Cross-Functional Alignment</text>
+<text x="300" y="380" text-anchor="middle" class="bm7sub">All teams pulling together</text>
+
+<path class="bm7dedge" d="M190,368 L80,368 L80,48 L190,48"/>
+<text x="85" y="210" text-anchor="middle" class="bm7lbl" transform="rotate(-90 85 210)">Continuous cycle</text>
+
+<text x="390" y="445" text-anchor="middle" class="bm7lbl">Blue = process step   ·   Dashed loop = continuous strategic cycle</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s7-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('section7', this)">Expand all</button>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 1: Define / Refresh Brand Vision</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager (with CEO)</div>
+            <div class="field"><span class="label">When:</span> Annually, or when a significant strategic shift occurs</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Articulate what each brand stands for — its positioning, personality, audience, and promise — and how the brands relate to each other within the portfolio.</li>
+                <li>Align the vision with the CEO's strategic direction for the company.</li>
+                <li>Document the vision in a format that can be shared with all teams (deck, one-pager, or brand book preamble).</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A clear, CEO-aligned brand vision for the portfolio.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 2: Communicate to All Business Units</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> After the vision is defined, and reinforced quarterly</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Present the brand vision to all team leads — eCommerce, digital marketing, creative, retail — and explain how their function contributes to it.</li>
+                <li>Make the vision accessible and easy to reference (shared document, team channel pin, or physical display).</li>
+                <li>Reinforce the vision in team check-ins and briefs — keep it alive, not just a one-time presentation.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> All teams understand and can connect their work to the brand vision.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 3: CEO Strategic Check-ins</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Fortnightly (or as agreed with the CEO)</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Prepare a concise update covering: creative highlights and campaign results, brand health observations (consistency, perception, social sentiment), competitor and trend insights, and upcoming priorities.</li>
+                <li>Share specific recommendations for brand growth — new initiatives, adjustments, or opportunities worth exploring.</li>
+                <li>Discuss and align on any strategic decisions that need CEO input or approval.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> CEO is informed and aligned; strategic decisions are made together.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 4: Propose Strategic Initiatives</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> As opportunities or needs arise</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Identify brand-level opportunities — a repositioning, a new sub-brand direction, a strategic partnership, a market entry, or a portfolio-level branding decision.</li>
+                <li>Develop a proposal: the opportunity, the rationale, the expected impact, and the resources required.</li>
+                <li>Present to the CEO for discussion and decision.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> A well-reasoned strategic proposal for CEO consideration.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-header" onclick="toggleStep(this)"><span class="title">Step 5: Ensure Cross-Functional Brand Alignment</span><span class="chev">&#9654;</span></div>
+          <div class="step-body">
+            <div class="field"><span class="label">Who:</span> Brand Manager</div>
+            <div class="field"><span class="label">When:</span> Ongoing</div>
+            <div class="field"><span class="label">How:</span>
+              <ol class="plain">
+                <li>Proactively review the output and plans of each business unit (eCommerce, digital marketing, creative, retail) for consistency with the brand vision.</li>
+                <li>Flag and correct any misalignment early — before it reaches the customer.</li>
+                <li>Facilitate cross-team coordination when a campaign or initiative touches multiple business units, ensuring everyone is working toward the same brand outcome.</li>
+              </ol>
+            </div>
+            <div class="field"><span class="label">Output:</span> All teams are consistently pulling in the same brand direction.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s7-exceptions">
+        <h2>Exceptions and Edge Cases</h2>
+        <table class="data">
+          <tr><th>Scenario</th><th>What to Do</th></tr>
+          <tr><td>A business unit is operating out of alignment with the brand vision and resists correction</td><td>Escalate to the CEO with specific examples and a proposed resolution — brand alignment is non-negotiable.</td></tr>
+          <tr><td>The CEO's strategic direction shifts significantly mid-quarter</td><td>Rapidly assess the brand implications, update the brand vision and priorities as needed, and re-communicate to all teams.</td></tr>
+          <tr><td>A proposed strategic initiative is rejected by the CEO</td><td>Accept the decision; document the rationale for future reference and redirect focus to the agreed priorities.</td></tr>
+          <tr><td>External factors (market shift, regulatory change, crisis) require an urgent brand response</td><td>Convene with the CEO immediately to agree on the brand's position and messaging; brief all teams on the aligned response.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s7-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>CEO check-in cadence</td><td>Fortnightly — no missed sessions without rescheduling</td><td>Calendar log of completed check-ins</td></tr>
+          <tr><td>Brand vision communication</td><td>Presented to all BUs at least once per quarter</td><td>Presentation/meeting log</td></tr>
+          <tr><td>Cross-functional alignment issues flagged</td><td>Flagged and resolved within 1 week</td><td>Issue log with resolution dates</td></tr>
+          <tr><td>Strategic initiatives proposed</td><td>Track count and outcome — no fixed target, but a consistent pipeline of ideas</td><td>Proposal log with CEO decision and outcome</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s7-related">
+        <h2>Related Documents</h2>
+        <ul class="plain">
+          <li>Brand vision document per brand / portfolio overview</li>
+          <li>CEO check-in agenda and notes template</li>
+          <li>Strategic initiative proposal template</li>
+          <li>Cross-functional alignment checklist</li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<footer class="doc-footer">Brand Manager — Process Documentation</footer>
+
+<script>
+  function showTab(id, btn) {
+    if (btn.classList.contains('disabled')) return;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.section-tab').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.jumplist').forEach(el => el.classList.remove('visible'));
+    const jl = document.getElementById('jump-' + id);
+    if (jl) jl.classList.add('visible');
+  }
+  function toggleStep(headerEl) {
+    headerEl.parentElement.classList.toggle('open');
+  }
+  function toggleAll(sectionId, btn) {
+    const steps = document.querySelectorAll('#' + sectionId + ' .step');
+    const anyClosed = Array.from(steps).some(s => !s.classList.contains('open'));
+    steps.forEach(s => s.classList.toggle('open', anyClosed));
+    btn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
+  }
+</script>
+
+</body>
+</html>
