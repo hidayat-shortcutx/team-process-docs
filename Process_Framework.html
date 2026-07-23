@@ -301,9 +301,25 @@
 
   footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
 
-  @media (max-width: 700px) {
+  @media (max-width: 860px) {
     .collab-grid { grid-template-columns: 1fr; }
     .page { padding: 20px 16px 60px; }
+    header.top h1 { font-size: 20px; }
+    header.top p { font-size: 15px; }
+    .section-title { font-size: 22px; }
+    .section-sub { font-size: 15px; }
+    .card { padding: 16px 18px; }
+    table.data { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table.data th { font-size: 14px; padding: 9px 10px; }
+    table.data td { font-size: 15px; padding: 9px 10px; }
+    .phase-header { padding: 14px 18px; min-height: 50px; }
+    .phase-header .phase-label { font-size: 16px; }
+    .step-row { flex-direction: column; gap: 6px; padding: 12px 16px; }
+    .step-row .step-text { font-size: 16px; line-height: 1.55; }
+    .step-row .step-text .note { font-size: 14px; }
+    .collab-item h4 { font-size: 15px; }
+    .collab-item ul { font-size: 15px; }
+    .collab-item ul li { margin-bottom: 5px; }
   }
 </style>
 </head>
@@ -721,7 +737,7 @@
           <div class="step-row">
             <span class="step-badge"><span class="badge badge-bm">Brand Manager</span></span>
             <span class="step-text"><strong>Approves final ad creative and uploads to Google Shared Drive</strong> — static assets (30) handed off to Media Manager for paid ads. Soft approval on DMM's video creative batch.
-              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Media Manager cannot upload creative to platforms without Brand Manager clearance.</span>
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Media Manager cannot upload creative to platforms until it has been approved by the Head of Marketing and uploaded to the Google Shared Drive.</span>
             </span>
           </div>
           <div class="step-row">
@@ -798,8 +814,8 @@
           </div>
           <div class="step-row">
             <span class="step-badge"><span class="badge badge-mm">Media Manager</span></span>
-            <span class="step-text"><strong>Adjusts ad spend and targeting</strong> based on performance signals. Any budget changes require Brand Manager approval before execution.
-              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Budget changes → Brand Manager must approve before Media Manager acts.</span>
+            <span class="step-text"><strong>Adjusts ad spend and targeting</strong> based on performance signals. Any budget changes require Head of Marketing approval before execution.
+              <span class="note"><span class="flag flag-gate">APPROVAL GATE</span> Budget changes → Head of Marketing must approve before Media Manager acts.</span>
             </span>
           </div>
           <div class="step-row">
