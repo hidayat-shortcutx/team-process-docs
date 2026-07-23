@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Media Manager — Process Documentation</title>
+<style>
+  :root {
+    --navy: #1A1A1A;
+    --blue: #A6373C;
+    --blue-light: #F7EFEF;
+    --border: #E3DEDE;
+    --text: #262222;
+    --muted: #6E6660;
+    --confirm-bg: #FFF7E6;
+    --confirm-border: #F0B429;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    color: var(--text);
+    background: #F7F9FC;
+  }
+  header.top {
+    background: var(--navy);
+    color: #fff;
+    padding: 28px 32px 22px;
+    border-top: 6px solid var(--blue);
+  }
+  header.top h1 { margin: 0 0 6px; font-size: 24px; }
+  header.top .meta { font-size: 13px; color: #E8D0D0; }
+  .layout {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  nav.side {
+    width: 260px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+  .section-tab {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+  }
+  .section-tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .jumplist { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; display: none; }
+  .jumplist.visible { display: block; }
+  .jumplist a {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+  .jumplist a:hover { background: var(--blue-light); color: var(--blue); }
+  main {
+    flex: 1;
+    padding: 24px 32px 80px;
+    min-width: 0;
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: var(--navy);
+    border-bottom: 2px solid var(--blue);
+    padding-bottom: 8px;
+  }
+  .card h3 { color: var(--blue); font-size: 15px; margin: 18px 0 6px; }
+  .card p { line-height: 1.55; font-size: 14px; margin: 0 0 10px; }
+  .pill-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  ul.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ul.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 4px; }
+  ol.plain { margin: 6px 0 14px; padding-left: 20px; }
+  ol.plain li { font-size: 14px; line-height: 1.5; margin-bottom: 6px; }
+  .scope-cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  .scope-cols > div { flex: 1; min-width: 240px; }
+  .scope-cols h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 16px;
+    font-size: 13.5px;
+  }
+  table.data th {
+    background: var(--navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 12px;
+  }
+  table.data td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.data tr:nth-child(even) td { background: var(--blue-light); }
+  .note {
+    font-size: 12.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: -6px;
+    margin-bottom: 14px;
+  }
+  .step {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    background: var(--blue-light);
+  }
+  .step-header:hover { background: #E8EFF8; }
+  .step-header .title { font-weight: 600; font-size: 14px; color: var(--navy); }
+  .step-header .chev { font-size: 13px; color: var(--muted); transition: transform .15s ease; }
+  .step.open .step-header .chev { transform: rotate(90deg); }
+  .step-body { display: none; padding: 14px 18px 18px; font-size: 14px; }
+  .step.open .step-body { display: block; }
+  .field { margin-bottom: 8px; }
+  .field .label { font-weight: 600; color: var(--navy); }
+  .quote {
+    border-left: 3px solid var(--blue);
+    background: var(--blue-light);
+    padding: 12px 16px;
+    font-style: italic;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 8px 0 16px;
+    border-radius: 0 6px 6px 0;
+  }
+  .confirm-box {
+    background: var(--confirm-bg);
+    border: 1px solid var(--confirm-border);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .confirm-box h2 { border-bottom: none; color: #8A6300; }
+  .confirm-box ul.plain li { color: #6B4E00; }
+  a.ext-link { color: var(--blue); text-decoration: none; font-weight: 600; }
+  a.ext-link:hover { text-decoration: underline; }
+  .links-list { list-style: none; padding: 0; margin: 8px 0 16px; }
+  .links-list li { margin-bottom: 8px; font-size: 14px; }
+  .expand-all {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: var(--navy);
+    margin-bottom: 12px;
+  }
+  .expand-all:hover { background: var(--blue-light); }
+  footer.doc-footer { text-align: center; font-size: 12px; color: var(--muted); padding: 20px 0 40px; }
+  .diagram-wrap { overflow-x: auto; }
+  .diagram-wrap svg { max-width: 640px; width: 100%; height: auto; display: block; margin: 0 auto; }
+  @media (max-width: 860px) {
+    .layout { flex-direction: column; }
+    nav.side { width: 100%; position: static; max-height: none; }
+  }
+  /* Role badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+  .badge-mm   { background: #1A7F5A; }
+  .badge-hom  { background: #6B3FA0; }
+  .badge-bm   { background: #A6373C; }
+  .badge-dmm  { background: #2563C4; }
+  .badge-em   { background: #C97200; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html" style="display:inline-block; font-size:12.5px; color:#E8D0D0; text-decoration:none; margin-bottom:10px;">&larr; All roles</a>
+  <h1>Media Manager — Process Documentation</h1>
+  <div class="meta">Owner: Media Manager &nbsp;|&nbsp; Last Updated: 23 July 2026 &nbsp;|&nbsp; Review Cadence: Quarterly</div>
+</header>
+
+<div class="layout">
+  <nav class="side">
+    <button class="section-tab active" data-tab="section1" onclick="showTab('section1', this)">Section 1: Paid Media Strategy &amp; Planning</button>
+    <div class="jumplist visible" id="jump-section1">
+      <a href="#s1-purpose">Purpose</a>
+      <a href="#s1-scope">Scope</a>
+      <a href="#s1-raci">RACI Matrix</a>
+      <a href="#s1-flow">Process Flow</a>
+      <a href="#s1-diagram">Process Flow Diagram</a>
+      <a href="#s1-steps">Detailed Steps</a>
+      <a href="#s1-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s1-metrics">Metrics</a>
+      <a href="#s1-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section2" onclick="showTab('section2', this)">Section 2: Always-On Campaign Management</button>
+    <div class="jumplist" id="jump-section2">
+      <a href="#s2-purpose">Purpose</a>
+      <a href="#s2-scope">Scope</a>
+      <a href="#s2-raci">RACI Matrix</a>
+      <a href="#s2-flow">Process Flow</a>
+      <a href="#s2-diagram">Process Flow Diagram</a>
+      <a href="#s2-steps">Detailed Steps</a>
+      <a href="#s2-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s2-metrics">Metrics</a>
+      <a href="#s2-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section3" onclick="showTab('section3', this)">Section 3: eCommerce Campaign Management</button>
+    <div class="jumplist" id="jump-section3">
+      <a href="#s3-purpose">Purpose</a>
+      <a href="#s3-scope">Scope</a>
+      <a href="#s3-raci">RACI Matrix</a>
+      <a href="#s3-flow">Process Flow</a>
+      <a href="#s3-diagram">Process Flow Diagram</a>
+      <a href="#s3-steps">Detailed Steps</a>
+      <a href="#s3-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s3-metrics">Metrics</a>
+      <a href="#s3-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section4" onclick="showTab('section4', this)">Section 4: Budget Management</button>
+    <div class="jumplist" id="jump-section4">
+      <a href="#s4-purpose">Purpose</a>
+      <a href="#s4-scope">Scope</a>
+      <a href="#s4-raci">RACI Matrix</a>
+      <a href="#s4-flow">Process Flow</a>
+      <a href="#s4-diagram">Process Flow Diagram</a>
+      <a href="#s4-steps">Detailed Steps</a>
+      <a href="#s4-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s4-metrics">Metrics</a>
+      <a href="#s4-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section5" onclick="showTab('section5', this)">Section 5: Performance Reporting</button>
+    <div class="jumplist" id="jump-section5">
+      <a href="#s5-purpose">Purpose</a>
+      <a href="#s5-scope">Scope</a>
+      <a href="#s5-raci">RACI Matrix</a>
+      <a href="#s5-flow">Process Flow</a>
+      <a href="#s5-diagram">Process Flow Diagram</a>
+      <a href="#s5-steps">Detailed Steps</a>
+      <a href="#s5-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s5-metrics">Metrics</a>
+      <a href="#s5-related">Related Documents</a>
+    </div>
+
+    <button class="section-tab" data-tab="section6" onclick="showTab('section6', this)">Section 6: Weekly Creative Performance Sync</button>
+    <div class="jumplist" id="jump-section6">
+      <a href="#s6-purpose">Purpose</a>
+      <a href="#s6-scope">Scope</a>
+      <a href="#s6-raci">RACI Matrix</a>
+      <a href="#s6-flow">Process Flow</a>
+      <a href="#s6-diagram">Process Flow Diagram</a>
+      <a href="#s6-steps">Detailed Steps</a>
+      <a href="#s6-exceptions">Exceptions &amp; Edge Cases</a>
+      <a href="#s6-metrics">Metrics</a>
+      <a href="#s6-related">Related Documents</a>
+    </div>
+  </nav>
+
+  <main>
+
+    <!-- ================= SECTION 1: PAID MEDIA STRATEGY & PLANNING ================= -->
+    <div class="tab-content active" id="section1">
+
+      <div class="card" id="s1-purpose">
+        <h2>Purpose</h2>
+        <p>This process ensures the team's paid media investment is directed intentionally — with channel allocation, funnel mapping, and budget split determined at the start of each quarter, reviewed with the Head of Marketing, and shared with all relevant stakeholders before any campaign spending begins.</p>
+      </div>
+
+      <div class="card" id="s1-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Quarterly paid media strategy: channel selection, funnel stage mapping (TOFU / MOFU / BOFU), and budget allocation across Meta, Google, and TikTok</li>
+              <li>Campaign structure planning: objective, targeting approach, ad formats per channel</li>
+              <li>Quarterly strategy review presentation to Head of Marketing for sign-off</li>
+              <li>Briefing the Brand Manager and eCommerce Manager on the approved plan</li>
+              <li>Maintaining an always-on media plan document in Google Drive</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Creative production — owned by the Digital Marketing Manager</li>
+              <li>Organic social media strategy — owned by the Digital Marketing Manager</li>
+              <li>Campaign-specific budget uplifts for eCommerce campaigns (covered in Section 3)</li>
+              <li>Setting overall marketing budget — determined by the Head of Marketing and CEO</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s1-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Review previous quarter performance</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Map channels to funnel stages &amp; draft plan</td><td>Media Manager</td><td>Media Manager</td><td>Brand Manager</td><td>—</td></tr>
+          <tr><td>3. Present strategy to Head of Marketing</td><td>Media Manager</td><td>Head of Marketing</td><td>Brand Manager</td><td>—</td></tr>
+          <tr><td>4. Incorporate feedback &amp; finalise plan</td><td>Media Manager</td><td>Media Manager</td><td>Head of Marketing</td><td>—</td></tr>
+          <tr><td>5. Brief Brand Manager &amp; eCommerce Manager</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager, eCommerce Manager</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Pull the previous quarter's performance data from Google Data Studio — ROAS, CTR, CPM, CPC, and conversion rate per channel.</li>
+          <li>Identify which channels performed above/below target and carry insights into the new quarter's channel strategy.</li>
+          <li>Draft the media plan: assign each channel a funnel role (TOFU / MOFU / BOFU), set campaign objectives, and propose budget split.</li>
+          <li>Share draft with Brand Manager for alignment — confirm it maps to the campaign calendar and creative pipeline.</li>
+          <li>Present the finalised draft to the Head of Marketing for review and sign-off. No spending begins on the new quarter plan without this approval.</li>
+          <li>Incorporate any feedback and publish the approved plan to the shared Google Drive folder.</li>
+          <li>Brief the eCommerce Manager on media timing and campaign windows so platform setups are aligned.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s1-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Paid Media Strategy &amp; Planning process flow</title>
+<desc>Quarterly paid media strategy flow from performance review through channel mapping, HoM sign-off, and stakeholder briefing.</desc>
+<defs>
+  <marker id="arrowMm1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .mm1box { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; rx: 8; }
+  .mm1gbox { fill: #EAF3EC; stroke: #B2D4B8; stroke-width: 1.2; }
+  .mm1pbox { fill: #F0EBFA; stroke: #C9B3E8; stroke-width: 1.2; }
+  .mm1dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .mm1title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1A1A1A; }
+  .mm1sub { font-family: Arial, sans-serif; font-size: 11.5px; fill: #6E6660; }
+  .mm1lbl { font-family: Arial, sans-serif; font-size: 11px; fill: #6E6660; font-style: italic; }
+  .mm1edge { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowMm1); }
+</style>
+<rect fill="#ffffff" x="0" y="0" width="640" height="560"/>
+
+<!-- Start -->
+<rect class="mm1box" x="220" y="20" width="200" height="48" rx="8"/>
+<text class="mm1title" x="320" y="41" text-anchor="middle">Review Previous Quarter</text>
+<text class="mm1sub" x="320" y="57" text-anchor="middle">Pull ROAS, CTR, CPM per channel</text>
+<line class="mm1edge" x1="320" y1="68" x2="320" y2="108"/>
+
+<!-- Step 2 -->
+<rect class="mm1box" x="220" y="108" width="200" height="48" rx="8"/>
+<text class="mm1title" x="320" y="129" text-anchor="middle">Draft Media Plan</text>
+<text class="mm1sub" x="320" y="145" text-anchor="middle">Channel mapping, budget split</text>
+<line class="mm1edge" x1="320" y1="156" x2="320" y2="196"/>
+
+<!-- Step 3 -->
+<rect class="mm1box" x="220" y="196" width="200" height="48" rx="8"/>
+<text class="mm1title" x="320" y="217" text-anchor="middle">Align with Brand Manager</text>
+<text class="mm1sub" x="320" y="233" text-anchor="middle">Campaign calendar &amp; creative pipeline</text>
+<line class="mm1edge" x1="320" y1="244" x2="320" y2="284"/>
+
+<!-- Step 4: HoM Approval -->
+<rect class="mm1pbox" x="200" y="284" width="240" height="56" rx="8"/>
+<text class="mm1title" x="320" y="308" text-anchor="middle">HoM Review &amp; Sign-Off</text>
+<text class="mm1sub" x="320" y="324" text-anchor="middle">No new quarter spend without approval</text>
+<line class="mm1edge" x1="320" y1="340" x2="320" y2="380"/>
+
+<!-- Step 5: Publish -->
+<rect class="mm1gbox" x="220" y="380" width="200" height="48" rx="8"/>
+<text class="mm1title" x="320" y="401" text-anchor="middle">Publish Approved Plan</text>
+<text class="mm1sub" x="320" y="417" text-anchor="middle">Google Drive shared folder</text>
+<line class="mm1edge" x1="320" y1="428" x2="320" y2="468"/>
+
+<!-- Step 6: Brief -->
+<rect class="mm1box" x="190" y="468" width="260" height="48" rx="8"/>
+<text class="mm1title" x="320" y="489" text-anchor="middle">Brief eCommerce Manager</text>
+<text class="mm1sub" x="320" y="505" text-anchor="middle">Align media timing to campaign windows</text>
+
+<!-- Legend -->
+<rect class="mm1pbox" x="20" y="300" width="14" height="14" rx="3"/>
+<text class="mm1lbl" x="38" y="312">HoM approval gate</text>
+<rect class="mm1gbox" x="20" y="320" width="14" height="14" rx="3"/>
+<text class="mm1lbl" x="38" y="332">Output / handoff</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s1-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('s1-steps-list')">Expand all steps</button>
+        <div id="s1-steps-list">
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 1: Review Previous Quarter Performance</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">When:</span> First week of each new quarter</div>
+              <p>Open Google Data Studio and pull ROAS, CTR, CPM, CPC, and conversion rate for the past quarter, broken down by channel (Meta, Google, TikTok) and campaign type (TOFU, MOFU, BOFU). Note which channels and ad formats outperformed or underperformed targets. These insights directly inform the new quarter's channel prioritisation and budget allocation.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 2: Draft the Media Plan</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">Consult:</span> <span class="badge badge-bm">Brand Manager</span></div>
+              <p>Using the prior quarter insights, draft the paid media plan for the new quarter. The plan must cover:</p>
+              <ul class="plain">
+                <li><strong>Channel allocation</strong> — which percentage of budget goes to Meta, Google, TikTok</li>
+                <li><strong>Funnel mapping</strong> — which channel and ad format serves TOFU (awareness), MOFU (consideration), BOFU (conversion)</li>
+                <li><strong>Campaign objectives</strong> — reach, traffic, conversion, retargeting — per channel</li>
+                <li><strong>Ad formats</strong> — video, carousel, static, search, performance max, etc.</li>
+                <li><strong>Targeting approach</strong> — audiences, lookalikes, remarketing lists</li>
+              </ul>
+              <p>Align the plan with the Brand Manager to confirm it maps to the campaign calendar and that the creative pipeline can support it.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 3: Present to Head of Marketing for Sign-Off</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">Accountable:</span> <span class="badge badge-hom">Head of Marketing</span></div>
+              <p>Schedule a 30-minute strategy review with the Head of Marketing. Present the draft plan with performance context, channel rationale, and proposed budget split. Capture any changes or directives from the HoM.</p>
+              <div class="quote">No new quarter media spending begins until this approval is given. If the meeting is delayed, the existing plan continues at maintenance level until the new plan is signed off.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 4: Finalise, Publish &amp; Brief Stakeholders</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Incorporate HoM feedback, finalise the media plan document, and upload it to the shared Google Drive folder. Share the document link with the Brand Manager and eCommerce Manager. Brief the eCommerce Manager specifically on media timing around campaign windows (6.6, 9.9, 11.11, 12.12, seasonal events) so platform setups and paid amplification are coordinated.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" id="s1-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Situation</th><th>Action</th></tr>
+          <tr><td>HoM is unavailable for the quarterly review at the start of the quarter</td><td>Continue with the prior quarter's plan at maintenance spend. Do not reallocate budget or start new campaign types without sign-off. Reschedule the review within 2 weeks.</td></tr>
+          <tr><td>A new channel (e.g. Pinterest, YouTube) is proposed mid-quarter</td><td>Escalate to HoM for approval before any test budget is allocated. Document the rationale and present as a mini-strategy brief.</td></tr>
+          <tr><td>Creative pipeline is delayed and cannot support the planned channel mix</td><td>Flag to Brand Manager and HoM immediately. Temporarily shift budget to channels where existing creative is available, and update the media plan.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Quarterly media plan submitted and approved</td><td>Before first day of new quarter's spending</td><td>Approval date vs. quarter start date</td></tr>
+          <tr><td>Stakeholders briefed</td><td>Within 3 days of HoM sign-off</td><td>Date of briefing vs. sign-off date</td></tr>
+          <tr><td>Plan documented in Google Drive</td><td>Published same day as approval</td><td>File creation/update timestamp</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s1-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Quarterly Media Plan — Google Drive (shared folder)</li>
+          <li>Campaign Calendar — Brand Manager [cross-reference]</li>
+          <li>Performance Reporting Dashboard — Google Data Studio [see Section 5]</li>
+          <li>Process Framework — Team Wide Process</li>
+        </ul>
+      </div>
+
+    </div><!-- /section1 -->
+
+
+    <!-- ================= SECTION 2: ALWAYS-ON CAMPAIGN MANAGEMENT ================= -->
+    <div class="tab-content" id="section2">
+
+      <div class="card" id="s2-purpose">
+        <h2>Purpose</h2>
+        <p>This process ensures always-on paid campaigns across Meta, Google, and TikTok run continuously, are set up correctly, are refreshed with approved creative before fatigue sets in, and are monitored daily so performance issues are caught and acted on quickly.</p>
+      </div>
+
+      <div class="card" id="s2-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Receiving approved creative assets from the Digital Marketing Manager via Google Shared Drive</li>
+              <li>Uploading and configuring ad sets on Meta Ads Manager, Google Ads, and TikTok Ads Manager</li>
+              <li>Setting targeting parameters, bid strategies, and daily/lifetime budgets</li>
+              <li>Daily monitoring of CTR, ROAS, CPM, CPC, frequency, and conversion rate</li>
+              <li>Flagging creative fatigue to the Digital Marketing Manager when performance signals indicate a refresh is needed</li>
+              <li>Optimising bids, budgets, and targeting within the approved media plan</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Creating ad creative — owned by the Digital Marketing Manager</li>
+              <li>Content calendar and organic post scheduling — owned by the Digital Marketing Manager</li>
+              <li>Setting the overall campaign budget — set at strategy stage (Section 1) or via HoM approval for changes (Section 4)</li>
+              <li>Campaign-specific eCommerce campaign pushes (6.6, 9.9, etc.) — covered in Section 3</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s2-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Receive creative assets from DMM</td><td>Media Manager</td><td>Media Manager</td><td>Digital Marketing Manager</td><td>—</td></tr>
+          <tr><td>2. Upload &amp; configure on platforms</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager</td></tr>
+          <tr><td>3. Set targeting &amp; bidding</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>4. Daily performance monitoring</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Flag creative fatigue &amp; request refresh</td><td>Media Manager</td><td>Digital Marketing Manager</td><td>Brand Manager</td><td>Head of Marketing</td></tr>
+          <tr><td>6. Optimise bids &amp; targeting</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Digital Marketing Manager uploads approved creative to the Google Shared Drive folder and notifies the Media Manager.</li>
+          <li>Media Manager downloads assets, checks specs (dimensions, file size, copy length) against each platform's requirements, and flags any issues to the DMM before uploading.</li>
+          <li>Upload creative to Meta Ads Manager, Google Ads, and/or TikTok Ads Manager. Set campaign objective, targeting, ad set budget, bid strategy, and scheduling.</li>
+          <li>Once live, monitor daily — pull CTR, ROAS, CPM, CPC, frequency, and conversion rate from each platform.</li>
+          <li>If any creative shows a consistent decline in CTR or frequency above 3 over two consecutive weeks, trigger a formal creative refresh request to the DMM (see Section 6: Weekly Creative Performance Sync).</li>
+          <li>Optimise active campaigns continuously: adjust bids, refine targeting, pause underperforming ad sets, and reallocate budget within the approved plan.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s2-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 640 540" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Always-On Campaign Management process flow</title>
+<desc>Flow from DMM handing off creative assets to Media Manager uploading, configuring, monitoring and optimising always-on paid campaigns.</desc>
+<defs>
+  <marker id="arrowMm2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .mm2box  { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .mm2bblue { fill: #EBF1FB; stroke: #A8C0E8; stroke-width: 1.2; }
+  .mm2gbox { fill: #EAF3EC; stroke: #B2D4B8; stroke-width: 1.2; }
+  .mm2dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .mm2title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1A1A1A; }
+  .mm2sub   { font-family: Arial, sans-serif; font-size: 11.5px; fill: #6E6660; }
+  .mm2lbl   { font-family: Arial, sans-serif; font-size: 11px; fill: #6E6660; font-style: italic; }
+  .mm2edge  { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowMm2); }
+</style>
+<rect fill="#ffffff" x="0" y="0" width="640" height="540"/>
+
+<!-- From DMM -->
+<rect class="mm2bblue" x="200" y="20" width="240" height="48" rx="8"/>
+<text class="mm2title" x="320" y="41" text-anchor="middle">DMM Uploads Approved Creative</text>
+<text class="mm2sub" x="320" y="57" text-anchor="middle">Google Shared Drive + notification to MM</text>
+<line class="mm2edge" x1="320" y1="68" x2="320" y2="108"/>
+
+<!-- Spec check -->
+<rect class="mm2box" x="200" y="108" width="240" height="48" rx="8"/>
+<text class="mm2title" x="320" y="129" text-anchor="middle">Check Asset Specs</text>
+<text class="mm2sub" x="320" y="145" text-anchor="middle">Dimensions, file size, copy per platform</text>
+<line class="mm2edge" x1="320" y1="156" x2="320" y2="196"/>
+
+<!-- Upload & configure -->
+<rect class="mm2box" x="200" y="196" width="240" height="48" rx="8"/>
+<text class="mm2title" x="320" y="217" text-anchor="middle">Upload &amp; Configure on Platforms</text>
+<text class="mm2sub" x="320" y="233" text-anchor="middle">Meta / Google / TikTok</text>
+<line class="mm2edge" x1="320" y1="244" x2="320" y2="284"/>
+
+<!-- Daily monitoring -->
+<rect class="mm2box" x="200" y="284" width="240" height="48" rx="8"/>
+<text class="mm2title" x="320" y="305" text-anchor="middle">Daily Performance Monitoring</text>
+<text class="mm2sub" x="320" y="321" text-anchor="middle">CTR, ROAS, CPM, CPC, Frequency</text>
+<line class="mm2edge" x1="320" y1="332" x2="320" y2="372"/>
+
+<!-- Decision: fatigue? -->
+<rect class="mm2dbox" x="200" y="372" width="240" height="56" rx="8"/>
+<text class="mm2title" x="320" y="396" text-anchor="middle">Creative Fatigue Detected?</text>
+<text class="mm2sub" x="320" y="412" text-anchor="middle">CTR drop 2 weeks / Frequency &gt;3</text>
+
+<!-- Yes — refresh request -->
+<line class="mm2edge" x1="200" y1="400" x2="120" y2="400" />
+<line class="mm2edge" x1="120" y1="400" x2="120" y2="468"/>
+<rect class="mm2bblue" x="20" y="468" width="200" height="48" rx="8"/>
+<text class="mm2title" x="120" y="489" text-anchor="middle">Request Creative Refresh</text>
+<text class="mm2sub" x="120" y="505" text-anchor="middle">Flag to DMM (see Section 6)</text>
+<text class="mm2lbl" x="155" y="390">Yes</text>
+
+<!-- No — optimise -->
+<line class="mm2edge" x1="440" y1="400" x2="520" y2="400"/>
+<line class="mm2edge" x1="520" y1="400" x2="520" y2="468"/>
+<rect class="mm2gbox" x="420" y="468" width="200" height="48" rx="8"/>
+<text class="mm2title" x="520" y="489" text-anchor="middle">Optimise</text>
+<text class="mm2sub" x="520" y="505" text-anchor="middle">Bids, targeting, budget shifts</text>
+<text class="mm2lbl" x="448" y="390">No</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s2-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('s2-steps-list')">Expand all steps</button>
+        <div id="s2-steps-list">
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 1: Receive Creative Assets from DMM</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Handoff from:</span> <span class="badge badge-dmm">Digital Marketing Manager</span></div>
+              <p>The DMM places final approved creative into the designated Google Shared Drive folder and notifies the Media Manager (via ClickUp or agreed channel). The MM must not upload any creative that has not gone through the DMM's approval process with the Brand Manager.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 2: Check Specs Before Uploading</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Before uploading to any platform, verify that each asset meets platform spec requirements — image dimensions, video length, file size, aspect ratio, and text overlay limits. If an asset fails a spec check, return it to the DMM with a clear note on what needs to be fixed. Do not upload non-compliant assets.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 3: Upload, Configure &amp; Launch</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Upload the creative to each applicable platform (Meta Ads Manager, Google Ads, TikTok Ads Manager). For each campaign, configure:</p>
+              <ul class="plain">
+                <li><strong>Campaign objective</strong> — aligned to funnel stage in the approved media plan</li>
+                <li><strong>Targeting</strong> — audience segments, lookalikes, or remarketing lists as per the plan</li>
+                <li><strong>Bid strategy</strong> — lowest cost, target CPA, or ROAS-based as appropriate</li>
+                <li><strong>Daily/lifetime budget</strong> — within the approved allocation</li>
+                <li><strong>Scheduling</strong> — start date, end date (or ongoing for always-on)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 4: Daily Performance Monitoring</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">Frequency:</span> Every business day</div>
+              <p>Pull daily metrics from each platform for all active campaigns: CTR, ROAS, CPM, CPC, frequency, and conversion rate. Log results in the tracking sheet or Google Data Studio. Any metric that moves 20% or more from the rolling weekly average should be flagged for investigation that same day.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 5: Optimise Active Campaigns</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Based on daily monitoring, optimise continuously. Allowable optimisations within the approved plan (no HoM approval needed):</p>
+              <ul class="plain">
+                <li>Adjusting bids within the same campaign</li>
+                <li>Pausing underperforming ad sets</li>
+                <li>Shifting budget between ad sets within the same campaign</li>
+                <li>Refining audience targeting within the approved strategy</li>
+              </ul>
+              <p>Any change to total campaign budget or channel allocation requires HoM approval first — see Section 4: Budget Management.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" id="s2-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Situation</th><th>Action</th></tr>
+          <tr><td>Platform rejects an ad (policy violation)</td><td>Do not try to rework the creative yourself. Return the rejected creative to the DMM with the platform's rejection reason. Pause the ad slot until a compliant version is provided.</td></tr>
+          <tr><td>Creative is delayed and campaigns have no fresh assets</td><td>Flag to Brand Manager and DMM. Keep existing creative running if still within acceptable frequency. If frequency is already high, reduce budget on that ad set and escalate.</td></tr>
+          <tr><td>Platform algorithm change causes sudden performance drop</td><td>Document the change, flag to HoM and BM with context, and propose a bid/targeting adjustment. Do not reallocate budget across channels without HoM approval.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>ROAS (Return on Ad Spend)</td><td>Per channel target set in quarterly media plan</td><td>Platform reporting / Google Data Studio</td></tr>
+          <tr><td>CTR (Click-Through Rate)</td><td>Baseline established per channel; flag if drops &gt;20% week-on-week</td><td>Platform reporting</td></tr>
+          <tr><td>Ad Frequency</td><td>≤3 per week per audience segment</td><td>Meta / TikTok platform reports</td></tr>
+          <tr><td>Time to launch after creative received</td><td>Within 2 business days of receiving approved assets from DMM</td><td>Drive upload date vs. platform go-live date</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s2-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Digital Marketing Manager Process Documentation — Section 3: Ads (Always-On) [cross-reference]</li>
+          <li>Quarterly Media Plan — Google Drive</li>
+          <li>Section 4: Budget Management [this document]</li>
+          <li>Section 6: Weekly Creative Performance Sync [this document]</li>
+        </ul>
+      </div>
+
+    </div><!-- /section2 -->
+
+
+    <!-- ================= SECTION 3: ECOMMERCE CAMPAIGN MANAGEMENT ================= -->
+    <div class="tab-content" id="section3">
+
+      <div class="card" id="s3-purpose">
+        <h2>Purpose</h2>
+        <p>This process covers the Media Manager's role in paid media amplification during eCommerce campaign windows — 6.6, 9.9, 11.11, 12.12, Raya, CNY, and any other campaign period designated by the brand calendar. The goal is to coordinate paid amplification with the eCommerce Manager's platform mechanics, so spend, targeting, and timing are fully aligned before each campaign goes live.</p>
+      </div>
+
+      <div class="card" id="s3-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Campaign brief intake from Brand Manager ahead of each eCommerce campaign window</li>
+              <li>Coordinating with eCommerce Manager on campaign mechanics (vouchers, bundle pricing, landing URLs) before setting up ads</li>
+              <li>Setting up campaign-specific paid ad campaigns on Meta, Google, and TikTok</li>
+              <li>Proposing and obtaining HoM approval for campaign budget uplift</li>
+              <li>Heightened daily monitoring during the live campaign window</li>
+              <li>Contributing paid media results to the post-campaign report</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Platform mechanics setup — Shopify, Shopee, Lazada configurations owned by eCommerce Manager</li>
+              <li>Pricing and voucher creation — owned by eCommerce Manager</li>
+              <li>Campaign creative production — owned by Digital Marketing Manager</li>
+              <li>Post-campaign report compilation — owned by Brand Manager (MM provides paid media data)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s3-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Receive campaign brief from BM</td><td>Media Manager</td><td>Brand Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Align mechanics with eCommerce Manager</td><td>Media Manager</td><td>Media Manager</td><td>eCommerce Manager</td><td>—</td></tr>
+          <tr><td>3. Request budget uplift approval from HoM</td><td>Media Manager</td><td>Head of Marketing</td><td>Brand Manager</td><td>—</td></tr>
+          <tr><td>4. Set up campaign-specific paid ads</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager, eCommerce Manager</td></tr>
+          <tr><td>5. Heightened monitoring during live window</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager</td></tr>
+          <tr><td>6. Submit paid media results for post-campaign report</td><td>Media Manager</td><td>Brand Manager</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Receive campaign brief from Brand Manager — at least 3 weeks before campaign launch date. Brief must include: campaign name, key dates, target audience, and campaign objective.</li>
+          <li>Meet with eCommerce Manager to confirm platform mechanics: landing URLs, voucher codes, bundle pricing, and platform-specific promotions. Do not set up ads until landing URLs and mechanics are confirmed.</li>
+          <li>Propose campaign budget uplift to Head of Marketing (via ClickUp or agreed channel). No campaign-specific budget increase may be executed without explicit HoM approval.</li>
+          <li>Once budget is approved and creative is received from DMM, set up campaign-specific paid campaigns on applicable platforms with campaign-specific targeting and messaging.</li>
+          <li>During the live campaign window: monitor daily (morning and afternoon check-in). Reallocate budget in real time to best-performing channels, within approved total.</li>
+          <li>Within 2 days of campaign end, compile paid media performance data (ROAS, spend, CTR, conversions, CPA) and submit to Brand Manager for inclusion in the post-campaign report.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s3-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 640 580" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>eCommerce Campaign Management process flow</title>
+<desc>Paid media amplification flow for campaign windows: brief intake, mechanics alignment with eCom Manager, HoM budget approval, campaign setup, live monitoring, and post-campaign reporting.</desc>
+<defs>
+  <marker id="arrowMm3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .mm3box  { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .mm3pbox { fill: #F0EBFA; stroke: #C9B3E8; stroke-width: 1.2; }
+  .mm3abox { fill: #FEF3C7; stroke: #D97706; stroke-width: 1.2; }
+  .mm3gbox { fill: #EAF3EC; stroke: #B2D4B8; stroke-width: 1.2; }
+  .mm3title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1A1A1A; }
+  .mm3sub   { font-family: Arial, sans-serif; font-size: 11.5px; fill: #6E6660; }
+  .mm3lbl   { font-family: Arial, sans-serif; font-size: 11px; fill: #6E6660; font-style: italic; }
+  .mm3edge  { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowMm3); }
+</style>
+<rect fill="#ffffff" x="0" y="0" width="640" height="580"/>
+
+<rect class="mm3box"  x="200" y="20"  width="240" height="48" rx="8"/>
+<text class="mm3title" x="320" y="41"  text-anchor="middle">Receive Campaign Brief</text>
+<text class="mm3sub"  x="320" y="57"  text-anchor="middle">From Brand Manager — 3 weeks before launch</text>
+<line class="mm3edge" x1="320" y1="68" x2="320" y2="108"/>
+
+<rect class="mm3abox" x="200" y="108" width="240" height="56" rx="8"/>
+<text class="mm3title" x="320" y="132" text-anchor="middle">Align with eCommerce Manager</text>
+<text class="mm3sub"  x="320" y="148" text-anchor="middle">Landing URLs, vouchers, mechanics</text>
+<line class="mm3edge" x1="320" y1="164" x2="320" y2="204"/>
+
+<rect class="mm3pbox" x="200" y="204" width="240" height="56" rx="8"/>
+<text class="mm3title" x="320" y="228" text-anchor="middle">Request Budget Uplift — HoM</text>
+<text class="mm3sub"  x="320" y="244" text-anchor="middle">No spend increase without approval</text>
+<line class="mm3edge" x1="320" y1="260" x2="320" y2="300"/>
+
+<rect class="mm3box"  x="200" y="300" width="240" height="48" rx="8"/>
+<text class="mm3title" x="320" y="321" text-anchor="middle">Set Up Campaign Ads</text>
+<text class="mm3sub"  x="320" y="337" text-anchor="middle">Meta / Google / TikTok, campaign targeting</text>
+<line class="mm3edge" x1="320" y1="348" x2="320" y2="388"/>
+
+<rect class="mm3box"  x="200" y="388" width="240" height="48" rx="8"/>
+<text class="mm3title" x="320" y="409" text-anchor="middle">Heightened Monitoring</text>
+<text class="mm3sub"  x="320" y="425" text-anchor="middle">AM + PM check-in during live window</text>
+<line class="mm3edge" x1="320" y1="436" x2="320" y2="476"/>
+
+<rect class="mm3gbox" x="190" y="476" width="260" height="56" rx="8"/>
+<text class="mm3title" x="320" y="500" text-anchor="middle">Submit Paid Media Results</text>
+<text class="mm3sub"  x="320" y="516" text-anchor="middle">To Brand Manager within 2 days of campaign end</text>
+
+<!-- Legend -->
+<rect class="mm3pbox" x="20" y="480" width="12" height="12" rx="3"/>
+<text class="mm3lbl"  x="36" y="491">HoM approval gate</text>
+<rect class="mm3abox" x="20" y="498" width="12" height="12" rx="3"/>
+<text class="mm3lbl"  x="36" y="509">External coordination</text>
+<rect class="mm3gbox" x="20" y="516" width="12" height="12" rx="3"/>
+<text class="mm3lbl"  x="36" y="527">Output / handoff</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s3-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('s3-steps-list')">Expand all steps</button>
+        <div id="s3-steps-list">
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 1: Receive Campaign Brief from Brand Manager</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Handoff from:</span> <span class="badge badge-bm">Brand Manager</span></div>
+              <p>The Brand Manager issues the campaign brief at least 3 weeks before the campaign launch date. The brief must include: campaign name and dates, key promotion mechanic, target audiences, campaign objective, and which platforms to activate. If any of these are missing, return the brief with a request to complete it before proceeding.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 2: Align Mechanics with eCommerce Manager</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Coordinate with:</span> <span class="badge badge-em">eCommerce Manager</span></div>
+              <p>Before building any ad campaign, confirm with the eCommerce Manager: the exact landing page URLs, voucher codes or bundle mechanics that will appear in ads, and the platform go-live schedule. Ads must not go live before the mechanics are confirmed live on the platform — a mismatch between the ad and the landing page will waste budget and damage conversion rates.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 3: Request Budget Uplift Approval from HoM</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Approval from:</span> <span class="badge badge-hom">Head of Marketing</span></div>
+              <div class="quote">No campaign budget increase may be executed without explicit approval from the Head of Marketing. Submit the request with the campaign name, proposed uplift amount, and rationale. Wait for written approval before executing any spend changes.</div>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 4: Set Up Campaign-Specific Ads</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Using the approved creative from the DMM and the confirmed mechanics from the eCommerce Manager, build campaign-specific ad sets on the applicable platforms. Use campaign-specific audiences (e.g., warm audiences, retargeting pools, campaign-specific lookalikes) rather than always-on audiences to avoid cannibalisation. Set campaign-specific budgets within the HoM-approved uplift.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 5: Heightened Monitoring During Live Window</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>During the campaign live window, check performance in the morning (before 9:30am) and afternoon (around 3pm) every day. Identify best-performing channels and ad sets. Shift budget in real time to maximise ROAS, within the approved total. Flag any critical performance anomalies to the Brand Manager and HoM the same day.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 6: Submit Paid Media Results for Post-Campaign Report</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Handoff to:</span> <span class="badge badge-bm">Brand Manager</span></div>
+              <p>Within 2 days of the campaign end date, compile paid media performance data and submit to the Brand Manager: total spend, ROAS per channel, CTR, conversion rate, CPA, and top-performing creatives. The Brand Manager incorporates this into the full post-campaign report for the Head of Marketing.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" id="s3-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Situation</th><th>Action</th></tr>
+          <tr><td>eCommerce Manager's platform setup is delayed — mechanics not confirmed before ad go-live date</td><td>Do not launch ads until mechanics are confirmed. Alert Brand Manager and HoM immediately. Push launch date if needed; do not activate campaigns pointing to broken or unready landing pages.</td></tr>
+          <tr><td>HoM is unavailable to approve budget uplift before campaign window</td><td>Run campaign at existing always-on budget. Do not exceed approved amounts. Escalate urgency via alternative contact method and document the constraint.</td></tr>
+          <tr><td>Campaign creative is not delivered by DMM in time for platform setup</td><td>Flag to Brand Manager with enough lead time (at least 5 days before launch). Explore whether an existing compliant creative can be used as a temporary placeholder — but only with Brand Manager sign-off.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Campaign ROAS</td><td>Target set per campaign in brief; minimum 2× always-on baseline</td><td>Platform reporting, Google Data Studio</td></tr>
+          <tr><td>Campaign setup completed before launch date</td><td>All ads configured at least 24 hours before campaign window opens</td><td>Campaign setup date vs. launch date</td></tr>
+          <tr><td>Post-campaign data submitted to Brand Manager</td><td>Within 2 days of campaign end</td><td>Submission date vs. campaign end date</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s3-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Digital Marketing Manager Process Documentation — Section 4: eCommerce Campaigns [cross-reference]</li>
+          <li>eCommerce Manager Process Documentation [cross-reference]</li>
+          <li>Section 4: Budget Management [this document]</li>
+          <li>Campaign Brief Template — Brand Manager</li>
+        </ul>
+      </div>
+
+    </div><!-- /section3 -->
+
+
+    <!-- ================= SECTION 4: BUDGET MANAGEMENT ================= -->
+    <div class="tab-content" id="section4">
+
+      <div class="card" id="s4-purpose">
+        <h2>Purpose</h2>
+        <p>This process ensures all paid media budgets are tracked daily, spending stays within plan, ROAS targets are monitored and flagged, and any budget change — increase or decrease, across any channel — goes through the Head of Marketing for approval before it is executed.</p>
+      </div>
+
+      <div class="card" id="s4-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Daily spend tracking against the approved media plan</li>
+              <li>ROAS monitoring per channel and campaign</li>
+              <li>Flagging overspend, underspend, and ROAS anomalies to the Head of Marketing</li>
+              <li>Submitting budget change requests to HoM for approval before execution</li>
+              <li>Documenting all approved budget changes with date, amount, rationale, and HoM sign-off</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Approving budget changes — this authority rests with the Head of Marketing</li>
+              <li>Setting the initial media budget — set at the quarterly strategy stage (Section 1)</li>
+              <li>Paying media invoices — handled outside the Media Manager's scope</li>
+              <li>Reporting on non-paid channels (email, organic, SEO)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s4-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Daily spend tracking</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Flag ROAS anomaly or overspend</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Head of Marketing, Brand Manager</td></tr>
+          <tr><td>3. Submit budget change request</td><td>Media Manager</td><td>Head of Marketing</td><td>Brand Manager</td><td>—</td></tr>
+          <tr><td>4. Execute approved budget change</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager</td></tr>
+          <tr><td>5. Document change in budget log</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Each business day, pull actual spend per channel from each platform and compare to the daily pacing target (monthly budget ÷ number of days in month).</li>
+          <li>If actual spend deviates from the pacing target by more than 15%, investigate the cause (algorithm, audience exhaustion, creative issue).</li>
+          <li>If ROAS falls below the channel target for 3 consecutive days, flag to the Head of Marketing with a brief summary of the cause and proposed action.</li>
+          <li>If a budget change is needed (up or down), submit a change request to the Head of Marketing with: channel, current budget, proposed budget, reason, and expected impact.</li>
+          <li>Wait for explicit HoM approval before executing any change. No exceptions.</li>
+          <li>Once approved, execute the change on the platform and log it in the budget change log: date, channel, change amount, reason, approved by.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s4-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Budget Management process flow</title>
+<desc>Daily spend tracking flow: pacing check, ROAS monitoring, HoM approval for changes, execution and logging.</desc>
+<defs>
+  <marker id="arrowMm4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .mm4box  { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .mm4pbox { fill: #F0EBFA; stroke: #C9B3E8; stroke-width: 1.2; }
+  .mm4gbox { fill: #EAF3EC; stroke: #B2D4B8; stroke-width: 1.2; }
+  .mm4dbox { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .mm4title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1A1A1A; }
+  .mm4sub   { font-family: Arial, sans-serif; font-size: 11.5px; fill: #6E6660; }
+  .mm4lbl   { font-family: Arial, sans-serif; font-size: 11px; fill: #6E6660; font-style: italic; }
+  .mm4edge  { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowMm4); }
+</style>
+<rect fill="#ffffff" x="0" y="0" width="640" height="500"/>
+
+<rect class="mm4box"  x="200" y="20"  width="240" height="48" rx="8"/>
+<text class="mm4title" x="320" y="41"  text-anchor="middle">Daily Spend Pull</text>
+<text class="mm4sub"  x="320" y="57"  text-anchor="middle">Actual vs. pacing target per channel</text>
+<line class="mm4edge" x1="320" y1="68" x2="320" y2="108"/>
+
+<rect class="mm4dbox" x="200" y="108" width="240" height="56" rx="8"/>
+<text class="mm4title" x="320" y="132" text-anchor="middle">Within Pacing &amp; ROAS Target?</text>
+<text class="mm4sub"  x="320" y="148" text-anchor="middle">±15% spend / ROAS &gt; channel target</text>
+
+<!-- Yes: optimise -->
+<line class="mm4edge" x1="440" y1="136" x2="530" y2="136"/>
+<rect class="mm4gbox" x="530" y="112" width="96" height="48" rx="8"/>
+<text class="mm4title" x="578" y="133" text-anchor="middle">Optimise</text>
+<text class="mm4sub"  x="578" y="149" text-anchor="middle">Bids &amp; targeting</text>
+<text class="mm4lbl"  x="452" y="128">Yes</text>
+
+<!-- No: flag -->
+<line class="mm4edge" x1="320" y1="164" x2="320" y2="204"/>
+<text class="mm4lbl"  x="326" y="192">No</text>
+
+<rect class="mm4box"  x="200" y="204" width="240" height="48" rx="8"/>
+<text class="mm4title" x="320" y="225" text-anchor="middle">Flag to Head of Marketing</text>
+<text class="mm4sub"  x="320" y="241" text-anchor="middle">Cause summary &amp; proposed action</text>
+<line class="mm4edge" x1="320" y1="252" x2="320" y2="292"/>
+
+<rect class="mm4pbox" x="190" y="292" width="260" height="56" rx="8"/>
+<text class="mm4title" x="320" y="316" text-anchor="middle">Submit Budget Change Request</text>
+<text class="mm4sub"  x="320" y="332" text-anchor="middle">HoM approves — no exceptions</text>
+<line class="mm4edge" x1="320" y1="348" x2="320" y2="388"/>
+
+<rect class="mm4gbox" x="200" y="388" width="240" height="48" rx="8"/>
+<text class="mm4title" x="320" y="409" text-anchor="middle">Execute &amp; Log Change</text>
+<text class="mm4sub"  x="320" y="425" text-anchor="middle">Platform update + budget change log</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s4-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('s4-steps-list')">Expand all steps</button>
+        <div id="s4-steps-list">
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 1: Daily Spend Tracking</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">Frequency:</span> Every business day, before 10am</div>
+              <p>Pull actual spend for the previous day from each platform. Compare to the daily pacing target (monthly approved budget ÷ days in month). Record in the budget tracking sheet. Any deviation greater than 15% from pacing triggers Step 2.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 2: Monitor ROAS and Flag Anomalies</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Track ROAS daily per channel. If ROAS drops below the channel target for 3 consecutive days, flag to the Head of Marketing and Brand Manager with:</p>
+              <ul class="plain">
+                <li>The affected channel and campaign</li>
+                <li>Current ROAS vs. target</li>
+                <li>Likely cause (creative fatigue, audience exhaustion, competitor activity, platform issue)</li>
+                <li>Proposed action</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 3: Submit Budget Change Request to HoM</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Approval from:</span> <span class="badge badge-hom">Head of Marketing</span></div>
+              <div class="quote">Every budget change — regardless of direction or amount — requires Head of Marketing approval before the Media Manager executes it on any platform. This applies to shifts between channels, total budget increases, and budget reductions.</div>
+              <p>Submit the request with: channel, current approved budget, proposed new budget, expected impact on ROAS and delivery, and a brief rationale.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 4: Execute Approved Change &amp; Update the Log</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>Once HoM approval is received (in writing), update the campaign budget on the relevant platform. Immediately log the change in the budget change log: date of change, channel, previous budget, new budget, reason, and name of approver. This log is reviewed monthly as part of the performance reporting cycle.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" id="s4-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Situation</th><th>Action</th></tr>
+          <tr><td>Platform overbills (actual spend exceeds budget setting due to platform error)</td><td>Document the overbilling with screenshots, flag to HoM and Brand Manager, and raise a dispute with the platform. Do not adjust future budgets to compensate without HoM approval.</td></tr>
+          <tr><td>ROAS falls critically below target during a live campaign and HoM is unreachable</td><td>Pause the worst-performing ad sets (not the entire campaign) to stop bleed. Inform Brand Manager. Document the action taken and present to HoM for retrospective review as soon as they are available.</td></tr>
+          <tr><td>Budget runs out before the end of the month</td><td>Flag to HoM immediately. Do not top up without approval. Inform Brand Manager so they can manage expectations on campaign visibility.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Spend pacing accuracy</td><td>Actual spend within ±15% of daily pacing target</td><td>Daily spend log vs. pacing target</td></tr>
+          <tr><td>ROAS per channel</td><td>Per channel target from quarterly media plan</td><td>Platform reporting / Data Studio</td></tr>
+          <tr><td>Budget change requests approved before execution</td><td>100% — zero unauthorised changes</td><td>Budget change log audit</td></tr>
+          <tr><td>Budget change log up to date</td><td>Updated within 24 hours of each change</td><td>Log timestamp vs. platform change date</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s4-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Quarterly Media Plan — Google Drive</li>
+          <li>Budget Change Log — Google Sheets (shared folder)</li>
+          <li>Section 1: Paid Media Strategy &amp; Planning [this document]</li>
+          <li>Section 5: Performance Reporting [this document]</li>
+        </ul>
+      </div>
+
+    </div><!-- /section4 -->
+
+
+    <!-- ================= SECTION 5: PERFORMANCE REPORTING ================= -->
+    <div class="tab-content" id="section5">
+
+      <div class="card" id="s5-purpose">
+        <h2>Purpose</h2>
+        <p>This process ensures paid media performance is visible, consistent, and actionable across the team. The Media Manager owns the Google Data Studio dashboard, delivers a weekly performance report to the Brand Manager and Head of Marketing, and contributes paid media data to the post-campaign report after each campaign window.</p>
+      </div>
+
+      <div class="card" id="s5-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Maintaining the Google Data Studio dashboard — all paid channels, updated weekly</li>
+              <li>Connecting Google Analytics to the dashboard for conversion and audience data</li>
+              <li>Weekly performance report: ROAS, CTR, CPM, CPC, and conversion rate per channel</li>
+              <li>Post-campaign paid media data for inclusion in the Brand Manager's post-campaign report</li>
+              <li>Trend analysis: identifying what is improving, declining, or anomalous across weeks</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Business-level P&amp;L reporting — not the Media Manager's responsibility</li>
+              <li>Email campaign performance reporting — owned by Digital Marketing Manager</li>
+              <li>Organic social media reporting — owned by Digital Marketing Manager</li>
+              <li>Compiling the full post-campaign report — owned by Brand Manager (MM provides the paid data only)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s5-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Maintain Data Studio dashboard</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager, Head of Marketing</td></tr>
+          <tr><td>2. Pull weekly performance data</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Compile &amp; share weekly report</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>Brand Manager, Head of Marketing</td></tr>
+          <tr><td>4. Submit post-campaign paid data to BM</td><td>Media Manager</td><td>Brand Manager</td><td>—</td><td>Head of Marketing</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Every Monday morning, pull the previous week's performance data from Meta, Google, and TikTok and refresh the Google Data Studio dashboard.</li>
+          <li>Review the data: compare ROAS, CTR, CPM, CPC, and conversion rate against the prior week and against the quarterly targets from the media plan.</li>
+          <li>Flag any metric that moved more than 20% week-on-week — note the likely cause and proposed action.</li>
+          <li>Share the weekly report with the Brand Manager and Head of Marketing by end of day Monday. The report should include: channel summary table, top-performing creatives, key trends, and any recommended actions.</li>
+          <li>Post-campaign: within 2 days of each campaign window closing, compile paid media performance data (spend, ROAS, CTR, conversions, CPA, top creatives) and submit to the Brand Manager for the post-campaign report.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s5-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Performance Reporting process flow</title>
+<desc>Weekly reporting cycle from data pull through dashboard refresh, analysis, and sharing with BM and HoM; plus post-campaign data submission.</desc>
+<defs>
+  <marker id="arrowMm5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .mm5box  { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .mm5gbox { fill: #EAF3EC; stroke: #B2D4B8; stroke-width: 1.2; }
+  .mm5bblue { fill: #EBF1FB; stroke: #A8C0E8; stroke-width: 1.2; }
+  .mm5title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1A1A1A; }
+  .mm5sub   { font-family: Arial, sans-serif; font-size: 11.5px; fill: #6E6660; }
+  .mm5lbl   { font-family: Arial, sans-serif; font-size: 11px; fill: #6E6660; font-style: italic; }
+  .mm5edge  { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowMm5); }
+  .mm5dedge { stroke-dasharray: 4 3; stroke: #6E6660; stroke-width: 1; fill: none; marker-end: url(#arrowMm5); }
+</style>
+<rect fill="#ffffff" x="0" y="0" width="640" height="480"/>
+
+<!-- Monday -->
+<rect class="mm5box"  x="200" y="20"  width="240" height="48" rx="8"/>
+<text class="mm5title" x="320" y="41"  text-anchor="middle">Monday: Pull Weekly Data</text>
+<text class="mm5sub"  x="320" y="57"  text-anchor="middle">Meta, Google, TikTok — refresh Data Studio</text>
+<line class="mm5edge" x1="320" y1="68" x2="320" y2="108"/>
+
+<rect class="mm5box"  x="200" y="108" width="240" height="48" rx="8"/>
+<text class="mm5title" x="320" y="129" text-anchor="middle">Analyse Performance</text>
+<text class="mm5sub"  x="320" y="145" text-anchor="middle">vs. prior week &amp; quarterly targets</text>
+<line class="mm5edge" x1="320" y1="156" x2="320" y2="196"/>
+
+<rect class="mm5box"  x="200" y="196" width="240" height="48" rx="8"/>
+<text class="mm5title" x="320" y="217" text-anchor="middle">Flag Anomalies (&gt;20% move)</text>
+<text class="mm5sub"  x="320" y="233" text-anchor="middle">Note cause &amp; proposed action</text>
+<line class="mm5edge" x1="320" y1="244" x2="320" y2="284"/>
+
+<rect class="mm5gbox" x="190" y="284" width="260" height="48" rx="8"/>
+<text class="mm5title" x="320" y="305" text-anchor="middle">Share Weekly Report</text>
+<text class="mm5sub"  x="320" y="321" text-anchor="middle">To Brand Manager &amp; HoM by EOD Monday</text>
+<line class="mm5edge" x1="320" y1="332" x2="320" y2="372"/>
+
+<!-- Post-campaign branch -->
+<rect class="mm5bblue" x="190" y="372" width="260" height="56" rx="8"/>
+<text class="mm5title" x="320" y="396" text-anchor="middle">Post-Campaign: Submit Paid Data</text>
+<text class="mm5sub"  x="320" y="412" text-anchor="middle">To Brand Manager within 2 days of campaign end</text>
+<text class="mm5lbl"  x="320" y="428" text-anchor="middle">Spend, ROAS, CTR, Conversions, CPA</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s5-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('s5-steps-list')">Expand all steps</button>
+        <div id="s5-steps-list">
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 1: Maintain the Google Data Studio Dashboard</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>The dashboard is the single source of truth for paid media performance. It must display: spend, ROAS, CTR, CPM, CPC, conversion rate, and impressions — broken down by channel (Meta, Google, TikTok) and campaign type. Google Analytics is connected to provide on-site conversion data. Ensure the dashboard is accessible to the Brand Manager and Head of Marketing via the shared Google Drive link. Resolve any data connector issues within 24 hours of discovery.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 2: Weekly Report — Pull, Analyse &amp; Share</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">Deadline:</span> Every Monday, end of day</div>
+              <p>Every Monday: pull the previous week's data and refresh the dashboard. Write a short weekly report (a summary doc or email is acceptable) that covers:</p>
+              <ul class="plain">
+                <li><strong>Channel performance table</strong> — ROAS, CTR, CPM, CPC, conversion rate vs. target</li>
+                <li><strong>Top-performing creatives</strong> — highest CTR or ROAS assets from the week</li>
+                <li><strong>Key trends</strong> — what improved, what declined, and why</li>
+                <li><strong>Recommended actions</strong> — specific, actionable items for the coming week</li>
+              </ul>
+              <p>Share the report and dashboard link with the Brand Manager and Head of Marketing.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 3: Post-Campaign Paid Media Data Submission</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Handoff to:</span> <span class="badge badge-bm">Brand Manager</span></div>
+              <p>Within 2 days of each campaign window closing, compile and submit the following paid media data to the Brand Manager for inclusion in the post-campaign report: total spend, ROAS per channel, total conversions, CPA, CTR, top-performing creatives, and a brief narrative on what worked and what to do differently next time.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" id="s5-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Situation</th><th>Action</th></tr>
+          <tr><td>Google Data Studio connector breaks and data does not refresh</td><td>Notify Brand Manager and HoM immediately. Pull data manually from each platform and share a temporary summary. Resolve the connector issue within 24 hours.</td></tr>
+          <tr><td>Weekly report is late due to public holiday or absence</td><td>If Monday is a public holiday, submit by the next business day. If the MM is on leave, arrange cover with the Brand Manager in advance — the report cadence must not be missed.</td></tr>
+          <tr><td>Platform data is inconsistent between platforms and Analytics</td><td>Use Google Analytics as the source of truth for on-site conversions. Note the discrepancy in the report with a brief explanation (attribution model differences, ad blocker impact, etc.).</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Weekly report submitted on time</td><td>Every Monday by EOD</td><td>Report submission timestamp</td></tr>
+          <tr><td>Dashboard last-updated date</td><td>Refreshed every Monday morning</td><td>Data Studio last-refresh timestamp</td></tr>
+          <tr><td>Post-campaign data submitted on time</td><td>Within 2 days of campaign end</td><td>Submission date vs. campaign end date</td></tr>
+          <tr><td>ROAS vs. quarterly target (weekly tracking)</td><td>At or above target — flag if below for 3 consecutive days</td><td>Data Studio / platform reporting</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s5-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Google Data Studio Dashboard — shared link in Google Drive</li>
+          <li>Google Analytics — connected to dashboard</li>
+          <li>Quarterly Media Plan — Section 1 [this document]</li>
+          <li>Post-Campaign Report Template — Brand Manager</li>
+          <li>Section 4: Budget Management [this document]</li>
+        </ul>
+      </div>
+
+    </div><!-- /section5 -->
+
+
+    <!-- ================= SECTION 6: WEEKLY CREATIVE PERFORMANCE SYNC ================= -->
+    <div class="tab-content" id="section6">
+
+      <div class="card" id="s6-purpose">
+        <h2>Purpose</h2>
+        <p>This process ensures the Digital Marketing Manager is always informed of how ad creatives are performing across paid channels, so creative fatigue is identified early and refresh briefs are issued before performance drops significantly. The weekly sync is the primary mechanism for this feedback loop between the Media Manager and the Digital Marketing Manager.</p>
+      </div>
+
+      <div class="card" id="s6-scope">
+        <h2>Scope</h2>
+        <div class="scope-cols">
+          <div>
+            <h4>In Scope</h4>
+            <ul class="plain">
+              <li>Weekly 30-minute sync between Media Manager and Digital Marketing Manager</li>
+              <li>MM prepares creative performance data ahead of each sync (CTR, frequency, CPM per creative)</li>
+              <li>Identifying creatives with consistent 2-week CTR decline or frequency above 3 — these trigger a formal creative refresh request</li>
+              <li>Agreeing on a refresh timeline with the DMM during or immediately after the sync</li>
+              <li>Following up on previously agreed refresh requests</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Out of Scope</h4>
+            <ul class="plain">
+              <li>Creative production decisions — owned by the Digital Marketing Manager</li>
+              <li>Strategic creative direction — owned by the Head of Marketing and Brand Manager</li>
+              <li>Organic content planning — owned by the Digital Marketing Manager</li>
+              <li>Budget decisions triggered by creative fatigue — require HoM approval (see Section 4)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="s6-raci">
+        <h2>RACI Matrix</h2>
+        <table class="data">
+          <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
+          <tr><td>1. Prepare creative performance data</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>2. Identify fatigue signals</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>3. Run weekly sync</td><td>Media Manager</td><td>Media Manager</td><td>Digital Marketing Manager</td><td>Brand Manager</td></tr>
+          <tr><td>4. Agree refresh timeline</td><td>Digital Marketing Manager</td><td>Digital Marketing Manager</td><td>Media Manager</td><td>Brand Manager</td></tr>
+          <tr><td>5. Follow up on refresh actions</td><td>Media Manager</td><td>Media Manager</td><td>Digital Marketing Manager</td><td>—</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-flow">
+        <h2>Process Flow</h2>
+        <ol class="plain">
+          <li>Before the weekly sync, the Media Manager pulls CTR, frequency, and CPM for every active ad creative across Meta, Google, and TikTok.</li>
+          <li>Flag any creative with: (a) a consistent CTR decline over 2 consecutive weeks, or (b) ad frequency above 3 per week — these are formal fatigue signals.</li>
+          <li>In the weekly 30-minute sync with the DMM, share the creative performance data. Walk through flagged creatives and their metrics.</li>
+          <li>Agree on a refresh timeline for each flagged creative. The DMM commits to a delivery date for the replacement or variation. Document the agreed timeline in ClickUp or the agreed tracking tool.</li>
+          <li>In the following week's sync, check if agreed refreshes were delivered. If a creative refresh was not delivered by the agreed date and the flagged creative is still running, escalate to the Brand Manager.</li>
+        </ol>
+      </div>
+
+      <div class="card" id="s6-diagram">
+        <h2>Process Flow Diagram</h2>
+        <div class="diagram-wrap">
+<svg viewBox="0 0 640 500" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Weekly Creative Performance Sync process flow</title>
+<desc>Weekly cycle: MM prepares creative data, identifies fatigue signals, runs sync with DMM, agrees refresh timeline, and follows up.</desc>
+<defs>
+  <marker id="arrowMm6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6E6660" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+<style>
+  .mm6box   { fill: #F7EFEF; stroke: #D9C9C9; stroke-width: 1.2; }
+  .mm6bblue { fill: #EBF1FB; stroke: #A8C0E8; stroke-width: 1.2; }
+  .mm6dbox  { fill: #FFF7E6; stroke: #F0B429; stroke-width: 1.2; }
+  .mm6gbox  { fill: #EAF3EC; stroke: #B2D4B8; stroke-width: 1.2; }
+  .mm6rbox  { fill: #FEE2E2; stroke: #FCA5A5; stroke-width: 1.2; }
+  .mm6title { font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; fill: #1A1A1A; }
+  .mm6sub   { font-family: Arial, sans-serif; font-size: 11.5px; fill: #6E6660; }
+  .mm6lbl   { font-family: Arial, sans-serif; font-size: 11px; fill: #6E6660; font-style: italic; }
+  .mm6edge  { stroke: #6E6660; stroke-width: 1.3; fill: none; marker-end: url(#arrowMm6); }
+</style>
+<rect fill="#ffffff" x="0" y="0" width="640" height="500"/>
+
+<rect class="mm6box"  x="200" y="20"  width="240" height="48" rx="8"/>
+<text class="mm6title" x="320" y="41"  text-anchor="middle">Prepare Creative Performance Data</text>
+<text class="mm6sub"  x="320" y="57"  text-anchor="middle">CTR, frequency, CPM per active creative</text>
+<line class="mm6edge" x1="320" y1="68" x2="320" y2="108"/>
+
+<rect class="mm6dbox" x="200" y="108" width="240" height="56" rx="8"/>
+<text class="mm6title" x="320" y="132" text-anchor="middle">Identify Fatigue Signals</text>
+<text class="mm6sub"  x="320" y="148" text-anchor="middle">CTR drop 2 wks in a row / Frequency &gt;3</text>
+<line class="mm6edge" x1="320" y1="164" x2="320" y2="204"/>
+
+<rect class="mm6bblue" x="200" y="204" width="240" height="56" rx="8"/>
+<text class="mm6title" x="320" y="228" text-anchor="middle">Weekly Sync with DMM</text>
+<text class="mm6sub"  x="320" y="244" text-anchor="middle">30 min — share data, walk through flags</text>
+<line class="mm6edge" x1="320" y1="260" x2="320" y2="300"/>
+
+<rect class="mm6gbox" x="200" y="300" width="240" height="56" rx="8"/>
+<text class="mm6title" x="320" y="324" text-anchor="middle">Agree Refresh Timeline</text>
+<text class="mm6sub"  x="320" y="340" text-anchor="middle">DMM commits to delivery date per creative</text>
+<line class="mm6edge" x1="320" y1="356" x2="320" y2="396"/>
+
+<!-- Follow up -->
+<rect class="mm6box"  x="200" y="396" width="240" height="48" rx="8"/>
+<text class="mm6title" x="320" y="417" text-anchor="middle">Follow Up Next Sync</text>
+<text class="mm6sub"  x="320" y="433" text-anchor="middle">Were agreed refreshes delivered?</text>
+
+<!-- Escalate branch -->
+<line class="mm6edge" x1="440" y1="420" x2="530" y2="420"/>
+<rect class="mm6rbox" x="490" y="396" width="140" height="48" rx="8"/>
+<text class="mm6title" x="560" y="417" text-anchor="middle">Escalate to BM</text>
+<text class="mm6sub"  x="560" y="433" text-anchor="middle">If still not delivered</text>
+<text class="mm6lbl"  x="450" y="412">If late</text>
+</svg>
+        </div>
+      </div>
+
+      <div class="card" id="s6-steps">
+        <h2>Detailed Steps</h2>
+        <button class="expand-all" onclick="toggleAll('s6-steps-list')">Expand all steps</button>
+        <div id="s6-steps-list">
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 1: Prepare Creative Performance Data Before the Sync</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">When:</span> Day before or morning of the weekly sync</div>
+              <p>Pull CTR, frequency, CPM, and impressions for every active ad creative across Meta, Google, and TikTok. Organise by channel and creative, with week-on-week comparison. This data is the agenda for the sync — do not run the sync without it.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 2: Identify and Flag Fatigue Signals</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>A creative is considered fatigued and triggers a formal refresh request when either of the following conditions is met:</p>
+              <ul class="plain">
+                <li><strong>CTR decline:</strong> CTR has dropped for 2 consecutive weeks with no recovery</li>
+                <li><strong>High frequency:</strong> ad frequency has exceeded 3 per week for the target audience</li>
+              </ul>
+              <p>Creatives meeting these criteria are marked as "refresh required" in the performance data going into the sync.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 3: Run the Weekly Sync with the DMM</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">With:</span> <span class="badge badge-dmm">Digital Marketing Manager</span></div>
+              <div class="field"><span class="label">Duration:</span> 30 minutes, weekly</div>
+              <p>Walk through the creative performance data with the DMM. For each flagged creative, share: the creative name/ID, the channel it runs on, the fatigue signal (CTR trend or frequency), and the current performance vs. the week it launched. The goal is for the DMM to understand the performance context so they can brief a replacement or variation.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 4: Agree on Refresh Timeline &amp; Document</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-dmm">Digital Marketing Manager</span></div>
+              <p>The DMM commits to a delivery date for each flagged creative refresh. The Media Manager documents the commitment in ClickUp (or the agreed tracking tool): creative name, platform, fatigue signal noted, refresh delivery date agreed, and DMM's name. This creates a record that feeds into the following week's sync check.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 5: Follow Up &amp; Escalate if Needed</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <p>At the start of each sync, check the status of previously agreed refresh requests. If a creative refresh was not delivered by the agreed date and the fatigued creative is still running on paid channels, escalate to the Brand Manager — not the DMM — so the Brand Manager can prioritise the production pipeline accordingly. Do not silently continue running a fatigued creative beyond the agreed refresh date.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card" id="s6-exceptions">
+        <h2>Exceptions &amp; Edge Cases</h2>
+        <table class="data">
+          <tr><th>Situation</th><th>Action</th></tr>
+          <tr><td>DMM is unavailable for the weekly sync</td><td>Reschedule within the same week — do not skip. If this becomes a recurring issue, flag to the Brand Manager to help protect the sync cadence.</td></tr>
+          <tr><td>Multiple creatives are fatigued at the same time and the DMM cannot refresh all of them at once</td><td>Prioritise by highest spend exposure first. Agree a phased refresh timeline with the DMM and inform the Brand Manager so they can manage production capacity. Reduce budget on the most fatigued creatives in the interim.</td></tr>
+          <tr><td>A creative shows CTR decline but frequency is low — could be seasonal or audience saturation rather than creative fatigue</td><td>Note it as "under observation" rather than issuing a formal refresh request. If the decline continues for a third week, issue the refresh request. Apply context before triggering the process.</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-metrics">
+        <h2>Metrics</h2>
+        <table class="data">
+          <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
+          <tr><td>Weekly sync held</td><td>Every week without exception</td><td>Calendar / meeting log</td></tr>
+          <tr><td>Refresh requests documented in ClickUp</td><td>100% of flagged creatives logged with agreed delivery date</td><td>ClickUp task log</td></tr>
+          <tr><td>Refresh delivered on time by DMM</td><td>By the agreed date</td><td>ClickUp task completion date vs. agreed date</td></tr>
+          <tr><td>Ad frequency per creative</td><td>≤3 per week before refresh is triggered</td><td>Platform frequency reports</td></tr>
+        </table>
+      </div>
+
+      <div class="card" id="s6-related">
+        <h2>Related Documents</h2>
+        <ul class="links-list">
+          <li>Digital Marketing Manager Process Documentation — Section 3: Ads (Always-On) [cross-reference]</li>
+          <li>Section 2: Always-On Campaign Management [this document]</li>
+          <li>Section 5: Performance Reporting [this document]</li>
+          <li>Creative Refresh Request Log — ClickUp</li>
+        </ul>
+      </div>
+
+    </div><!-- /section6 -->
+
+    <footer class="doc-footer">Media Manager Process Documentation &mdash; Confidential Internal Use Only</footer>
+
+  </main>
+</div><!-- /layout -->
+
+<script>
+  function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.jumplist').forEach(j => j.classList.remove('visible'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    var jumpId = 'jump-' + id;
+    var jl = document.getElementById(jumpId);
+    if (jl) jl.classList.add('visible');
+  }
+
+  function toggleStep(hdr) {
+    hdr.parentElement.classList.toggle('open');
+  }
+
+  function toggleAll(containerId) {
+    var container = document.getElementById(containerId);
+    var steps = container.querySelectorAll('.step');
+    var anyOpen = Array.from(steps).some(s => s.classList.contains('open'));
+    steps.forEach(s => anyOpen ? s.classList.remove('open') : s.classList.add('open'));
+  }
+</script>
+
+</body>
+</html>
