@@ -235,7 +235,7 @@
 <header class="top">
   <a href="index.html" style="display:inline-block; font-size:12.5px; color:#E8D0D0; text-decoration:none; margin-bottom:10px;">&larr; All roles</a>
   <h1>Media Manager — Process Documentation</h1>
-  <div class="meta">Owner: Media Manager &nbsp;|&nbsp; Last Updated: 23 July 2026 &nbsp;|&nbsp; Review Cadence: Quarterly</div>
+  <div class="meta">Owner: Media Manager &nbsp;|&nbsp; Last Updated: 23 July 2026 &nbsp;|&nbsp; Review Cadence: Monthly</div>
 </header>
 
 <div class="layout">
@@ -326,7 +326,7 @@
 
       <div class="card" id="s1-purpose">
         <h2>Purpose</h2>
-        <p>This process ensures the team's paid media investment is directed intentionally — with channel allocation, funnel mapping, and budget split determined at the start of each quarter, reviewed with the Head of Marketing, and shared with all relevant stakeholders before any campaign spending begins.</p>
+        <p>This process ensures the team's paid media investment is directed intentionally — with a quarterly topline strategy setting channel allocation, funnel mapping, and budget split, supported by a monthly tactical review that tracks performance against targets and adjusts where needed. Unit economics are run against proposed campaign metrics before any plan goes to the Head of Marketing for sign-off, ensuring every campaign is commercially viable before spend begins.</p>
       </div>
 
       <div class="card" id="s1-scope">
@@ -335,9 +335,11 @@
           <div>
             <h4>In Scope</h4>
             <ul class="plain">
-              <li>Quarterly paid media strategy: channel selection, funnel stage mapping (TOFU / MOFU / BOFU), and budget allocation across Meta, Google, and TikTok</li>
+              <li>Quarterly topline paid media strategy: channel selection, funnel stage mapping (TOFU / MOFU / BOFU), and budget allocation across Meta, Google, and TikTok</li>
+              <li>Monthly tactical review: performance vs. quarterly targets, channel mix assessment, and pacing adjustments within the approved budget</li>
+              <li>Unit economics analysis per proposed campaign: AOV, CAC, OpEx, pricing, and profitability assessment — completed before the plan is submitted to the Head of Marketing</li>
               <li>Campaign structure planning: objective, targeting approach, ad formats per channel</li>
-              <li>Quarterly strategy review presentation to Head of Marketing for sign-off</li>
+              <li>Quarterly strategy and monthly review presentations to Head of Marketing for sign-off</li>
               <li>Briefing the eCommerce Manager on the approved plan</li>
               <li>Maintaining an always-on media plan document in Google Drive</li>
             </ul>
@@ -358,23 +360,25 @@
         <h2>RACI Matrix</h2>
         <table class="data">
           <tr><th>Step</th><th>Responsible</th><th>Accountable</th><th>Consulted</th><th>Informed</th></tr>
-          <tr><td>1. Review previous quarter performance</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
+          <tr><td>1. Review previous quarter/month performance</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>—</td></tr>
           <tr><td>2. Map channels to funnel stages &amp; draft plan</td><td>Media Manager</td><td>Media Manager</td><td>Digital Marketing Manager</td><td>—</td></tr>
-          <tr><td>3. Present strategy to Head of Marketing</td><td>Media Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
-          <tr><td>4. Incorporate feedback &amp; finalise plan</td><td>Media Manager</td><td>Media Manager</td><td>Head of Marketing</td><td>—</td></tr>
-          <tr><td>5. Brief eCommerce Manager</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>eCommerce Manager</td></tr>
+          <tr><td>3. Run unit economics per proposed campaign</td><td>Media Manager</td><td>Media Manager</td><td>eCommerce Manager (pricing/mechanics)</td><td>—</td></tr>
+          <tr><td>4. Present strategy/monthly review to Head of Marketing</td><td>Media Manager</td><td>Head of Marketing</td><td>—</td><td>—</td></tr>
+          <tr><td>5. Incorporate feedback &amp; finalise plan</td><td>Media Manager</td><td>Media Manager</td><td>Head of Marketing</td><td>—</td></tr>
+          <tr><td>6. Brief eCommerce Manager</td><td>Media Manager</td><td>Media Manager</td><td>—</td><td>eCommerce Manager</td></tr>
         </table>
       </div>
 
       <div class="card" id="s1-flow">
         <h2>Process Flow</h2>
         <ol class="plain">
-          <li>Pull the previous quarter's performance data from Google Data Studio — ROAS, CTR, CPM, CPC, and conversion rate per channel.</li>
-          <li>Identify which channels performed above/below target and carry insights into the new quarter's channel strategy.</li>
-          <li>Draft the media plan: assign each channel a funnel role (TOFU / MOFU / BOFU), set campaign objectives, and propose budget split.</li>
+          <li>Pull the previous quarter's (or month's) performance data from Google Data Studio — ROAS, CTR, CPM, CPC, and conversion rate per channel.</li>
+          <li>Identify which channels performed above/below target and carry insights into the new plan.</li>
+          <li>Draft the media plan: assign each channel a funnel role (TOFU / MOFU / BOFU), set campaign objectives, and propose budget split. For quarterly plans this is a full topline strategy; for monthly reviews this is a tactical adjustment within the approved quarterly framework.</li>
           <li>Consult with the Digital Marketing Manager to confirm the plan maps to the creative pipeline and what ad formats and volumes are achievable.</li>
-          <li>Present the finalised draft to the Head of Marketing for review and sign-off. No spending begins on the new quarter plan without this approval.</li>
-          <li>Incorporate any feedback and publish the approved plan to the shared Google Drive folder.</li>
+          <li>Run unit economics for each proposed campaign: model AOV, projected CAC, OpEx, and expected ROAS to confirm the campaign is profitable at the proposed spend level. Consult the eCommerce Manager for current pricing and mechanics. Do not submit the plan to HoM if the unit economics do not support the proposed budget.</li>
+          <li>Present the plan and unit economics summary to the Head of Marketing for review and sign-off. No new spending begins without this approval.</li>
+          <li>Incorporate any feedback, finalise the plan, and publish it to the shared Google Drive folder.</li>
           <li>Brief the eCommerce Manager on media timing and campaign windows so platform setups are aligned.</li>
         </ol>
       </div>
@@ -453,13 +457,13 @@
 
           <div class="step">
             <div class="step-header" onclick="toggleStep(this)">
-              <span class="title">Step 1: Review Previous Quarter Performance</span>
+              <span class="title">Step 1: Review Previous Performance</span>
               <span class="chev">&#9658;</span>
             </div>
             <div class="step-body">
               <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
-              <div class="field"><span class="label">When:</span> First week of each new quarter</div>
-              <p>Open Google Data Studio and pull ROAS, CTR, CPM, CPC, and conversion rate for the past quarter, broken down by channel (Meta, Google, TikTok) and campaign type (TOFU, MOFU, BOFU). Note which channels and ad formats outperformed or underperformed targets. These insights directly inform the new quarter's channel prioritisation and budget allocation.</p>
+              <div class="field"><span class="label">When:</span> First week of each new quarter (full strategy); first week of each month (tactical review)</div>
+              <p>Open Google Data Studio and pull ROAS, CTR, CPM, CPC, and conversion rate for the prior period, broken down by channel (Meta, Google, TikTok) and campaign type (TOFU, MOFU, BOFU). Note which channels and ad formats outperformed or underperformed targets. For monthly reviews, assess performance against the quarterly targets set in the approved plan and identify any pacing issues or channel adjustments needed within the existing budget.</p>
             </div>
           </div>
 
@@ -471,7 +475,7 @@
             <div class="step-body">
               <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
               <div class="field"><span class="label">Consult:</span> <span class="badge badge-dmm">Digital Marketing Manager</span></div>
-              <p>Using the prior quarter insights, draft the paid media plan for the new quarter. The plan must cover:</p>
+              <p>For quarterly plans, draft the full topline strategy covering:</p>
               <ul class="plain">
                 <li><strong>Channel allocation</strong> — which percentage of budget goes to Meta, Google, TikTok</li>
                 <li><strong>Funnel mapping</strong> — which channel and ad format serves TOFU (awareness), MOFU (consideration), BOFU (conversion)</li>
@@ -479,26 +483,46 @@
                 <li><strong>Ad formats</strong> — video, carousel, static, search, performance max, etc.</li>
                 <li><strong>Targeting approach</strong> — audiences, lookalikes, remarketing lists</li>
               </ul>
-              <p>Consult with the Digital Marketing Manager to confirm the creative pipeline can support the planned channel mix and ad formats.</p>
+              <p>For monthly reviews, document proposed tactical adjustments: channel reallocation, budget pacing changes, or new campaign types within the approved quarterly framework. Consult with the Digital Marketing Manager to confirm the creative pipeline supports the planned mix.</p>
             </div>
           </div>
 
           <div class="step">
             <div class="step-header" onclick="toggleStep(this)">
-              <span class="title">Step 3: Present to Head of Marketing for Sign-Off</span>
+              <span class="title">Step 3: Run Unit Economics per Proposed Campaign</span>
+              <span class="chev">&#9658;</span>
+            </div>
+            <div class="step-body">
+              <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
+              <div class="field"><span class="label">Consult:</span> <span class="badge badge-em">eCommerce Manager</span> (pricing &amp; campaign mechanics)</div>
+              <p>Before submitting any plan to the Head of Marketing, run unit economics for each proposed campaign to confirm it is commercially viable. The analysis must cover:</p>
+              <ul class="plain">
+                <li><strong>AOV (Average Order Value)</strong> — expected average order value based on the campaign's product mix, bundle, or voucher mechanics</li>
+                <li><strong>CAC (Customer Acquisition Cost)</strong> — projected cost to acquire one customer at the proposed budget and conversion rate targets</li>
+                <li><strong>OpEx</strong> — relevant operating costs that affect the margin available per order (fulfilment, platform fees, etc.)</li>
+                <li><strong>Pricing &amp; profitability</strong> — confirm that after CAC and OpEx, the campaign generates an acceptable margin; flag if not</li>
+                <li><strong>ROAS target</strong> — back-calculate the minimum ROAS required for the campaign to break even, and confirm the proposed budget is achievable at that threshold</li>
+              </ul>
+              <p>Consult the eCommerce Manager for the current pricing, voucher mechanics, and bundle details for each campaign being modelled. Do not submit the plan to the Head of Marketing if the unit economics show the campaign is loss-making at the proposed spend level — either revise the budget, mechanics, or escalate to HoM with a clear explanation of the trade-off.</p>
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-header" onclick="toggleStep(this)">
+              <span class="title">Step 4: Present to Head of Marketing for Sign-Off</span>
               <span class="chev">&#9658;</span>
             </div>
             <div class="step-body">
               <div class="field"><span class="label">Owner:</span> <span class="badge badge-mm">Media Manager</span></div>
               <div class="field"><span class="label">Accountable:</span> <span class="badge badge-hom">Head of Marketing</span></div>
-              <p>Schedule a 30-minute strategy review with the Head of Marketing. Present the draft plan with performance context, channel rationale, and proposed budget split. Capture any changes or directives from the HoM.</p>
-              <div class="quote">No new quarter media spending begins until this approval is given. If the meeting is delayed, the existing plan continues at maintenance level until the new plan is signed off.</div>
+              <p>Schedule a review with the Head of Marketing. Present the plan with performance context, channel rationale, proposed budget split, and the unit economics summary for each campaign. Capture any changes or directives from the HoM.</p>
+              <div class="quote">No new spending or material reallocation begins until this approval is given. If the meeting is delayed, the existing plan continues at maintenance level until the new plan is signed off.</div>
             </div>
           </div>
 
           <div class="step">
             <div class="step-header" onclick="toggleStep(this)">
-              <span class="title">Step 4: Finalise, Publish &amp; Brief Stakeholders</span>
+              <span class="title">Step 5: Finalise, Publish &amp; Brief Stakeholders</span>
               <span class="chev">&#9658;</span>
             </div>
             <div class="step-body">
@@ -514,8 +538,9 @@
         <h2>Exceptions &amp; Edge Cases</h2>
         <table class="data">
           <tr><th>Situation</th><th>Action</th></tr>
-          <tr><td>HoM is unavailable for the quarterly review at the start of the quarter</td><td>Continue with the prior quarter's plan at maintenance spend. Do not reallocate budget or start new campaign types without sign-off. Reschedule the review within 2 weeks.</td></tr>
-          <tr><td>A new channel (e.g. Pinterest, YouTube) is proposed mid-quarter</td><td>Escalate to HoM for approval before any test budget is allocated. Document the rationale and present as a mini-strategy brief.</td></tr>
+          <tr><td>HoM is unavailable for the quarterly strategy review or monthly review</td><td>Continue with the current approved plan at maintenance spend. Do not reallocate budget or start new campaign types without sign-off. Reschedule within 2 weeks for quarterly; within 1 week for monthly.</td></tr>
+          <tr><td>Unit economics show a proposed campaign is loss-making</td><td>Do not submit to HoM as-is. Revise the budget or mechanics first, or escalate to HoM with the full unit economics breakdown and a clear explanation of the trade-off and proposed options.</td></tr>
+          <tr><td>A new channel (e.g. Pinterest, YouTube) is proposed mid-quarter</td><td>Escalate to HoM for approval before any test budget is allocated. Document the rationale, present as a mini-strategy brief, and include unit economics for the proposed test.</td></tr>
           <tr><td>Creative pipeline is delayed and cannot support the planned channel mix</td><td>Flag to HoM and DMM immediately. Temporarily shift budget to channels where existing creative is available, and update the media plan.</td></tr>
         </table>
       </div>
@@ -524,7 +549,9 @@
         <h2>Metrics</h2>
         <table class="data">
           <tr><th>Metric</th><th>Target</th><th>How to Measure</th></tr>
-          <tr><td>Quarterly media plan submitted and approved</td><td>Before first day of new quarter's spending</td><td>Approval date vs. quarter start date</td></tr>
+          <tr><td>Quarterly topline media plan submitted and approved</td><td>Before first day of new quarter's spending</td><td>Approval date vs. quarter start date</td></tr>
+          <tr><td>Monthly tactical review submitted and approved</td><td>By end of first week of each month</td><td>Submission date vs. month start date</td></tr>
+          <tr><td>Unit economics completed per proposed campaign</td><td>100% of campaigns presented to HoM must have a unit economics summary</td><td>Check plan submission — economics summary included yes/no</td></tr>
           <tr><td>Stakeholders briefed</td><td>Within 3 days of HoM sign-off</td><td>Date of briefing vs. sign-off date</td></tr>
           <tr><td>Plan documented in Google Drive</td><td>Published same day as approval</td><td>File creation/update timestamp</td></tr>
         </table>
